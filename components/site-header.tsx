@@ -11,6 +11,7 @@ const navItems = [
   { label: "Locations", href: "/locations" },
   { label: "Planner", href: "/" },
   { label: "Nigeria", href: "/nigeria" },
+  { label: "Agent", href: "/agent" },
 ]
 
 export function SiteHeader({
