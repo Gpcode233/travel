@@ -1,9 +1,19 @@
+import type { Metadata } from "next"
 import { Geist, Geist_Mono, Instrument_Sans } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 import { TooltipProvider } from "@/components/ui/tooltip"
+
+export const metadata: Metadata = {
+  title: {
+    default: "Trails",
+    template: "%s · Trails",
+  },
+  description:
+    "Plan a smarter Enugu-first Nigeria trip with an AI travel agent.",
+}
 
 const geist = Geist({
   subsets: ["latin"],

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useChat } from "@ai-sdk/react"
 import {
   DefaultChatTransport,
@@ -16,9 +17,17 @@ import {
   ArrowReloadHorizontalIcon,
   SparklesIcon,
 } from "@hugeicons/core-free-icons"
+import { nanoid } from "nanoid"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 import { SiteHeader } from "@/components/site-header"
+import { ChatHistorySidebar } from "@/components/chat-history-sidebar"
+import { deriveTitle, useChatSessions } from "@/hooks/use-chat-sessions"
 import {
   Conversation,
   ConversationContent,
@@ -53,7 +62,13 @@ import {
   ChainOfThoughtStep,
 } from "@/components/ai-elements/chain-of-thought"
 import { Task, TaskContent, TaskTrigger } from "@/components/ai-elements/task"
-import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from "@/components/ai-elements/tool"
+import {
+  Tool,
+  ToolContent,
+  ToolHeader,
+  ToolInput,
+  ToolOutput,
+} from "@/components/ai-elements/tool"
 import {
   Context,
   ContextCacheUsage,
@@ -67,6 +82,12 @@ import {
   ContextTrigger,
 } from "@/components/ai-elements/context"
 import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion"
+import {
+  calculateBudgetBaseline,
+  formatBudgetBaseline,
+  getBudgetTier,
+  travelerCount,
+} from "@/lib/budget-tiers"
 
 type AgentMessage = UIMessage<{ usage?: LanguageModelUsage }>
 
@@ -76,9 +97,52 @@ const MODEL_MAX_TOKENS = 131_072
 const starterPrompts = [
   "Plan a 3-day Enugu trip for waterfalls and food",
   "What's the difference between Awhum and Ezeagu?",
-  "Suggest a relaxed 2-day Nike Lake weekend",
-  "Which Nigeria extension pairs well with a 5-day Enugu trip?",
+  "Suggest a mid-range hotel near Independence Layout",
+  "Which restaurant in GRA is best for a group dinner?",
 ]
+
+function buildAutoPrompt(searchParams: URLSearchParams): string | null {
+  const prompt = searchParams.get("prompt")
+  if (prompt) return prompt
+
+  const mode = searchParams.get("mode")
+
+  if (mode === "guided") {
+    const days = searchParams.get("days")
+    const travelers = searchParams.get("travelers")
+    const budgetValue = searchParams.get("budget")
+    const pace = searchParams.get("pace")?.trim()
+    const interests = searchParams.get("interests")?.trim()
+
+    if (!days || !travelers || !budgetValue) return null
+
+    const tier = getBudgetTier(budgetValue)
+    const travelerN = travelerCount(travelers)
+    const duration = Number(days)
+    const baseline =
+      tier && travelerN ? calculateBudgetBaseline(tier, travelerN, duration) : null
+
+    const lines = [
+      `Plan a ${days}-day Enugu trip for ${travelers} traveler${travelers === "1" ? "" : "s"}.`,
+      `Budget tier: ${tier ? tier.label : budgetValue} (planning baseline of ₦${tier?.minPerPersonPerDay.toLocaleString()}${tier?.maxPerPersonPerDay ? `–₦${tier.maxPerPersonPerDay.toLocaleString()}` : "+"} per person per day — this is a guideline for the kind of trip I want, not a hard cap).`,
+      baseline
+        ? `Estimated trip baseline: ${formatBudgetBaseline(baseline)} total for the group.`
+        : null,
+      `Pace: ${pace ? pace : "no preference specified"}.`,
+      `Interests: ${interests ? interests : "open to suggestions"}.`,
+      `Travelers: ${travelers}. Remember some costs are shared across the group (hotel rooms, private vehicles, drivers, some guided tours) and should not be multiplied by traveler count, while others are per-person (food, some tickets/tours). Reason using actual prices for these dates where possible, and explain if the real itinerary cost differs from the baseline above.`,
+      `Use known attractions, hotels, resorts, and restaurants to draft a full day-by-day itinerary.`,
+    ]
+
+    return lines.filter(Boolean).join(" ")
+  }
+
+  if (mode === "open") {
+    return "I want to plan an Enugu trip but haven't decided the details yet. Ask me what you need to know (days, budget, pace, interests) before drafting an itinerary."
+  }
+
+  return null
+}
 
 type AnyToolPart = ToolUIPart | DynamicToolUIPart
 
@@ -160,12 +224,57 @@ function AssistantToolActivity({ parts }: { parts: AnyToolPart[] }) {
   )
 }
 
-export default function AgentPage() {
+function AgentChat() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [input, setInput] = useState("")
-  const { messages, sendMessage, status, stop, error, regenerate } =
-    useChat<AgentMessage>({
-      transport: new DefaultChatTransport({ api: "/api/agent" }),
-    })
+  const [sessionId, setSessionId] = useState(() => nanoid())
+  const initRef = useRef(false)
+  const {
+    messages,
+    setMessages,
+    sendMessage,
+    status,
+    stop,
+    error,
+    regenerate,
+  } = useChat<AgentMessage>({
+    transport: new DefaultChatTransport({ api: "/api/agent" }),
+  })
+  const { sessions, saveSession, deleteSession, getSession } =
+    useChatSessions<AgentMessage>()
+
+  useEffect(() => {
+    if (initRef.current) return
+    initRef.current = true
+
+    const sessionParam = searchParams.get("session")
+    const existing = sessionParam ? getSession(sessionParam) : undefined
+    if (sessionParam && existing) {
+      // getSession reads localStorage, which only exists client-side, so this
+      // one-time restore has to run post-mount rather than during render.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSessionId(sessionParam)
+      setMessages(existing.messages)
+      return
+    }
+
+    const autoPrompt = buildAutoPrompt(searchParams)
+    if (autoPrompt) {
+      sendMessage({ text: autoPrompt })
+    }
+    router.replace("/agent")
+  }, [searchParams, sendMessage, setMessages, getSession, router])
+
+  useEffect(() => {
+    if (messages.length === 0 || status === "streaming") return
+    const firstUserText = messages
+      .find((message) => message.role === "user")
+      ?.parts.find(
+        (part): part is { type: "text"; text: string } => part.type === "text"
+      )?.text
+    saveSession(sessionId, deriveTitle(firstUserText ?? "New chat"), messages)
+  }, [messages, status, sessionId, saveSession])
 
   const lastAssistantUsage = [...messages]
     .reverse()
@@ -180,148 +289,192 @@ export default function AgentPage() {
     await sendMessage({ text })
   }
 
+  function handleNewChat() {
+    setSessionId(nanoid())
+    setMessages([])
+    setInput("")
+    router.replace("/agent")
+  }
+
+  function handleSelectSession(id: string) {
+    const session = getSession(id)
+    if (!session) return
+    setSessionId(id)
+    setMessages(session.messages)
+    setInput("")
+    router.replace(`/agent?session=${id}`)
+  }
+
+  function handleDeleteSession(id: string) {
+    deleteSession(id)
+    if (id === sessionId) {
+      handleNewChat()
+    }
+  }
+
   return (
-    <main className="flex h-svh flex-col bg-background text-foreground">
-      <div className="border-b px-5 py-5 sm:px-8 lg:px-10">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
-          <SiteHeader />
-          <Context
-            usedTokens={lastAssistantUsage?.totalTokens ?? 0}
-            maxTokens={MODEL_MAX_TOKENS}
-            usage={lastAssistantUsage}
-            modelId={MODEL_ID}
-          >
-            <ContextTrigger />
-            <ContextContent>
-              <ContextContentHeader />
-              <ContextContentBody>
-                <ContextInputUsage />
-                <ContextOutputUsage />
-                <ContextReasoningUsage />
-                <ContextCacheUsage />
-              </ContextContentBody>
-              <ContextContentFooter />
-            </ContextContent>
-          </Context>
+    <SidebarProvider>
+      <ChatHistorySidebar
+        sessions={sessions}
+        activeId={sessionId}
+        onSelect={handleSelectSession}
+        onNew={handleNewChat}
+        onDelete={handleDeleteSession}
+      />
+      <SidebarInset className="h-svh bg-background text-foreground">
+        <div className="border-b px-5 py-5 sm:px-8 lg:px-10">
+          <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <SidebarTrigger />
+              <SiteHeader />
+            </div>
+            <Context
+              usedTokens={lastAssistantUsage?.totalTokens ?? 0}
+              maxTokens={MODEL_MAX_TOKENS}
+              usage={lastAssistantUsage}
+              modelId={MODEL_ID}
+            >
+              <ContextTrigger />
+              <ContextContent>
+                <ContextContentHeader />
+                <ContextContentBody>
+                  <ContextInputUsage />
+                  <ContextOutputUsage />
+                  <ContextReasoningUsage />
+                  <ContextCacheUsage />
+                </ContextContentBody>
+                <ContextContentFooter />
+              </ContextContent>
+            </Context>
+          </div>
         </div>
-      </div>
 
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden px-5 sm:px-8 lg:px-10">
-        <Conversation>
-          <ConversationContent>
-            {messages.length === 0 ? (
-              <ConversationEmptyState>
-                <HugeiconsIcon
-                  icon={SparklesIcon}
-                  className="size-8 text-muted-foreground"
-                />
-                <div className="space-y-1">
-                  <h3 className="text-sm font-medium">
-                    Ask the Enugu trip agent
-                  </h3>
-                  <p className="max-w-sm text-sm text-muted-foreground">
-                    Grounded in the app&apos;s known Enugu and Nigeria
-                    destinations via the search_locations tool.
-                  </p>
-                </div>
-                <Suggestions className="mt-2">
-                  {starterPrompts.map((prompt) => (
-                    <Suggestion
-                      key={prompt}
-                      suggestion={prompt}
-                      onClick={setInput}
-                    />
-                  ))}
-                </Suggestions>
-              </ConversationEmptyState>
-            ) : (
-              messages.map((message, messageIndex) => {
-                const toolParts = message.parts.filter(
-                  (part): part is AnyToolPart =>
-                    isToolUIPart(part) || isDynamicToolUIPart(part)
-                )
-                const isLastMessage = messageIndex === messages.length - 1
+        <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden px-5 sm:px-8 lg:px-10">
+          <Conversation>
+            <ConversationContent>
+              {messages.length === 0 ? (
+                <ConversationEmptyState>
+                  <HugeiconsIcon
+                    icon={SparklesIcon}
+                    className="size-8 text-muted-foreground"
+                  />
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-medium">
+                      Ask the Enugu trip agent
+                    </h3>
+                    <p className="max-w-sm text-sm text-muted-foreground">
+                      Grounded in the app&apos;s known Enugu attractions,
+                      hotels, resorts, and restaurants via the search_locations
+                      tool.
+                    </p>
+                  </div>
+                  <Suggestions className="mt-2">
+                    {starterPrompts.map((prompt) => (
+                      <Suggestion
+                        key={prompt}
+                        suggestion={prompt}
+                        onClick={setInput}
+                      />
+                    ))}
+                  </Suggestions>
+                </ConversationEmptyState>
+              ) : (
+                messages.map((message, messageIndex) => {
+                  const toolParts = message.parts.filter(
+                    (part): part is AnyToolPart =>
+                      isToolUIPart(part) || isDynamicToolUIPart(part)
+                  )
+                  const isLastMessage = messageIndex === messages.length - 1
 
-                return (
-                  <Message key={message.id} from={message.role}>
-                    <MessageContent>
-                      {message.role === "assistant" && (
-                        <AssistantToolActivity parts={toolParts} />
-                      )}
-                      {message.parts.map((part, partIndex) => {
-                        if (part.type === "text") {
-                          return (
-                            <MessageResponse key={partIndex}>
-                              {part.text}
-                            </MessageResponse>
-                          )
-                        }
-                        if (part.type === "reasoning" && part.text) {
-                          return (
-                            <Reasoning
-                              key={partIndex}
-                              isStreaming={
-                                isLastMessage &&
-                                isStreaming &&
-                                partIndex === message.parts.length - 1
-                              }
+                  return (
+                    <Message key={message.id} from={message.role}>
+                      <MessageContent>
+                        {message.role === "assistant" && (
+                          <AssistantToolActivity parts={toolParts} />
+                        )}
+                        {message.parts.map((part, partIndex) => {
+                          if (part.type === "text") {
+                            return (
+                              <MessageResponse key={partIndex}>
+                                {part.text}
+                              </MessageResponse>
+                            )
+                          }
+                          if (part.type === "reasoning" && part.text) {
+                            return (
+                              <Reasoning
+                                key={partIndex}
+                                isStreaming={
+                                  isLastMessage &&
+                                  isStreaming &&
+                                  partIndex === message.parts.length - 1
+                                }
+                              >
+                                <ReasoningTrigger />
+                                <ReasoningContent>{part.text}</ReasoningContent>
+                              </Reasoning>
+                            )
+                          }
+                          return null
+                        })}
+                      </MessageContent>
+                      {message.role === "assistant" &&
+                        isLastMessage &&
+                        status === "ready" && (
+                          <MessageActions>
+                            <MessageAction
+                              tooltip="Regenerate"
+                              onClick={() => regenerate()}
                             >
-                              <ReasoningTrigger />
-                              <ReasoningContent>{part.text}</ReasoningContent>
-                            </Reasoning>
-                          )
-                        }
-                        return null
-                      })}
-                    </MessageContent>
-                    {message.role === "assistant" &&
-                      isLastMessage &&
-                      status === "ready" && (
-                        <MessageActions>
-                          <MessageAction
-                            tooltip="Regenerate"
-                            onClick={() => regenerate()}
-                          >
-                            <HugeiconsIcon
-                              icon={ArrowReloadHorizontalIcon}
-                              className="size-4"
-                            />
-                          </MessageAction>
-                        </MessageActions>
-                      )}
-                  </Message>
-                )
-              })
-            )}
-          </ConversationContent>
-          <ConversationScrollButton />
-        </Conversation>
+                              <HugeiconsIcon
+                                icon={ArrowReloadHorizontalIcon}
+                                className="size-4"
+                              />
+                            </MessageAction>
+                          </MessageActions>
+                        )}
+                    </Message>
+                  )
+                })
+              )}
+            </ConversationContent>
+            <ConversationScrollButton />
+          </Conversation>
 
-        {error && (
-          <Alert className="mb-3" variant="destructive">
-            <AlertTitle>The agent hit an error</AlertTitle>
-            <AlertDescription>{error.message}</AlertDescription>
-          </Alert>
-        )}
+          {error && (
+            <Alert className="mb-3" variant="destructive">
+              <AlertTitle>The agent hit an error</AlertTitle>
+              <AlertDescription>{error.message}</AlertDescription>
+            </Alert>
+          )}
 
-        <PromptInput className="mb-4" onSubmit={handleSubmit}>
-          <PromptInputBody>
-            <PromptInputTextarea
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="Ask about Enugu destinations, pacing, or a full itinerary..."
-            />
-          </PromptInputBody>
-          <PromptInputFooter>
-            <PromptInputTools />
-            <PromptInputSubmit
-              status={status}
-              onStop={stop}
-              disabled={status === "ready" && !input.trim()}
-            />
-          </PromptInputFooter>
-        </PromptInput>
-      </div>
-    </main>
+          <PromptInput className="mb-4" onSubmit={handleSubmit}>
+            <PromptInputBody>
+              <PromptInputTextarea
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                placeholder="Ask about Enugu destinations, pacing, or a full itinerary..."
+              />
+            </PromptInputBody>
+            <PromptInputFooter>
+              <PromptInputTools />
+              <PromptInputSubmit
+                status={status}
+                onStop={stop}
+                disabled={status === "ready" && !input.trim()}
+              />
+            </PromptInputFooter>
+          </PromptInput>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}
+
+export default function AgentPage() {
+  return (
+    <Suspense fallback={null}>
+      <AgentChat />
+    </Suspense>
   )
 }

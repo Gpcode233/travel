@@ -8,10 +8,8 @@ import { CompassIcon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 
 const navItems = [
-  { label: "Locations", href: "/locations" },
+  { label: "Explore", href: "/explore" },
   { label: "Planner", href: "/" },
-  { label: "Nigeria", href: "/nigeria" },
-  { label: "Agent", href: "/agent" },
 ]
 
 export function SiteHeader({
@@ -29,7 +27,7 @@ export function SiteHeader({
         className="flex items-center gap-2 text-sm font-medium"
       >
         <HugeiconsIcon icon={CompassIcon} className="size-5" />
-        Enugu Trails AI
+        Trails
       </Link>
       <nav
         className={cn(
