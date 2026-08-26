@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Calendar01Icon,
-  MapPinIcon,
+  Location03Icon,
   MountainIcon,
   Search01Icon,
   SparklesIcon,
@@ -108,10 +108,6 @@ export default function Page() {
 
           <div className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[1fr_420px]">
             <div className="max-w-3xl">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs backdrop-blur">
-                <HugeiconsIcon icon={MapPinIcon} className="size-3.5" />
-                Enugu first, Nigeria next
-              </div>
               <h1 className="max-w-3xl text-5xl leading-[.98] font-heading font-semibold tracking-normal sm:text-7xl lg:text-8xl">
                 Plan a smarter adventure through Enugu.
               </h1>
@@ -122,7 +118,7 @@ export default function Page() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button size="lg" onClick={openOpenPlan}>
-                  <HugeiconsIcon icon={SparklesIcon} />
+                  <HugeiconsIcon icon={Location03Icon} />
                   Generate trip
                 </Button>
                 <Button

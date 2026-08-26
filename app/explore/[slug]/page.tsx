@@ -12,6 +12,7 @@ import {
 
 import { SiteHeader } from "@/components/site-header"
 import { PlaceCard } from "@/components/place-card"
+import { PlaceImageCarousel } from "@/components/place-image-carousel"
 import { Button } from "@/components/ui/button"
 import { allPlaces, findPlaceBySlug } from "@/lib/enugu-data"
 
@@ -72,9 +73,9 @@ export default async function PlaceDetailsPage({
           Back to Explore
         </Link>
 
-        <div
-          className="mt-6 aspect-video w-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${place.image})` }}
+        <PlaceImageCarousel
+          images={[place.image, ...(place.images ?? [])]}
+          alt={place.name}
         />
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-4">

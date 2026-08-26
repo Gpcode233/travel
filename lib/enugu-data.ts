@@ -19,6 +19,8 @@ export type Place = {
   priceLevel?: string
   address?: string
   image: string
+  /** Extra photos beyond `image`, shown in the details-page carousel. */
+  images?: string[]
   note: string
   description: string
 }
@@ -31,9 +33,14 @@ export const enuguAttractions: Place[] = [
     area: "Udi",
     kind: "Waterfall + cave monastery",
     time: "Half day",
+    priceLevel: "₦500–₦2,000 entry",
     image: wikimedia(
       "Awhum_monastery_cave_and_waterfall,_Enugu,_Nigeria.jpg"
     ),
+    images: [
+      wikimedia("Awhum_monastery_cave_and_waterfall,_Enugu,_Nigeria_2.jpg"),
+      wikimedia("Awhum_monastery_cave_and_waterfall,_Enugu,_Nigeria_6.jpg"),
+    ],
     note: "Cool valley walk, limestone scenery, prayer cave, strong photo stop.",
     description:
       "A 30-metre waterfall at Amu-Ugwu village in Udi Local Government Area, next to the Our Lady of Mount Calvary Monastery. The walk down the valley passes a limestone cave used for prayer before opening onto the falls. Wear grip footwear, the path is slippery after rain, and a local guide makes the cave section much easier to navigate.",
@@ -45,7 +52,12 @@ export const enuguAttractions: Place[] = [
     area: "Ngwo",
     kind: "Forest trail + cave",
     time: "3-4 hours",
+    priceLevel: "~₦500–₦1,000 entry (informal)",
     image: wikimedia("Ngwo_Pine_Forest_Enugu.jpg"),
+    images: [
+      wikimedia("Ngwo_Pine_Forest_Ngwo_Enugu.jpg"),
+      wikimedia("Through_the_pines.jpg"),
+    ],
     note: "Pine canopy, short hike, cave stream, best with a local guide.",
     description:
       "A planted pine forest on the outskirts of Enugu city with a limestone cave and stream running through it. The canopy keeps the trail shaded, and the walk is short enough for a half-day out. Go early for cooler air and better light, and use a local guide for the cave section.",
@@ -57,6 +69,7 @@ export const enuguAttractions: Place[] = [
     area: "Abakpa Nike",
     kind: "Lakefront rest day",
     time: "Easy afternoon",
+    priceLevel: "Free entry (swimming ~₦2,000, boat ride ~₦1,500)",
     image: wikimedia("Nike_Lake_Enugu_Nike_02.jpg"),
     note: "Slow water views, resort lunch, sunset pacing for low-stress trips.",
     description:
@@ -69,6 +82,7 @@ export const enuguAttractions: Place[] = [
     area: "Ezeagu",
     kind: "Cave + waterfall + tunnel",
     time: "Full day",
+    priceLevel: "₦500–₦1,000 entry",
     image: wikimedia("GURARA_WATERFALLS.jpg"),
     note: "Most adventurous Enugu day trip: caves, rock paths, forest water.",
     description:
@@ -81,6 +95,7 @@ export const enuguAttractions: Place[] = [
     area: "Ngwo",
     kind: "Panoramic hill road",
     time: "1-2 hours",
+    priceLevel: "Free",
     image: wikimedia("IDANRE_HILLS_AKURE_iooj.jpg"),
     note: "Coal-mine-era hill road with a sweeping dusk view of Enugu city.",
     description:
@@ -93,7 +108,9 @@ export const enuguAttractions: Place[] = [
     area: "Enugu city",
     kind: "History + culture museum",
     time: "1-2 hours",
+    priceLevel: "₦1,000 entry",
     image: wikimedia("National_Museum_Of_Unity,Enugu.jpg"),
+    images: [wikimedia("Nat_Museum,_Enugu.jpg")],
     note: "Coal City history and Igbo cultural galleries, easy indoor stop.",
     description:
       "Three galleries in the city centre: a Unity Gallery on shared belief systems across Nigerian ethnic groups, an Igbo Gallery on architectural, religious, and social life, and an 'Enugu the Coal City' gallery tracing the city's growth from coal discovery. An easy, air-conditioned stop to pair with a city-day itinerary.",
@@ -105,6 +122,7 @@ export const enuguAttractions: Place[] = [
     area: "Enugu city",
     kind: "Urban park",
     time: "Short stop",
+    priceLevel: "~₦1,000–₦2,000 entry",
     image: wikimedia("Gigantic_Lion_Statue_in_Enugu_Unity_Park.jpg"),
     note: "Central green space with a landmark lion statue, good rest break.",
     description:
@@ -117,6 +135,7 @@ export const enuguAttractions: Place[] = [
     area: "Independence Layout",
     kind: "City square + events ground",
     time: "Short stop",
+    priceLevel: "Free",
     image: wikimedia("Tafawa_Balewa_Square,_Lagos,_Nigeria.jpg"),
     note: "Civic square used for parades and fitness walks, easy city-day add-on.",
     description:
@@ -178,6 +197,92 @@ export const enuguHotels: Place[] = [
     note: "Enugu's premium end, beside Loma Linda Estate in Ogui.",
     description:
       "A premium hotel on Ekweani Close in Ogui, beside Loma Linda Estate. The pick for a premium-budget trip that wants the highest comfort tier available in Enugu.",
+  },
+  {
+    slug: "golden-royale-hotel",
+    name: "Golden Royale Hotel",
+    category: "hotel",
+    area: "Independence Layout",
+    kind: "4-star hotel",
+    priceLevel: "From $59/night",
+    address: "10 Bissala Road, Independence Layout, Enugu",
+    image: wikimedia("Swimming_Pool_at_Kwara_Hotel.jpg"),
+    images: [
+      wikimedia(
+        "Interior_of_the_Lagos_Oriental_Hotel_in_Victoria_Island,_Lagos_State._Nigeria_(6).jpg"
+      ),
+    ],
+    note: "Indoor + outdoor pool, sauna, gym and garden on Bissala Road.",
+    description:
+      "A 4-star hotel on Bissala Road in Independence Layout, with an indoor swimming pool, sauna, garden, and an outdoor pool. Rooms come with air-conditioning, balconies, kitchenette, and free Wi-Fi. Restaurant, bar, shared lounge, fitness room, cooked-to-order breakfast, laundry, and 24-hour front desk on site. A comfort-tier pick right in Independence Layout.",
+  },
+  {
+    slug: "grace-manor-hotels-and-suites",
+    name: "Grace Manor Hotels & Suites",
+    category: "hotel",
+    area: "Independence Layout",
+    kind: "Budget hotel",
+    priceLevel: "From $24/night",
+    address: "2A Nnanna Atuonwu Drive, Liberty Estate, Enugu",
+    image: wikimedia("Oriental_Hotel.jpg"),
+    note: "20-room budget stay off Liberty Estate, with an outdoor pool.",
+    description:
+      "A 20-room budget hotel on Nnanna Atuonwu Drive in Liberty Estate, near Independence Layout, with an outdoor pool, free Wi-Fi, and free parking. A lean-budget base that still gets a pool and a residential-estate location.",
+  },
+  {
+    slug: "gold-rhino-hotel-and-suites",
+    name: "Gold Rhino Hotel & Suites",
+    category: "hotel",
+    area: "New Layout / Ogui",
+    kind: "Premium hotel",
+    priceLevel: "From $212/night",
+    address: "23 Nkpokiti Road, Nkpokiti Roundabout, Enugu",
+    image: wikimedia("Oriental_Hotel.jpg"),
+    note: "40-room luxury stay at Nkpokiti Roundabout, with a pool and skybar.",
+    description:
+      "A 40-room luxury hotel at Nkpokiti Roundabout, opposite C to C Plaza, a 2-minute drive from Nnamdi Azikiwe Stadium and 6 minutes from Polo Park Mall. Rooms have private balconies, work desks, and free toiletries. Pool, skybar, event hall, restaurant, bar, complimentary breakfast, room service, and free Wi-Fi and parking. Marketed as one of the state's most 'digital' hotels.",
+  },
+  {
+    slug: "nondon-international-hotel",
+    name: "Nondon International Hotel",
+    category: "hotel",
+    area: "New Haven",
+    kind: "3-star hotel",
+    priceLevel: "From $114/night",
+    address: "2 Ituku Street, Upper Chime Avenue, New Haven, Enugu",
+    image: wikimedia("Swimming_Pool_at_Kwara_Hotel.jpg"),
+    note: "13-room 3-star hotel in New Haven, pool, gym and poolside bar.",
+    description:
+      "A 3-star, 13-room hotel on Ituku Street off Upper Chime Avenue in New Haven, about 6km from Akanu Ibiam International Airport. Rooms span Standard, Executive, Super Executive, and Royal Suite tiers, each with bay windows, a granite work desk, Wi-Fi, air-conditioning, and a stocked mini bar. On-site restaurant serving local and continental food, poolside bar, swimming pool, and gym. Check-in from noon.",
+  },
+  {
+    slug: "budget-inn-by-maryjane",
+    name: "Budget Inn",
+    category: "hotel",
+    area: "New Haven",
+    kind: "Budget guest house / shortlet",
+    priceLevel: "₦5,000–₦15,000/night",
+    address: "New Haven, Enugu",
+    image: wikimedia(
+      "Interior_of_the_Lagos_Oriental_Hotel_in_Victoria_Island,_Lagos_State._Nigeria_(6).jpg"
+    ),
+    note: "Cheapest option on the list, simple shortlet rooms in New Haven.",
+    description:
+      "A budget guest house running shortlet rooms in New Haven from roughly ₦5,000 to ₦15,000 a night, the cheapest tier on this list. No resort extras, just a secure, simple room for travellers watching cost over comfort.",
+  },
+  {
+    slug: "muse-boutique-hotel",
+    name: "MUSE Boutique Hotel",
+    category: "hotel",
+    area: "GRA / Upper Chime Avenue",
+    kind: "5-star premium hotel",
+    priceLevel: "From $62/night",
+    address: "189 Upper Chime Avenue, Enugu",
+    image: wikimedia("Swimming_Pool_at_Kwara_Hotel.jpg"),
+    images: [wikimedia("Oriental_Hotel.jpg")],
+    note: "Newest premium hotel in Enugu, 7 minutes from the airport, spa + infinity-style pool.",
+    description:
+      "Enugu's newest 5-star boutique hotel, on Upper Chime Avenue, a 7-minute drive from Akanu Ibiam International Airport. 35 tastefully furnished rooms and suites with AC, flat-screen TVs, and safes. Full-service spa, fitness room, outdoor pool, free Wi-Fi, complimentary breakfast, tour desk, 24-hour front desk, and the O Lounge & Bar for indoor-outdoor dining with city views. The pick when the traveller wants the newest, most premium stay close to the airport.",
   },
 ]
 
@@ -278,6 +383,11 @@ export const nigeriaSpots: Place[] = [
     image: wikimedia(
       "Cable_Car,_Obudu_Cattle_Ranch,_Obudu,_Cross_river_state_01.jpg"
     ),
+    images: [
+      wikimedia(
+        "Obudu_Conservation_centre,_Obudu_Mountain_resort,_Cross_river_state.jpg"
+      ),
+    ],
     note: "Cool highland air, cable car ride, waterfalls, a longer extension trip.",
     description:
       "A highland resort on the Obudu Plateau in Cross River State, reached by cable car, with cool mountain air, waterfalls, and hiking trails. A multi-day extension once an Enugu trip has the extra time and road budget.",
@@ -290,6 +400,7 @@ export const nigeriaSpots: Place[] = [
     kind: "Wildlife reserve + warm spring",
     time: "2-3 days",
     image: wikimedia("Wikki_warm_spring,_YANKARI_Game_Reserve,_Bauchi.jpg"),
+    images: [wikimedia("Museum_in_Yankari_Game_Reserve.jpg")],
     note: "Nigeria's top game reserve, elephants and the Wikki warm spring.",
     description:
       "Nigeria's best-known wildlife reserve, in Bauchi State, home to elephants, baboons, and the naturally warm Wikki Spring. Worth the extra travel time for a wildlife-focused multi-day extension.",
@@ -302,6 +413,7 @@ export const nigeriaSpots: Place[] = [
     kind: "Multi-tier waterfall",
     time: "Full day",
     image: wikimedia("Erin-Ijesha_Waterfalls_banner.jpg"),
+    images: [wikimedia("Erin-Ijesha_Waterfalls_05.jpg")],
     note: "Olumirin's seven-level falls, a serious hike-and-climb day out.",
     description:
       "Also known as Olumirin Waterfalls, a seven-level waterfall in Erin-Ijesha, Osun State. A serious hike-and-climb day, not a casual stop, best attempted with sturdy footwear and daylight to spare.",
@@ -326,6 +438,10 @@ export const nigeriaSpots: Place[] = [
     kind: "Canopy walkway + nature reserve",
     time: "Half day",
     image: wikimedia("Canopy_walk_-_Lekki_conservation_center.jpg"),
+    images: [
+      wikimedia("Lekki_Conservation_Center,_Canopy_walk.jpg"),
+      wikimedia("Forest_Canopy_walkway.jpg"),
+    ],
     note: "Africa's longest canopy walkway, easy add-on for a Lagos leg.",
     description:
       "A nature reserve in Lekki, Lagos, with a 401-metre canopy walkway billed as the longest in Africa. An easy half-day add-on if a trip extends into a Lagos leg.",

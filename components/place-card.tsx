@@ -11,7 +11,7 @@ import {
 import type { Place, PlaceCategory } from "@/lib/enugu-data"
 import { cn } from "@/lib/utils"
 
-const categoryMeta: Record<
+export const categoryMeta: Record<
   PlaceCategory,
   { label: string; icon: IconSvgElement }
 > = {
