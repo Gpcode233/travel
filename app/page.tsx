@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select"
 import { SiteHeader } from "@/components/site-header"
 import { PlaceCard } from "@/components/place-card"
-import { cn } from "@/lib/utils"
+import { AppleCarousel } from '@/components/AppleCarousel';
 import { enuguAttractions, nigeriaSpots } from "@/lib/enugu-data"
 import {
   budgetTierList,
@@ -56,7 +56,9 @@ export default function Page() {
     return calculateBudgetBaseline(budgetTier, travelerN, duration)
   }, [budgetTier, travelerN, duration])
 
-  const canPlanRoute = Boolean(days && travelers && budget)
+  const [validationError, setValidationError] = useState(false)
+
+  const canPlanRoute = Boolean(days && travelers && budget && pace)
 
   const summary = useMemo(() => {
     const parts = [
@@ -69,7 +71,12 @@ export default function Page() {
   }, [days, travelers, budgetTier, pace])
 
   function openGuidedPlan() {
-    if (!canPlanRoute || !days || !travelers) return
+    if (!canPlanRoute || !days || !travelers) {
+      setValidationError(true)
+      const el = document.getElementById("build-plan-box")
+      el?.scrollIntoView({ behavior: "smooth", block: "center" })
+      return
+    }
     const params = new URLSearchParams({
       mode: "guided",
       days,
@@ -82,7 +89,13 @@ export default function Page() {
   }
 
   function openOpenPlan() {
-    router.push("/agent?mode=open")
+    if (!canPlanRoute) {
+      setValidationError(true)
+      const el = document.getElementById("build-plan-box")
+      el?.scrollIntoView({ behavior: "smooth", block: "center" })
+      return
+    }
+    openGuidedPlan()
   }
 
   function toggleInterest(interest: string) {
@@ -135,7 +148,15 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="border border-white/18 bg-black/30 p-4 shadow-2xl backdrop-blur-md">
+            <div
+              id="build-plan-box"
+              className={cn(
+                "border bg-black/30 p-4 shadow-2xl backdrop-blur-md transition-all duration-300",
+                validationError && !canPlanRoute
+                  ? "border-red-500 ring-2 ring-red-500/50"
+                  : "border-white/18"
+              )}
+            >
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs tracking-[.16em] text-white/55 uppercase">
@@ -277,127 +298,8 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[.75fr_1fr] lg:px-10">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            Featured Enugu
-          </p>
-          <h2 className="mt-3 text-4xl font-heading font-semibold">
-            Nature routes with enough detail to plan around.
-          </h2>
-          <p className="mt-4 max-w-md leading-7 text-muted-foreground">
-            Start with high-signal places around Enugu, then expand into
-            hotels, restaurants, and wider Nigerian destinations.
-          </p>
-          <Link
-            href="/explore"
-            className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-          >
-            See all of Enugu
-          </Link>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          {featuredLocations.map((location) => (
-            <PlaceCard key={location.slug} place={location} />
-          ))}
-        </div>
-      </section>
-
-      <section className="border-y bg-muted/40">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-3 lg:px-10">
-          <div className="flex gap-4">
-            <HugeiconsIcon
-              icon={MountainIcon}
-              className="mt-1 size-5 text-primary"
-            />
-            <div>
-              <h3 className="font-medium">Adventure fit</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Routes balance distance, daylight, terrain, and rest windows.
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <HugeiconsIcon
-              icon={Tree01Icon}
-              className="mt-1 size-5 text-primary"
-            />
-            <div>
-              <h3 className="font-medium">Local context</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Enugu places get priority before wider Nigeria suggestions.
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <HugeiconsIcon
-              icon={SpoonAndForkIcon}
-              className="mt-1 size-5 text-primary"
-            />
-            <div>
-              <h3 className="font-medium">Food, stays, and stops</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Plans include hotels and restaurants, not only sightseeing.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto grid max-w-7xl gap-8 px-5 py-16 sm:px-8 lg:grid-cols-[420px_1fr] lg:px-10">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            Current request
-          </p>
-          <h2 className="mt-3 text-4xl font-heading font-semibold">
-            {summary}
-          </h2>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {selected.map((item) => (
-              <span key={item} className="border px-3 py-1 text-sm">
-                {item}
-              </span>
-            ))}
-          </div>
-          <div className="mt-8">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-medium">Useful Nigeria extensions</p>
-              <Link
-                href="/explore"
-                className="text-sm font-medium text-primary hover:underline"
-              >
-                See all
-              </Link>
-            </div>
-            <ul className="mt-3 grid gap-2 text-sm text-muted-foreground">
-              {nigeriaSpots.map((spot) => (
-                <li key={spot.slug}>
-                  • {spot.name}, {spot.area}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <div className="flex min-h-[420px] flex-col items-center justify-center border bg-background p-8 text-center">
-          <HugeiconsIcon icon={SparklesIcon} className="mb-4 size-8 text-primary" />
-          <p className="font-medium">Itineraries happen in the Trails agent.</p>
-          <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-            Plan my route sends this exact request to the agent. Generate
-            trip opens a blank chat where the agent asks what it needs first.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Button onClick={openGuidedPlan} disabled={!canPlanRoute}>
-              <HugeiconsIcon icon={Calendar01Icon} />
-              Plan my route
-            </Button>
-            <Button variant="outline" onClick={openOpenPlan}>
-              <HugeiconsIcon icon={SparklesIcon} />
-              Generate trip
-            </Button>
-          </div>
-        </div>
+      <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-1 lg:px-10">
+        <AppleCarousel />
       </section>
     </main>
   )

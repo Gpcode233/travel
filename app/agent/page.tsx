@@ -220,7 +220,7 @@ function AgentWorkspaceContent() {
       <TripPlanningLoader
         dossier={itinerary?.dossier}
         onComplete={handleLoaderComplete}
-        estimatedDurationSeconds={3.5}
+        estimatedDurationSeconds={15}
       />
     )
   }
@@ -303,7 +303,7 @@ function AgentWorkspaceContent() {
       <AskTrailsAssistant onApplyAction={handleApplyAiAction} />
 
       {/* Sticky Save Trip Banner */}
-      <SaveTripBanner />
+      <SaveTripBanner itinerary={itinerary} />
     </div>
   )
 }
