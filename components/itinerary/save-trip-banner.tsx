@@ -20,10 +20,10 @@ import {
 } from "@/components/ui/dialog"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
-import { GeneratedItinerary } from "@/lib/itinerary-types"
+import { TripItinerary } from "@/lib/itinerary-types"
 
 interface SaveTripBannerProps {
-  itinerary?: GeneratedItinerary | null
+  itinerary?: TripItinerary | null
   onSave?: () => void
   isSaved?: boolean
 }

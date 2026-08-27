@@ -24,7 +24,8 @@ import {
 } from "@/components/ui/select"
 import { SiteHeader } from "@/components/site-header"
 import { PlaceCard } from "@/components/place-card"
-import { AppleCarousel } from '@/components/AppleCarousel';
+import { AppleCarousel } from "@/components/AppleCarousel"
+import { cn } from "@/lib/utils"
 import { enuguAttractions, nigeriaSpots } from "@/lib/enugu-data"
 import {
   budgetTierList,
