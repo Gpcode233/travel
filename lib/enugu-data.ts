@@ -289,9 +289,10 @@ export const enuguHotels: Place[] = [
     kind: "Boutique luxury hotel",
     priceLevel: "From ₦42,000/night",
     address: "No. 3 Pocket Drive, Nkpokiti Road, Enugu",
-    image: "https://images.pexels.com/photos/2017802/pexels-photo-2017802.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "https://ak-d.tripcdn.com/images/0222t12000pi1fl528D33_R_960_660_R5_D.jpg",
     images: [
-      "https://images.pexels.com/photos/1838554/pexels-photo-1838554.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://ak-d.tripcdn.com/images/0226612000o68dbf47FB6_R_960_660_R5_D.jpg",
+      "https://ak-d.tripcdn.com/images/0221t12000mavairx8AC2_R_339_206_R5_D.jpg",
     ],
     note: "35-room boutique hotel at Nkpokiti, pool, event hall, complimentary breakfast.",
     description:
@@ -522,10 +523,10 @@ export const enuguHotels: Place[] = [
     kind: "4-star hotel",
     priceLevel: "From ₦90,000/night",
     address: "Independence Layout, Enugu",
-    image: "https://images.pexels.com/photos/2017802/pexels-photo-2017802.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "https://hotelpresidentialbyamber.com/images/banner/hero.jpg",
     images: [
-      "https://images.pexels.com/photos/1743231/pexels-photo-1743231.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://hotelpresidentialbyamber.com/images/banner/banner1.jpg",
+      "https://hotelpresidentialbyamber.com/images/banner/banner2.jpg",
     ],
     note: "Iconic Enugu address, managed by Amber Hotels, pool, business centre, event halls.",
     description:
