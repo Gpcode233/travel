@@ -14,6 +14,7 @@ import {
   generateDynamicTripItinerary,
   removeActivityFromItinerary,
   updateAccommodationInItinerary,
+  PLACE_COORDINATES,
 } from "@/lib/itinerary-generator"
 import {
   ItineraryActivity,
@@ -53,18 +54,29 @@ function AgentWorkspaceContent() {
     const interests = searchParams.get("interests") || "Nature, Food, Culture"
     const destination = searchParams.get("destination") || "Enugu"
 
-    const generated = generateDynamicTripItinerary({
-      days,
-      travelers,
-      budget,
-      pace,
-      interests,
-      destination,
-    })
-
-    setItinerary(generated)
-    setActiveDayNumber(1)
     setPageState("loading")
+    setActiveDayNumber(1)
+
+    // Try AI-generated itinerary; fall back to static generator on failure
+    fetch("/api/agent/generate-itinerary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ days, travelers, budget, pace, interests, destination }),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(await res.text())
+        return res.json()
+      })
+      .then(({ itinerary }) => {
+        setItinerary(itinerary)
+      })
+      .catch(() => {
+        // Fallback to static generator
+        const generated = generateDynamicTripItinerary({
+          days, travelers, budget, pace, interests, destination,
+        })
+        setItinerary(generated)
+      })
   }, [searchParams])
 
   function handleLoaderComplete() {
@@ -248,6 +260,40 @@ function AgentWorkspaceContent() {
   const activeDay =
     itinerary.days.find((d) => d.dayNumber === activeDayNumber) || itinerary.days[0]
 
+  // Build route activities: hotel → day stops → hotel (round-trip route)
+  const selectedHotel = itinerary.accommodations.find(
+    (a) => a.id === itinerary.selectedAccommodationId
+  ) ?? itinerary.accommodations[0]
+
+  const hotelCoords = selectedHotel?.slug
+    ? PLACE_COORDINATES[selectedHotel.slug]
+    : null
+
+  const hotelStop: ItineraryActivity | null = hotelCoords
+    ? {
+        id: "hotel-base",
+        title: selectedHotel.name,
+        description: "Your hotel base",
+        startTime: "8:00 AM",
+        durationMinutes: 0,
+        estimatedCost: 0,
+        formattedCost: "",
+        category: "hotel",
+        tags: ["Hotel"],
+        imageUrl: selectedHotel.imageUrl,
+        location: {
+          name: selectedHotel.name,
+          area: selectedHotel.area,
+          latitude: hotelCoords.lat,
+          longitude: hotelCoords.lng,
+        },
+      }
+    : null
+
+  const routeActivities: ItineraryActivity[] = hotelStop
+    ? [hotelStop, ...activeDay.activities, hotelStop]
+    : activeDay.activities
+
   return (
     <div className="min-h-svh bg-background text-foreground flex flex-col">
       <PromoTicker variant="light" />
@@ -279,7 +325,7 @@ function AgentWorkspaceContent() {
           {/* Right Column: Dynamic Route Map & Est. Budget Breakdown */}
           <div className="space-y-6 lg:sticky lg:top-6 lg:self-start">
             <RouteMap
-              activities={activeDay.activities}
+              activities={routeActivities}
               hoveredActivityId={hoveredActivityId}
               onHoverActivity={setHoveredActivityId}
               selectedActivityId={selectedActivityId}

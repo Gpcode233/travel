@@ -8,6 +8,9 @@ import {
   Location05Icon,
   SparklesIcon,
   Tag01Icon,
+  BedIcon,
+  CheckmarkCircle02Icon,
+  UserGroupIcon,
 } from "@hugeicons/core-free-icons"
 
 import { SiteHeader } from "@/components/site-header"
@@ -120,6 +123,75 @@ export default async function PlaceDetailsPage({
         <p className="mt-8 max-w-3xl leading-7 text-foreground">
           {place.description}
         </p>
+
+        {/* Room tiers — hotels only */}
+        {place.category === "hotel" && place.rooms && place.rooms.length > 0 && (
+          <div className="mt-12">
+            <h2 className="font-heading text-2xl font-semibold">Room types &amp; rates</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Prices per night · Select a room when booking through Trails
+            </p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {place.rooms.map((room) => (
+                <div
+                  key={room.name}
+                  className="flex flex-col justify-between rounded border border-border bg-card p-5"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <HugeiconsIcon icon={BedIcon} className="size-4 text-muted-foreground" />
+                        <h3 className="font-heading font-semibold">{room.name}</h3>
+                      </div>
+                      {room.maxOccupancy && (
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <HugeiconsIcon icon={UserGroupIcon} className="size-3" />
+                          {room.maxOccupancy}
+                        </span>
+                      )}
+                    </div>
+                    {room.description && (
+                      <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                        {room.description}
+                      </p>
+                    )}
+                    <ul className="mt-3 space-y-1">
+                      {room.amenities.map((a) => (
+                        <li key={a} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3 text-green-500 shrink-0" />
+                          {a}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="mt-4 border-t pt-4">
+                    <p className="font-heading text-lg font-bold">{room.formattedPrice}</p>
+                    <Button asChild size="sm" className="mt-3 w-full bg-blue-600 text-white hover:bg-blue-700">
+                      <Link href={`/agent?budget=${encodeURIComponent("mid-range")}&prompt=${encodeURIComponent(`Book a ${room.name} at ${place.name}`)}`}>
+                        <HugeiconsIcon icon={SparklesIcon} className="size-3.5" />
+                        Plan trip with this room
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Website link for partner hotels */}
+        {place.website && (
+          <div className="mt-8">
+            <a
+              href={place.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:underline"
+            >
+              Visit official website →
+            </a>
+          </div>
+        )}
 
         {related.length > 0 && (
           <div className="mt-16">

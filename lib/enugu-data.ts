@@ -9,6 +9,15 @@ export type PlaceCategory =
   | "resort"
   | "nigeria"
 
+export type RoomTier = {
+  name: string
+  pricePerNight: number
+  formattedPrice: string
+  maxOccupancy?: number
+  amenities: string[]
+  description?: string
+}
+
 export type Place = {
   slug: string
   name: string
@@ -23,6 +32,11 @@ export type Place = {
   images?: string[]
   note: string
   description: string
+  website?: string
+  /** Room tiers shown on hotel detail pages. */
+  rooms?: RoomTier[]
+  /** Priority order for agent hotel recommendations (lower = higher priority). */
+  recommendPriority?: number
 }
 
 export const enuguAttractions: Place[] = [
@@ -222,25 +236,89 @@ export const enuguHotels: Place[] = [
     category: "hotel",
     area: "Independence Layout",
     kind: "Budget hotel",
-    priceLevel: "From $24/night",
+    priceLevel: "From ₦35,000/night",
     address: "2A Nnanna Atuonwu Drive, Liberty Estate, Enugu",
     image: wikimedia("Oriental_Hotel.jpg"),
     note: "20-room budget stay off Liberty Estate, with an outdoor pool.",
     description:
       "A 20-room budget hotel on Nnanna Atuonwu Drive in Liberty Estate, near Independence Layout, with an outdoor pool, free Wi-Fi, and free parking. A lean-budget base that still gets a pool and a residential-estate location.",
+    recommendPriority: 6,
+    rooms: [
+      {
+        name: "Standard Room",
+        pricePerNight: 35_000,
+        formattedPrice: "₦35,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "Double bed", "Free Wi-Fi", "Pool access", "Parking"],
+        description: "Simple, clean room in a quiet Liberty Estate residential setting.",
+      },
+      {
+        name: "Deluxe Room",
+        pricePerNight: 55_000,
+        formattedPrice: "₦55,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "King bed", "Bathtub", "Free Wi-Fi", "Pool access"],
+        description: "Upgraded room with a king bed and bathtub.",
+      },
+    ],
   },
   {
     slug: "gold-rhino-hotel-and-suites",
     name: "Gold Rhino Hotel & Suites",
     category: "hotel",
-    area: "New Layout / Ogui",
-    kind: "Premium hotel",
-    priceLevel: "From $212/night",
-    address: "23 Nkpokiti Road, Nkpokiti Roundabout, Enugu",
-    image: wikimedia("Oriental_Hotel.jpg"),
-    note: "40-room luxury stay at Nkpokiti Roundabout, with a pool and skybar.",
+    area: "Nkpokiti",
+    kind: "Boutique luxury hotel",
+    priceLevel: "From ₦42,000/night",
+    address: "No. 3 Pocket Drive, Nkpokiti Road, Enugu",
+    image: "https://images.pexels.com/photos/2017802/pexels-photo-2017802.jpeg?auto=compress&cs=tinysrgb&w=800",
+    images: [
+      "https://images.pexels.com/photos/1838554/pexels-photo-1838554.jpeg?auto=compress&cs=tinysrgb&w=800",
+    ],
+    note: "35-room boutique hotel at Nkpokiti, pool, event hall, complimentary breakfast.",
     description:
-      "A 40-room luxury hotel at Nkpokiti Roundabout, opposite C to C Plaza, a 2-minute drive from Nnamdi Azikiwe Stadium and 6 minutes from Polo Park Mall. Rooms have private balconies, work desks, and free toiletries. Pool, skybar, event hall, restaurant, bar, complimentary breakfast, room service, and free Wi-Fi and parking. Marketed as one of the state's most 'digital' hotels.",
+      "Gold Rhino Hotel & Suites is a distinctive boutique hotel on Pocket Drive off Nkpokiti Road, opposite C to C Plaza and 2 minutes from Nnamdi Azikiwe Stadium. The 35 tastefully appointed rooms — from Standard to Presidential Suite — combine modern sophistication with warm Nigerian hospitality. On-site amenities include a swimming pool, bar and lounge, restaurant, event hall (Golden Hall, 200-capacity), complimentary breakfast, airport pickup, high-speed Wi-Fi, and 24-hour power. Contact: +234 814 880 8800.",
+    rooms: [
+      {
+        name: "Standard Room",
+        pricePerNight: 42_000,
+        formattedPrice: "₦42,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "Flat-screen TV", "Free Wi-Fi", "Complimentary breakfast"],
+        description: "Tastefully furnished standard room with modern fittings.",
+      },
+      {
+        name: "Deluxe Room",
+        pricePerNight: 53_750,
+        formattedPrice: "₦53,750/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "King bed", "Flat-screen TV", "Minibar", "Pool access"],
+        description: "Upgraded deluxe room with king bed and minibar.",
+      },
+      {
+        name: "Executive Room",
+        pricePerNight: 64_500,
+        formattedPrice: "₦64,500/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "Work desk", "King bed", "Bathtub", "Free Wi-Fi"],
+        description: "Executive room ideal for business travellers, with a dedicated work desk.",
+      },
+      {
+        name: "Royal Executive",
+        pricePerNight: 96_750,
+        formattedPrice: "₦96,750/night",
+        maxOccupancy: 3,
+        amenities: ["AC", "King bed", "Sitting area", "Bathtub", "Breakfast", "Airport pickup"],
+        description: "Premium royal executive with sitting area and complimentary airport pickup.",
+      },
+      {
+        name: "Presidential Suite",
+        pricePerNight: 129_000,
+        formattedPrice: "₦129,000/night",
+        maxOccupancy: 4,
+        amenities: ["AC", "Living room", "Dining area", "Jacuzzi", "Butler service", "Airport transfer"],
+        description: "Top-floor suite with full living and dining areas and jacuzzi.",
+      },
+    ],
   },
   {
     slug: "nondon-international-hotel",
@@ -276,13 +354,276 @@ export const enuguHotels: Place[] = [
     category: "hotel",
     area: "GRA / Upper Chime Avenue",
     kind: "5-star premium hotel",
-    priceLevel: "From $62/night",
+    priceLevel: "From ₦95,000/night",
     address: "189 Upper Chime Avenue, Enugu",
     image: wikimedia("Swimming_Pool_at_Kwara_Hotel.jpg"),
     images: [wikimedia("Oriental_Hotel.jpg")],
     note: "Newest premium hotel in Enugu, 7 minutes from the airport, spa + infinity-style pool.",
     description:
       "Enugu's newest 5-star boutique hotel, on Upper Chime Avenue, a 7-minute drive from Akanu Ibiam International Airport. 35 tastefully furnished rooms and suites with AC, flat-screen TVs, and safes. Full-service spa, fitness room, outdoor pool, free Wi-Fi, complimentary breakfast, tour desk, 24-hour front desk, and the O Lounge & Bar for indoor-outdoor dining with city views. The pick when the traveller wants the newest, most premium stay close to the airport.",
+    rooms: [
+      {
+        name: "Deluxe Room",
+        pricePerNight: 95_000,
+        formattedPrice: "₦95,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "Flat-screen TV", "Safe", "Free Wi-Fi", "Breakfast included"],
+        description: "Comfortable deluxe room with city views and boutique furnishings.",
+      },
+      {
+        name: "Junior Suite",
+        pricePerNight: 145_000,
+        formattedPrice: "₦145,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "Sitting area", "Flat-screen TV", "Minibar", "Spa access"],
+        description: "Spacious suite with separate sitting area and rooftop lounge access.",
+      },
+      {
+        name: "Penthouse Suite",
+        pricePerNight: 220_000,
+        formattedPrice: "₦220,000/night",
+        maxOccupancy: 3,
+        amenities: ["AC", "Private terrace", "Butler service", "Spa", "Airport shuttle"],
+        description: "Top-floor penthouse with panoramic Enugu views and dedicated butler.",
+      },
+    ],
+  },
+  // ── Priority partner hotels ──────────────────────────────────────────────
+  {
+    slug: "omedel-hotel-and-suites",
+    name: "Omedel Hotel & Suites",
+    category: "hotel",
+    area: "Independence Layout",
+    kind: "5-star luxury hotel",
+    priceLevel: "From ₦100,000/night",
+    address: "4/6 Link Road off Pascal & Jerk Bus-stop, Independence Layout, Enugu",
+    website: "https://www.omedelluxury.com/",
+    image: "https://www.omedelluxury.com/storage/rooms/zLCXEjTkw8c2GZwjqzi5PBtKpX3SvOmIZbiu9t1z.jpg",
+    images: [
+      "https://www.omedelluxury.com/storage/rooms/gqIe16iRxurgwZNiJw6CGX87NXlSAcebxKqUPFCO.jpg",
+      "https://www.omedelluxury.com/storage/rooms/DCSt6ychZ5eJD6zofHmJBNWxAI7J8Mix0uqyYQPq.jpg",
+    ],
+    note: "Enugu's best 5-star deluxe hotel, 3 min from Government House, pool + free airport pickup.",
+    description:
+      "Omedel Hotel & Suites bills itself as the best five-star deluxe hotel in Enugu, positioned three minutes from the State Government House in the heart of Independence Layout. The hotel offers classic rooms, deluxe balcony rooms, executive suites, a premium suite, and VIP executive suites — all with modern sophisticated furnishings. Amenities include a swimming pool with lounge area, fitness centre, restaurant, bar, event facilities, 24-hour room service, complimentary breakfast, complimentary airport pickup and drop-off, secure parking, and high-speed fibre internet.",
+    recommendPriority: 1,
+    rooms: [
+      {
+        name: "Classic Room",
+        pricePerNight: 100_000,
+        formattedPrice: "₦100,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "King bed", "Smart TV", "Free Wi-Fi", "Breakfast", "Pool access"],
+        description: "Elegant classic room with modern fittings and complimentary breakfast.",
+      },
+      {
+        name: "Deluxe Balcony",
+        pricePerNight: 120_000,
+        formattedPrice: "₦120,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "King bed", "Private balcony", "Bathtub", "Minibar", "Pool access"],
+        description: "Spacious room with a private balcony overlooking the pool area.",
+      },
+      {
+        name: "Executive Suite",
+        pricePerNight: 150_000,
+        formattedPrice: "₦150,000/night",
+        maxOccupancy: 3,
+        amenities: ["AC", "Sitting area", "King bed", "Bathtub + shower", "Minibar", "Airport pickup"],
+        description: "Suite with separate sitting area and complimentary airport transfer.",
+      },
+      {
+        name: "Premium Suite",
+        pricePerNight: 200_000,
+        formattedPrice: "₦200,000/night",
+        maxOccupancy: 4,
+        amenities: ["AC", "Living + dining room", "King bed", "Jacuzzi", "Butler", "Airport transfer"],
+        description: "Full premium suite with jacuzzi, living and dining area, and dedicated butler.",
+      },
+      {
+        name: "VIP Executive Suite",
+        pricePerNight: 250_000,
+        formattedPrice: "₦250,000/night",
+        maxOccupancy: 4,
+        amenities: ["AC", "Multiple rooms", "Private terrace", "Jacuzzi", "Full butler service", "Airport transfer"],
+        description: "The hotel's most prestigious offering — presidential-grade VIP experience.",
+      },
+    ],
+  },
+  {
+    slug: "wells-royale-hotel",
+    name: "Wells Royale Hotel",
+    category: "hotel",
+    area: "Independence Layout",
+    kind: "Premium hotel",
+    priceLevel: "From ₦60,000/night",
+    address: "No. 21 Alex Ekwueme Street, Independence Layout, Enugu",
+    website: "https://wellsroyalehotels.com/",
+    image: "https://wellsroyalehotels.com/files/room-4.jpg",
+    images: [
+      "https://wellsroyalehotels.com/files/room-2.jpg",
+      "https://wellsroyalehotels.com/files/dining-1.jpg",
+    ],
+    note: "Polished Independence Layout hotel — spa, fitness centre, event halls, 24-hr guest support.",
+    description:
+      "Wells Royale Hotel is a premium property in Independence Layout, one of Enugu's most sought-after hospitality destinations. Guests enjoy well-furnished rooms, a rooftop bar with city views, a swimming pool, an all-day restaurant serving Nigerian and continental cuisine, a gym, and elegant event and conference facilities. Within walking distance of Government House and major Independence Layout dining and business addresses.",
+    recommendPriority: 2,
+    rooms: [
+      {
+        name: "Standard Room",
+        pricePerNight: 60_000,
+        formattedPrice: "₦60,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "Queen bed", "Smart TV", "Free Wi-Fi", "Breakfast"],
+        description: "Clean, well-equipped standard room with city or garden view.",
+      },
+      {
+        name: "Deluxe Room",
+        pricePerNight: 95_000,
+        formattedPrice: "₦95,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "King bed", "Bathtub", "Minibar", "Rooftop bar access"],
+        description: "Upgraded deluxe room with superior furnishings and minibar.",
+      },
+      {
+        name: "Royale Suite",
+        pricePerNight: 150_000,
+        formattedPrice: "₦150,000/night",
+        maxOccupancy: 3,
+        amenities: ["AC", "Living room", "Kitchenette", "Bathtub", "Butler access", "Complimentary airport pickup"],
+        description: "Flagship suite with separate lounge and complimentary airport pickup.",
+      },
+    ],
+  },
+  {
+    slug: "hotel-presidential-enugu",
+    name: "Hotel Presidential (by Amber)",
+    category: "hotel",
+    area: "Independence Layout",
+    kind: "4-star hotel",
+    priceLevel: "From ₦90,000/night",
+    address: "Independence Layout, Enugu",
+    image: "https://images.pexels.com/photos/2017802/pexels-photo-2017802.jpeg?auto=compress&cs=tinysrgb&w=800",
+    images: [
+      "https://images.pexels.com/photos/1743231/pexels-photo-1743231.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
+    ],
+    note: "Iconic Enugu address, managed by Amber Hotels, pool, business centre, event halls.",
+    description:
+      "Hotel Presidential is one of Enugu's best-known hotel addresses, now managed by Amber Hotels. Located in Independence Layout, it offers a full-service experience with a large swimming pool, a business centre, restaurants, bars, and spacious event halls suitable for weddings and conferences. A solid 4-star pick that balances prestige with practical amenities for both business and leisure travellers.",
+    recommendPriority: 3,
+    rooms: [
+      {
+        name: "Standard Room",
+        pricePerNight: 90_000,
+        formattedPrice: "₦90,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "Queen/King bed", "Smart TV", "Free Wi-Fi", "Breakfast"],
+        description: "Comfortable standard room with classic hotel furnishings.",
+      },
+      {
+        name: "Executive Room",
+        pricePerNight: 130_000,
+        formattedPrice: "₦130,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "King bed", "Work desk", "Minibar", "Pool access", "Express check-in"],
+        description: "Executive floor room with premium finishes and dedicated concierge.",
+      },
+      {
+        name: "Presidential Suite",
+        pricePerNight: 250_000,
+        formattedPrice: "₦250,000/night",
+        maxOccupancy: 4,
+        amenities: ["AC", "Living + dining rooms", "Kitchenette", "Jacuzzi", "Butler", "Airport transfer"],
+        description: "The hotel's top suite — full residential feel with a private jacuzzi.",
+      },
+    ],
+  },
+  {
+    slug: "oranto-international-airport-hotel",
+    name: "Oranto International Airport Hotel",
+    category: "hotel",
+    area: "Airport Road, Abakpa",
+    kind: "Airport hotel",
+    priceLevel: "From ₦55,000/night",
+    address: "Airport Road, Enugu",
+    image: "https://images.pexels.com/photos/271619/pexels-photo-271619.jpeg?auto=compress&cs=tinysrgb&w=800",
+    images: [
+      "https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=800",
+    ],
+    note: "5 minutes from Akanu Ibiam Airport, 24-hr reception, shuttle on request.",
+    description:
+      "Oranto International Airport Hotel sits on Airport Road within a short drive of Akanu Ibiam International Airport, making it the practical first-night or last-night choice for any Enugu trip. Rooms are well-maintained with all standard business amenities. A restaurant serves continental and local dishes around the clock, and the front desk can arrange airport shuttles and onward city transfers.",
+    recommendPriority: 5,
+    rooms: [
+      {
+        name: "Standard Room",
+        pricePerNight: 55_000,
+        formattedPrice: "₦55,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "Queen bed", "Smart TV", "Free Wi-Fi", "24-hr reception"],
+        description: "Clean, airport-convenient room perfect for early arrivals or late departures.",
+      },
+      {
+        name: "Deluxe Room",
+        pricePerNight: 85_000,
+        formattedPrice: "₦85,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "King bed", "Bathtub", "Minibar", "Airport shuttle"],
+        description: "Upgraded deluxe room with complimentary airport shuttle.",
+      },
+      {
+        name: "Suite",
+        pricePerNight: 130_000,
+        formattedPrice: "₦130,000/night",
+        maxOccupancy: 4,
+        amenities: ["AC", "Living room", "King bed", "Kitchenette", "Airport transfer", "Breakfast"],
+        description: "Spacious suite with a sitting area, ideal for families or extended stays.",
+      },
+    ],
+  },
+  {
+    slug: "bridgewaters-hotel-enugu",
+    name: "Bridgewaters Hotel",
+    category: "hotel",
+    area: "New Haven / GRA",
+    kind: "Mid-range hotel",
+    priceLevel: "From ₦45,000/night",
+    address: "New Haven, Enugu",
+    image: "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg?auto=compress&cs=tinysrgb&w=800",
+    images: [
+      "https://images.pexels.com/photos/1838554/pexels-photo-1838554.jpeg?auto=compress&cs=tinysrgb&w=800",
+    ],
+    note: "Comfortable mid-range stay in New Haven with a pool, restaurant, and free parking.",
+    description:
+      "Bridgewaters Hotel is a well-regarded mid-range property in the New Haven district, a comfortable and well-connected neighbourhood close to restaurants, supermarkets, and the main Enugu ring road. The hotel offers en-suite rooms with AC, a swimming pool, an on-site restaurant, a bar, and free secure parking. A reliable choice for mid-budget travellers who want comfort without paying premium prices.",
+    recommendPriority: 4,
+    rooms: [
+      {
+        name: "Standard Room",
+        pricePerNight: 45_000,
+        formattedPrice: "₦45,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "Double bed", "Smart TV", "Free Wi-Fi", "Parking"],
+        description: "Neat, well-maintained standard room with all core amenities.",
+      },
+      {
+        name: "Deluxe Room",
+        pricePerNight: 75_000,
+        formattedPrice: "₦75,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "King bed", "Bathtub", "Minibar", "Pool access"],
+        description: "Deluxe room with king bed and bathroom with separate bathtub.",
+      },
+      {
+        name: "Suite",
+        pricePerNight: 110_000,
+        formattedPrice: "₦110,000/night",
+        maxOccupancy: 4,
+        amenities: ["AC", "Living room", "King bed", "Kitchenette", "Breakfast", "Early check-in"],
+        description: "Comfortable suite with separate living area, ideal for couples or small families.",
+      },
+    ],
   },
 ]
 
@@ -350,9 +691,7 @@ export const enuguRestaurants: Place[] = [
     kind: "Native Nigerian dishes",
     priceLevel: "₦500–₦10,000 per plate",
     address: "97 Chime Avenue, New Haven, Enugu",
-    image: wikimedia(
-      "Amala_and_Ewedu_with_fish_and_pomo_stew_and_zobo.jpg"
-    ),
+    image: "/images/ntachi.webp",
     note: "Native soups and swallows, started as a mobile vendor in 2010.",
     description:
       "Started as a mobile food vendor in 2010, now a multi-branch native-food restaurant with a location at 97 Chime Avenue, New Haven. Menu covers egusi, draw, bitterleaf, and ora soups, ukwa and achicha swallows, jollof and fried rice, and local snacks. Prices span roughly ₦500 to ₦10,000 depending on the dish, covering both a quick affordable meal and a fuller spread.",

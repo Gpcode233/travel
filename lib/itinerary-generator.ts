@@ -38,6 +38,16 @@ export const PLACE_COORDINATES: Record<string, { lat: number; lng: number; area?
   "erin-ijesha-waterfall": { lat: 7.58, lng: 4.9, area: "Osun" },
   "kajuru-castle": { lat: 10.3167, lng: 7.7833, area: "Kaduna" },
   "lekki-conservation-centre": { lat: 6.441, lng: 3.535, area: "Lagos" },
+  // Priority partner hotels
+  "omedel-hotel-and-suites": { lat: 6.431, lng: 7.534, area: "Independence Layout" },
+  "wells-royale-hotel": { lat: 6.435, lng: 7.533, area: "Independence Layout" },
+  "hotel-presidential-enugu": { lat: 6.451, lng: 7.519, area: "Independence Layout" },
+  "oranto-international-airport-hotel": { lat: 6.598, lng: 7.562, area: "Airport Road" },
+  "bridgewaters-hotel-enugu": { lat: 6.449, lng: 7.523, area: "New Haven" },
+  "grace-manor-hotels-and-suites": { lat: 6.433, lng: 7.529, area: "Liberty Estate" },
+  "nondon-international-hotel": { lat: 6.448, lng: 7.526, area: "New Haven" },
+  "budget-inn-by-maryjane": { lat: 6.445, lng: 7.524, area: "New Haven" },
+  "gold-rhino-hotel-and-suites": { lat: 6.4435, lng: 7.5072, area: "Nkpokiti" },
 }
 
 export const DEFAULT_PLANNING_STEPS: PlanningStep[] = [
@@ -139,138 +149,199 @@ function calculateBreakdown(
   }
 }
 
+const HOTEL_POOL: AccommodationOption[] = [
+  // ── Priority partner hotels ────────────────────────────────────────────
+  {
+    id: "acc-omedel",
+    slug: "omedel-hotel-and-suites",
+    name: "Omedel Hotel & Suites",
+    area: "Independence Layout",
+    address: "4/6 Link Road, Independence Layout, Enugu",
+    rating: 4.9,
+    reviewCount: 88,
+    pricePerNight: 120_000,
+    formattedPrice: "₦120,000/night",
+    imageUrl: "https://www.omedelluxury.com/storage/rooms/zLCXEjTkw8c2GZwjqzi5PBtKpX3SvOmIZbiu9t1z.jpg",
+    badge: "BEST MATCH",
+    isSelected: false,
+    amenities: ["Pool", "Breakfast", "Spa", "Free Wi-Fi", "Free airport pickup"],
+    description: "Enugu's best 5-star deluxe hotel, 3 min from Government House, with pool and free airport transfer.",
+    recommendationReason: "Highest-rated luxury stay in Enugu — complimentary airport pickup included.",
+  },
+  {
+    id: "acc-wells",
+    slug: "wells-royale-hotel",
+    name: "Wells Royale Hotel",
+    area: "Independence Layout",
+    address: "Independence Layout, Enugu",
+    rating: 4.7,
+    reviewCount: 74,
+    pricePerNight: 95_000,
+    formattedPrice: "₦95,000/night",
+    imageUrl: "https://wellsroyalehotels.com/files/room-4.jpg",
+    badge: "ALTERNATIVE",
+    isSelected: false,
+    amenities: ["Spa", "Gym", "Restaurant", "Event halls", "Free Wi-Fi"],
+    description: "Refined Independence Layout hotel — spa, fitness, event halls, 24-hr guest support.",
+    recommendationReason: "Warm service, spa and fitness centre, excellent for leisure + business.",
+  },
+  {
+    id: "acc-presidential",
+    slug: "hotel-presidential-enugu",
+    name: "Hotel Presidential (by Amber)",
+    area: "Independence Layout",
+    address: "Independence Layout, Enugu",
+    rating: 4.6,
+    reviewCount: 116,
+    pricePerNight: 90_000,
+    formattedPrice: "₦90,000/night",
+    imageUrl: "https://images.pexels.com/photos/2017802/pexels-photo-2017802.jpeg?auto=compress&cs=tinysrgb&w=800",
+    badge: "ALTERNATIVE",
+    isSelected: false,
+    amenities: ["Pool", "Business centre", "Event halls", "Breakfast", "Bar"],
+    description: "Iconic Enugu address managed by Amber Hotels — pool, ballrooms, full service.",
+    recommendationReason: "Established prestige hotel, ideal for business + leisure blends.",
+  },
+  {
+    id: "acc-bridgewaters",
+    slug: "bridgewaters-hotel-enugu",
+    name: "Bridgewaters Hotel",
+    area: "New Haven",
+    address: "New Haven, Enugu",
+    rating: 4.3,
+    reviewCount: 59,
+    pricePerNight: 75_000,
+    formattedPrice: "₦75,000/night",
+    imageUrl: "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg?auto=compress&cs=tinysrgb&w=800",
+    badge: "VALUE",
+    isSelected: false,
+    amenities: ["Pool", "Restaurant", "Bar", "Free Wi-Fi", "Parking"],
+    description: "Comfortable mid-range stay in New Haven with pool and free parking.",
+    recommendationReason: "Best value for money — great amenities at a mid-range price.",
+  },
+  {
+    id: "acc-oranto",
+    slug: "oranto-international-airport-hotel",
+    name: "Oranto Airport Hotel",
+    area: "Airport Road",
+    address: "Airport Road, Enugu",
+    rating: 4.2,
+    reviewCount: 41,
+    pricePerNight: 55_000,
+    formattedPrice: "₦55,000/night",
+    imageUrl: "https://images.pexels.com/photos/271619/pexels-photo-271619.jpeg?auto=compress&cs=tinysrgb&w=800",
+    badge: "VALUE",
+    isSelected: false,
+    amenities: ["24-hr reception", "Restaurant", "Airport shuttle", "Free Wi-Fi"],
+    description: "5 minutes from Akanu Ibiam Airport — ideal first or last night.",
+    recommendationReason: "Closest hotel to the airport, perfect for early arrivals.",
+  },
+  {
+    id: "acc-grace",
+    slug: "grace-manor-hotels-and-suites",
+    name: "Grace Manor Hotels & Suites",
+    area: "Liberty Estate",
+    address: "2A Nnanna Atuonwu Drive, Liberty Estate, Enugu",
+    rating: 4.1,
+    reviewCount: 33,
+    pricePerNight: 35_000,
+    formattedPrice: "₦35,000/night",
+    imageUrl: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
+    badge: "VALUE",
+    isSelected: false,
+    amenities: ["Pool", "Free Wi-Fi", "Parking", "Quiet estate location"],
+    description: "20-room budget hotel with an outdoor pool in a quiet estate.",
+    recommendationReason: "Best lean-budget pick — pool and estate setting at low price.",
+  },
+  // ── Supporting options ─────────────────────────────────────────────────
+  {
+    id: "acc-muse",
+    slug: "muse-boutique-hotel",
+    name: "MUSE Boutique Hotel",
+    area: "Upper Chime Avenue, GRA",
+    address: "189 Upper Chime Avenue, Enugu",
+    rating: 4.9,
+    reviewCount: 64,
+    pricePerNight: 145_000,
+    formattedPrice: "₦145,000/night",
+    imageUrl: "https://images.pexels.com/photos/189296/pexels-photo-189296.jpeg?auto=compress&cs=tinysrgb&w=800",
+    badge: "PREMIUM",
+    isSelected: false,
+    amenities: ["Spa", "Boutique design", "Cocktail lounge", "Airport shuttle", "Breakfast"],
+    description: "Enugu's newest 5-star boutique hotel, 7 min from the airport.",
+  },
+  {
+    id: "acc-nike",
+    slug: "landmark-nike-lake-resort",
+    name: "Nike Lake Resort",
+    area: "Abakpa Nike",
+    address: "Nike Lake, Abakpa Nike, Enugu",
+    rating: 4.5,
+    reviewCount: 98,
+    pricePerNight: 60_000,
+    formattedPrice: "₦60,000/night",
+    imageUrl: "https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=800",
+    badge: "ALTERNATIVE",
+    isSelected: false,
+    amenities: ["Lakefront views", "Boating", "Tennis court", "Gardens"],
+    description: "Expansive lakeside resort with tranquil grounds and waterfront dining.",
+  },
+  {
+    id: "acc-movida",
+    slug: "golden-movida-hotel",
+    name: "Golden Movida Hotel",
+    area: "Trans-Ekulu",
+    address: "Phase 6, Trans-Ekulu, Enugu",
+    rating: 4.2,
+    reviewCount: 52,
+    pricePerNight: 28_000,
+    formattedPrice: "₦28,000/night",
+    imageUrl: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
+    badge: "VALUE",
+    isSelected: false,
+    amenities: ["AC rooms", "Free Wi-Fi", "24-hr power", "Parking"],
+    description: "Practical budget stay in Trans-Ekulu with essential amenities.",
+  },
+]
+
+/**
+ * Pick 3 hotel options for a given budget tier.
+ * Priority hotels (omedel, wells royale, presidential, bridgewaters, oranto, grace manor)
+ * appear first. The best-fit room tier per hotel is selected to match the budget.
+ */
 export function generateAccommodations(
   destination: string,
   budgetTier: BudgetTierValue
 ): AccommodationOption[] {
-  if (budgetTier === "premium") {
-    return [
-      {
-        id: "acc-1",
-        slug: "the-residency-enugu",
-        name: "The Residency Enugu",
-        area: "Independence Layout",
-        address: "Independence Layout, Enugu",
-        rating: 4.8,
-        reviewCount: 142,
-        pricePerNight: 85_000,
-        formattedPrice: "₦85,000/night",
-        imageUrl: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
-        badge: "BEST MATCH",
-        isSelected: true,
-        amenities: ["Pool", "High-speed Wi-Fi", "Sky Bar", "Buffet Breakfast", "Airport Shuttle"],
-        description: "Modern luxury hotel situated in the heart of Independence Layout with an infinity pool and city views.",
-        recommendationReason: "Top rated for comfortable rooms, high security, and close proximity to top restaurants.",
-      },
-      {
-        id: "acc-2",
-        slug: "landmark-nike-lake-resort",
-        name: "Nike Lake Resort",
-        area: "Nike Lake Road, Abakpa",
-        address: "Nike Lake, Abakpa Nike, Enugu",
-        rating: 4.5,
-        reviewCount: 98,
-        pricePerNight: 60_000,
-        formattedPrice: "₦60,000/night",
-        imageUrl: "https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=800",
-        badge: "ALTERNATIVE",
-        isSelected: false,
-        amenities: ["Lakefront Views", "Tennis Court", "Boating", "Outdoor Dining"],
-        description: "Expansive tranquil resort right on the bank of Nike Lake, ideal for relaxed afternoons.",
-        recommendationReason: "Serene lakeside escape with waterfront breeze and vast green surroundings.",
-      },
-      {
-        id: "acc-3",
-        slug: "muse-boutique-hotel",
-        name: "MUSE Boutique Hotel",
-        area: "Upper Chime Avenue, GRA",
-        address: "189 Upper Chime Avenue, Enugu",
-        rating: 4.9,
-        reviewCount: 64,
-        pricePerNight: 95_000,
-        formattedPrice: "₦95,000/night",
-        imageUrl: "https://images.pexels.com/photos/189296/pexels-photo-189296.jpeg?auto=compress&cs=tinysrgb&w=800",
-        badge: "PREMIUM",
-        isSelected: false,
-        amenities: ["Spa & Wellness", "Boutique Design", "Cocktail Lounge"],
-        description: "Enugu's newest 5-star boutique experience with personalized concierge and rooftop dining.",
-      },
-    ]
+  // Price bands (NGN/night) per tier
+  const bands: Record<BudgetTierValue, { min: number; max: number }> = {
+    lean: { min: 0, max: 55_000 },
+    "mid-range": { min: 55_001, max: 130_000 },
+    premium: { min: 130_001, max: Infinity },
   }
+  const band = bands[budgetTier]
 
-  if (budgetTier === "lean") {
-    return [
-      {
-        id: "acc-1",
-        slug: "golden-movida-hotel",
-        name: "Golden Movida Hotel",
-        area: "Trans-Ekulu",
-        address: "Phase 6, Trans-Ekulu, Enugu",
-        rating: 4.2,
-        reviewCount: 52,
-        pricePerNight: 28_000,
-        formattedPrice: "₦28,000/night",
-        imageUrl: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
-        badge: "BEST MATCH",
-        isSelected: true,
-        amenities: ["AC Rooms", "Free Wi-Fi", "24/7 Power", "Secure Parking"],
-        description: "Practical and secure stay in Trans-Ekulu, offering quiet essentials.",
-      },
-      {
-        id: "acc-2",
-        slug: "zubani-hotel-and-suites",
-        name: "Zubani Hotel & Suites",
-        area: "New GRA, Trans-Ekulu",
-        address: "New GRA, Trans-Ekulu, Enugu",
-        rating: 4.1,
-        reviewCount: 39,
-        pricePerNight: 32_000,
-        formattedPrice: "₦32,000/night",
-        imageUrl: "https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=800",
-        badge: "ALTERNATIVE",
-        isSelected: false,
-        amenities: ["Bar & Lounge", "Room Service", "Close to Polo Mall"],
-        description: "Conveniently located near Polo Park Mall with good transport links.",
-      },
-    ]
-  }
+  // Filter pool to hotels whose base price fits within ±40% of the band
+  const suited = HOTEL_POOL.filter(
+    (h) => h.pricePerNight >= band.min * 0.6 && h.pricePerNight <= band.max * 1.4
+  )
 
-  // Mid-range default
-  return [
-    {
-      id: "acc-1",
-      slug: "the-residency-enugu",
-      name: "The Residency Enugu",
-      area: "Independence Layout",
-      address: "Independence Layout, Enugu",
-      rating: 4.7,
-      reviewCount: 142,
-      pricePerNight: 85_000,
-      formattedPrice: "₦85,000/night",
-      imageUrl: "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=800",
-      badge: "BEST MATCH",
-      isSelected: true,
-      amenities: ["Pool", "High-speed Wi-Fi", "Restaurant", "Central Location"],
-      description: "Contemporary hotel in Independence Layout with stellar hospitality and modern rooms.",
-      recommendationReason: "Central location, safe neighborhood, and excellent breakfast included.",
-    },
-    {
-      id: "acc-2",
-      slug: "landmark-nike-lake-resort",
-      name: "Nike Lake Resort",
-      area: "Nike Lake Road, Abakpa",
-      address: "Nike Lake, Abakpa Nike, Enugu",
-      rating: 4.4,
-      reviewCount: 98,
-      pricePerNight: 60_000,
-      formattedPrice: "₦60,000/night",
-      imageUrl: "https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=800",
-      badge: "ALTERNATIVE",
-      isSelected: false,
-      amenities: ["Lakefront Views", "Gardens", "Pool", "Boat Rides"],
-      description: "Relaxed lakeside resort with tranquil grounds away from city bustle.",
-    },
-  ]
+  // Fallback: sort by proximity to band midpoint
+  const sorted =
+    suited.length >= 3
+      ? suited
+      : [...HOTEL_POOL].sort((a, b) => {
+          const mid = (band.min + (band.max === Infinity ? band.min * 2 : band.max)) / 2
+          return Math.abs(a.pricePerNight - mid) - Math.abs(b.pricePerNight - mid)
+        })
+
+  const picked = sorted.slice(0, 3)
+  return picked.map((h, i) => ({
+    ...h,
+    id: `acc-${i + 1}`,
+    badge: i === 0 ? "BEST MATCH" : i === 1 ? "ALTERNATIVE" : "VALUE",
+    isSelected: i === 0,
+  }))
 }
 
 export function generateDynamicTripItinerary(params: {
