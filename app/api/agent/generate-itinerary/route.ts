@@ -54,6 +54,11 @@ const CATEGORY_IMAGES: Record<string, string[]> = {
   transport: [
     "https://images.pexels.com/photos/38099166/pexels-photo-38099166.jpeg?auto=compress&cs=tinysrgb&w=800",
   ],
+  nightlife: [
+    "https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "https://images.pexels.com/photos/1268514/pexels-photo-1268514.jpeg?auto=compress&cs=tinysrgb&w=800",
+  ],
 }
 
 let imageCounters: Record<string, number> = {}
@@ -65,7 +70,6 @@ function pickImage(category: string): string {
 }
 
 const platformPlacesContext = allPlaces
-  .filter((p) => p.category !== "nigeria")
   .map((p) => `- ${p.name} (${p.category}, ${p.area}): ${p.note}`)
   .join("\n")
 
@@ -99,6 +103,10 @@ export async function POST(req: Request) {
     const accommodations = generateAccommodations(destination, budgetTier)
     const selectedHotel = accommodations[0]
 
+    const hotelHasBreakfast = selectedHotel.amenities?.some((a: string) =>
+      a.toLowerCase().includes("breakfast")
+    ) ?? (budgetTier !== "lean")
+
     const systemPrompt = `You are an expert Enugu, Nigeria travel planner. Generate a detailed, realistic day-by-day trip itinerary.
 
 PLATFORM PLACES (prefer these, they have known coordinates):
@@ -109,12 +117,21 @@ ${coordinatesContext}
 
 For places not in the platform, use realistic Enugu coordinates (latitude 6.3–6.6, longitude 7.3–7.6).
 
+HOTEL BASE: ${selectedHotel.name} in ${selectedHotel.area}.
+${hotelHasBreakfast ? `This hotel includes breakfast — use title "Breakfast at ${selectedHotel.name}", estimatedCost 0, category "hotel", latitude/longitude matching the hotel.` : `This is a budget hotel with no included breakfast — suggest a nearby affordable breakfast spot.`}
+
 RULES:
-- Each day has ${activitiesPerDay} activities maximum
-- Include breakfast at or near the hotel on day 1
-- Mix: nature, food, culture, adventure based on interests: ${interestsList.join(", ")}
+- Each day MUST have exactly these 3 meal slots (non-negotiable):
+  1. BREAKFAST: startTime "8:00 AM", durationMinutes 45, category "food" ${hotelHasBreakfast ? `(always "Breakfast at ${selectedHotel.name}", cost 0, category "hotel", use hotel coordinates)` : "(nearby breakfast spot, budget-appropriate cost)"}
+  2. LUNCH: startTime "12:30 PM", durationMinutes 60, category "food" (local restaurant, budget-appropriate)
+  3. DINNER: startTime "7:30 PM", durationMinutes 75, category "food" (dinner restaurant, include description)
+- Plus ${activitiesPerDay} additional non-meal activities spread across the day
+- Total activities per day = ${activitiesPerDay + 3} (3 meals + ${activitiesPerDay} activities)
+- Order activities chronologically by startTime
+- Mix: nature, food, culture, adventure, nightlife based on interests: ${interestsList.join(", ")}
+- For nightlife/entertainment interests, include evening stops at known Enugu nightlife venues (Toscana Villa, Volt Arena, Grand East Man, De Kash, Cubana, Hotel Presidential bar)
 - Use browser_search for current restaurant prices, opening hours, or new venues
-- Use search_locations to find platform places matching the activities
+- Use search_locations to find platform places matching the activities (use category "nightlife" for evening entertainment)
 - Start each day at the hotel, end each day near the hotel
 - Costs in NGN (Nigerian Naira) per person
 - Budget tier: ${tierConfig.label} (₦${tierConfig.minPerPersonPerDay.toLocaleString()}–${tierConfig.maxPerPersonPerDay ? "₦" + tierConfig.maxPerPersonPerDay.toLocaleString() : "open"}/person/day)
@@ -133,7 +150,7 @@ OUTPUT: Respond with ONLY valid JSON, no explanation, no markdown fences. Match 
           "startTime": "string (e.g. '9:00 AM')",
           "durationMinutes": number,
           "estimatedCost": number,
-          "category": "food|nature|culture|attraction|adventure|relaxation|transport|hotel",
+          "category": "food|nature|culture|attraction|adventure|relaxation|transport|hotel|nightlife",
           "tags": ["string"],
           "locationName": "string",
           "locationArea": "string",
@@ -154,7 +171,7 @@ Pace: ${pace}
 Interests: ${interestsList.join(", ")}
 Hotel base: ${selectedHotel.name} (${selectedHotel.area})
 
-Generate ${daysCount} unique days with ${activitiesPerDay} activities each. Use browser_search to verify current restaurant options and search_locations to find platform places. Output only JSON.`
+Generate ${daysCount} unique days. Each day MUST have ${activitiesPerDay + 3} activities total: breakfast (8:00 AM), ${activitiesPerDay} daytime activities, lunch (12:30 PM), dinner (7:30 PM). Order all activities by startTime. Use browser_search to verify restaurant options and search_locations to find platform places. Output only JSON.`
 
     const { text } = await generateText({
       model: groq("llama-3.3-70b-versatile"),
@@ -166,7 +183,7 @@ Generate ${daysCount} unique days with ${activitiesPerDay} activities each. Use 
           description: "Search known Enugu travel places by keyword and category.",
           inputSchema: z.object({
             query: z.string(),
-            category: z.enum(["attraction", "hotel", "resort", "restaurant"]).optional(),
+            category: z.enum(["attraction", "hotel", "resort", "restaurant", "nightlife"]).optional(),
           }),
           execute: async ({ query, category }) => {
             const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
@@ -211,7 +228,7 @@ Generate ${daysCount} unique days with ${activitiesPerDay} activities each. Use 
         const dateLabel = dayDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" })
 
         const activities: ItineraryActivity[] = d.activities
-          .slice(0, activitiesPerDay)
+          .slice(0, activitiesPerDay + 3)
           .map((act: any, actIdx: number) => ({
             id: `day-${dayIdx + 1}-act-${actIdx + 1}`,
             title: act.title,

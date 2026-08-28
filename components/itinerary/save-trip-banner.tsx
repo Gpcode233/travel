@@ -132,25 +132,27 @@ export function SaveTripBanner({
     router.push("/checkout")
   }
 
+  function openAuthModal(action: "save" | "book") {
+    sessionStorage.setItem("trails_pending_action", action)
+    if (itinerary) {
+      sessionStorage.setItem("trails_pending_itinerary", JSON.stringify(itinerary))
+    }
+    setShowAuthModal(true)
+  }
+
   function handleSaveClick() {
     if (isLoading) return
-    if (!isAuthenticated) {
-      sessionStorage.setItem("trails_pending_action", "save")
-      setShowAuthModal(true)
-      return
-    }
+    if (!isAuthenticated) { openAuthModal("save"); return }
     handleSaveToDb()
   }
 
   function handleBookClick() {
     if (isLoading) return
-    if (!isAuthenticated) {
-      sessionStorage.setItem("trails_pending_action", "book")
-      setShowAuthModal(true)
-      return
-    }
+    if (!isAuthenticated) { openAuthModal("book"); return }
     handleBookNow()
   }
+
+  const postLoginUrl = typeof window !== "undefined" ? window.location.href : ""
 
   return (
     <>
@@ -216,13 +218,13 @@ export function SaveTripBanner({
           </DialogHeader>
 
           <div className="mt-4 flex flex-col gap-3">
-            <LoginLink className="w-full">
+            <LoginLink className="w-full" postLoginRedirectURL={postLoginUrl}>
               <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium flex items-center justify-center gap-2">
                 <HugeiconsIcon icon={Mail01Icon} className="size-4" />
                 Sign in with Email
               </Button>
             </LoginLink>
-            <RegisterLink className="w-full">
+            <RegisterLink className="w-full" postLoginRedirectURL={postLoginUrl}>
               <Button variant="outline" className="w-full font-medium flex items-center justify-center gap-2">
                 <HugeiconsIcon icon={UserIcon} className="size-4" />
                 Create New Account

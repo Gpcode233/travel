@@ -48,6 +48,12 @@ export const PLACE_COORDINATES: Record<string, { lat: number; lng: number; area?
   "nondon-international-hotel": { lat: 6.448, lng: 7.526, area: "New Haven" },
   "budget-inn-by-maryjane": { lat: 6.445, lng: 7.524, area: "New Haven" },
   "gold-rhino-hotel-and-suites": { lat: 6.4435, lng: 7.5072, area: "Nkpokiti" },
+  // Nightlife venues
+  "toscana-villa-enugu": { lat: 6.432, lng: 7.531, area: "Independence Layout" },
+  "volt-arena-enugu": { lat: 6.453, lng: 7.517, area: "GRA" },
+  "grand-east-man-enugu": { lat: 6.430, lng: 7.532, area: "Independence Layout" },
+  "de-kash-enugu": { lat: 6.441, lng: 7.541, area: "New Haven" },
+  "cubana-enugu": { lat: 6.433, lng: 7.530, area: "Independence Layout" },
 }
 
 export const DEFAULT_PLANNING_STEPS: PlanningStep[] = [

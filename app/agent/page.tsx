@@ -1,8 +1,9 @@
 "use client"
 
-import { Suspense, useEffect, useState, useTransition } from "react"
+import { Suspense, useEffect, useRef, useState, useTransition } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { nanoid } from "nanoid"
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   CompassIcon,
@@ -38,12 +39,27 @@ function AgentWorkspaceContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
+  const { isAuthenticated } = useKindeBrowserClient()
   const [pageState, setPageState] = useState<AgentPageState>("loading")
   const [itinerary, setItinerary] = useState<TripItinerary | null>(null)
   const [activeDayNumber, setActiveDayNumber] = useState(1)
   const [hoveredActivityId, setHoveredActivityId] = useState<string | null>(null)
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const restoredRef = useRef(false)
+
+  // Restore itinerary from sessionStorage after Kinde post-login redirect
+  useEffect(() => {
+    if (!isAuthenticated || restoredRef.current) return
+    const stored = sessionStorage.getItem("trails_pending_itinerary")
+    if (!stored) return
+    try {
+      const parsed = JSON.parse(stored) as TripItinerary
+      sessionStorage.removeItem("trails_pending_itinerary")
+      restoredRef.current = true
+      setItinerary(parsed)
+    } catch {}
+  }, [isAuthenticated])
 
   // Initialize or re-generate itinerary based on query parameters
   useEffect(() => {
@@ -233,7 +249,7 @@ function AgentWorkspaceContent() {
       <TripPlanningLoader
         dossier={itinerary?.dossier}
         onComplete={handleLoaderComplete}
-        estimatedDurationSeconds={15}
+        isReady={itinerary !== null}
       />
     )
   }

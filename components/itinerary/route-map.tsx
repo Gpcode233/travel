@@ -137,25 +137,33 @@ export function RouteMap({
           {activities.map((act, idx) => {
             const isHovered = hoveredActivityId === act.id
             const isSelected = selectedActivityId === act.id
+            const label = (act.location.name || act.title).slice(0, 18)
 
             return (
               <Marker
                 key={act.id}
                 longitude={act.location.longitude}
                 latitude={act.location.latitude}
-                anchor="center"
+                anchor="bottom"
               >
                 <div
+                  className="flex flex-col items-center cursor-pointer"
                   onClick={() => handleMarkerClick(act.id)}
                   onMouseEnter={() => onHoverActivity(act.id)}
                   onMouseLeave={() => onHoverActivity(null)}
-                  className={`flex size-6 cursor-pointer items-center justify-center rounded-full text-[11px] font-bold text-white shadow-md transition-all duration-200 ${isSelected || isHovered
-                      ? "scale-125 bg-blue-600 ring-4 ring-blue-500/30"
-                      : "bg-blue-500 hover:scale-110 hover:bg-blue-600"
-                    }`}
-                  title={`${idx + 1}. ${act.title}`}
                 >
-                  {idx + 1}
+                  <div
+                    className={`flex size-6 items-center justify-center rounded-full text-[11px] font-bold text-white shadow-md transition-all duration-200 ${
+                      isSelected || isHovered
+                        ? "scale-125 bg-blue-600 ring-4 ring-blue-500/30"
+                        : "bg-blue-500 hover:scale-110 hover:bg-blue-600"
+                    }`}
+                  >
+                    {idx + 1}
+                  </div>
+                  <span className="mt-0.5 max-w-[80px] truncate rounded bg-black/70 px-1 py-0.5 text-center text-[9px] leading-tight text-white shadow-sm backdrop-blur-sm">
+                    {label}
+                  </span>
                 </div>
               </Marker>
             )

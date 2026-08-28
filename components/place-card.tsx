@@ -4,7 +4,7 @@ import {
   BeachIcon,
   CompassIcon,
   Hotel01Icon,
-  MapPinIcon,
+  Moon01Icon,
   Restaurant01Icon,
 } from "@hugeicons/core-free-icons"
 
@@ -19,10 +19,10 @@ export const categoryMeta: Record<
   hotel: { label: "Hotel", icon: Hotel01Icon },
   resort: { label: "Resort", icon: BeachIcon },
   restaurant: { label: "Restaurant", icon: Restaurant01Icon },
-  nigeria: { label: "Nigeria", icon: MapPinIcon },
+  nightlife: { label: "Nightlife", icon: Moon01Icon },
 }
 
-const timeBadgeCategories: PlaceCategory[] = ["attraction", "nigeria"]
+const timeBadgeCategories: PlaceCategory[] = ["attraction"]
 
 export function PlaceCard({
   place,

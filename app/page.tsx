@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -27,7 +27,7 @@ import { PlaceCard } from "@/components/place-card"
 import { AppleCarousel } from "@/components/AppleCarousel"
 import { PromoTicker } from "@/components/promo-ticker"
 import { cn } from "@/lib/utils"
-import { enuguAttractions, nigeriaSpots } from "@/lib/enugu-data"
+import { enuguAttractions } from "@/lib/enugu-data"
 import {
   budgetTierList,
   calculateBudgetBaseline,
@@ -59,6 +59,16 @@ export default function Page() {
   }, [budgetTier, travelerN, duration])
 
   const [validationError, setValidationError] = useState(false)
+  const [heroBg, setHeroBg] = useState(0)
+  const heroBgs = [
+    "https://images.pexels.com/photos/38099166/pexels-photo-38099166.jpeg?auto=compress&cs=tinysrgb&w=1800",
+    "/images/trails-background-2.png",
+    "/images/trails-background-3.webp",
+  ]
+  useEffect(() => {
+    const t = setInterval(() => setHeroBg((p) => (p + 1) % heroBgs.length), 6000)
+    return () => clearInterval(t)
+  }, [])
 
   const canPlanRoute = Boolean(days && travelers && budget && pace)
 
@@ -111,13 +121,16 @@ export default function Page() {
   return (
     <main className="min-h-svh overflow-hidden bg-background text-foreground">
       <section className="relative min-h-[92svh] border-b">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "linear-gradient(90deg, rgba(8,12,18,.9), rgba(8,12,18,.5), rgba(8,12,18,.18)), url(https://images.pexels.com/photos/38099166/pexels-photo-38099166.jpeg?auto=compress&cs=tinysrgb&w=1800)",
-          }}
-        />
+        {heroBgs.map((src, i) => (
+          <div
+            key={src}
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+            style={{
+              backgroundImage: `linear-gradient(90deg, rgba(8,12,18,.9), rgba(8,12,18,.5), rgba(8,12,18,.18)), url(${src})`,
+              opacity: i === heroBg ? 1 : 0,
+            }}
+          />
+        ))}
         <div className="relative mx-auto flex min-h-[92svh] w-full max-w-7xl flex-col px-5 py-5 text-white sm:px-8 lg:px-10">
           <SiteHeader variant="overlay" />
 

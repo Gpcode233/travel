@@ -7,7 +7,7 @@ export type PlaceCategory =
   | "hotel"
   | "restaurant"
   | "resort"
-  | "nigeria"
+  | "nightlife"
 
 export type RoomTier = {
   name: string
@@ -77,17 +77,28 @@ export const enuguAttractions: Place[] = [
       "A planted pine forest on the outskirts of Enugu city with a limestone cave and stream running through it. The canopy keeps the trail shaded, and the walk is short enough for a half-day out. Go early for cooler air and better light, and use a local guide for the cave section.",
   },
   {
-    slug: "nike-lake",
-    name: "Nike Lake",
+    slug: "landmark-resorts-enugu",
+    name: "Landmark Resorts Enugu",
     category: "attraction",
     area: "Abakpa Nike",
-    kind: "Lakefront rest day",
-    time: "Easy afternoon",
-    priceLevel: "Free entry (swimming ~₦2,000, boat ride ~₦1,500)",
-    image: wikimedia("Nike_Lake_Enugu_Nike_02.jpg"),
-    note: "Slow water views, resort lunch, sunset pacing for low-stress trips.",
+    kind: "Lakefront resort & activities",
+    time: "Half day – full day",
+    priceLevel: "Free entry · activities from ₦2,000",
+    image: "/images/landmark-resort-1.webp",
+    images: [
+      "/images/landmark-resort-2.jpg",
+      "/images/landmark-resort-3.jpg",
+      "/images/landmark-resort-4.jpg",
+      "/images/landmark-resort-5.jpg",
+      "/images/landmark-upsidedown-house.png",
+      "/images/landmark-resort-6.png",
+      "/images/landmark-resort-7.jpg",
+      "/images/landmark-resort-8.png",
+      "/images/landmark-resort-9.jpg",
+    ],
+    note: "Lakefront resort with pool, upside-down house, boat rides and suites — 10 min from the city.",
     description:
-      "A natural lake in the Abakpa Nike district, about ten minutes from Enugu city centre, with the Landmark Nike Lake Resort built along its bank. Good for a low-effort afternoon: lakeside walking, a resort lunch, and sunset views over the water without any hiking involved.",
+      "Formerly known as Nike Lake Resort, Landmark Resorts Enugu sits on a 150-hectare lakefront estate in Abakpa Nike, about 10 minutes from the city centre. The grounds include a pool, watersports, the famous upside-down house photo spot, and a renovated suite wing with lake views. A strong anchor for a relaxed half-day or full-day stop on any Enugu itinerary.",
   },
   {
     slug: "ezeagu-tourist-complex",
@@ -192,9 +203,13 @@ export const enuguHotels: Place[] = [
     category: "hotel",
     area: "Independence Layout",
     kind: "4-star hotel",
-    priceLevel: "From $101/night",
+    priceLevel: "From ₦62,000/night",
     address: "#1 Nza Street, Independence Layout, Enugu",
-    image: wikimedia("Swimming_Pool_at_Kwara_Hotel.jpg"),
+    image: "/images/maxbe_continental_hotel.jpg",
+    images: [
+      "/images/maxbe_continental_hotel_2.jpg",
+      "/images/maxbe_continental_hotel_3.jpg",
+    ],
     note: "4-star hotel beside Government House, with free Wi-Fi and a pool.",
     description:
       "A 4-star hotel on Nza Street in Independence Layout, right beside Government House. Free Wi-Fi and a pool make it a solid mid-to-premium pick for a comfort-focused Enugu stay close to the city centre.",
@@ -205,9 +220,13 @@ export const enuguHotels: Place[] = [
     category: "hotel",
     area: "Ogui",
     kind: "Premium hotel",
-    priceLevel: "From $186/night",
+    priceLevel: "From ₦207,650/night",
     address: "4 Ekweani Close, beside Loma Linda Estate, Ogui, Enugu",
-    image: wikimedia("Oriental_Hotel.jpg"),
+    image: "/images/lagendahotel_1.webp",
+    images: [
+      "/images/lagenda_hotel_2.webp",
+      "/images/lagenda_hotel_3.webp",
+    ],
     note: "Enugu's premium end, beside Loma Linda Estate in Ogui.",
     description:
       "A premium hotel on Ekweani Close in Ogui, beside Loma Linda Estate. The pick for a premium-budget trip that wants the highest comfort tier available in Enugu.",
@@ -630,16 +649,27 @@ export const enuguHotels: Place[] = [
 export const enuguResorts: Place[] = [
   {
     slug: "landmark-nike-lake-resort",
-    name: "Landmark Nike Lake Resort",
+    name: "Landmark Resorts Enugu",
     category: "resort",
     area: "Abakpa Nike",
-    kind: "Lakefront resort",
-    priceLevel: "From $107/night",
+    kind: "Lakefront resort & suites",
+    priceLevel: "From ₦65,000/night",
     address: "Nike Lake, Abakpa Nike, Enugu",
-    image: wikimedia("Nike_Lake_Enugu_Nike_02.jpg"),
+    image: "/images/landmark-resort-1.webp",
+    images: [
+      "/images/landmark-resort-2.jpg",
+      "/images/landmark-resort-3.jpg",
+      "/images/landmark-resort-4.jpg",
+      "/images/landmark-resort-5.jpg",
+      "/images/landmark-upsidedown-house.png",
+      "/images/landmark-resort-6.png",
+      "/images/landmark-resort-7.jpg",
+      "/images/landmark-resort-8.png",
+      "/images/landmark-resort-9.jpg",
+    ],
     note: "200+ room lakefront resort, 10 minutes from the city centre.",
     description:
-      "Founded in 1988 on the bank of Nike Lake in Abakpa Nike, roughly 15 minutes from the airport and 10 minutes from the city centre. Over 200 rooms on a large, tree-lined, 150-hectare site. Now under Landmark's Nike Lake Resort renovation, upgrading rooms, waterfront villas, dining, and a golf course. The natural anchor for a relaxed lakefront stay.",
+      "Formerly Nike Lake Resort, Landmark Resorts Enugu sits on a 150-hectare lakefront estate in Abakpa Nike, roughly 15 minutes from the airport and 10 minutes from the city centre. Features renovated suites with lake views, a pool, watersports, the famous upside-down house, and lakeside dining. The natural anchor for a relaxed lakefront stay in Enugu.",
   },
   {
     slug: "eden-crest-hotel-and-resort",
@@ -696,94 +726,73 @@ export const enuguRestaurants: Place[] = [
     description:
       "Started as a mobile food vendor in 2010, now a multi-branch native-food restaurant with a location at 97 Chime Avenue, New Haven. Menu covers egusi, draw, bitterleaf, and ora soups, ukwa and achicha swallows, jollof and fried rice, and local snacks. Prices span roughly ₦500 to ₦10,000 depending on the dish, covering both a quick affordable meal and a fuller spread.",
   },
-  {
-    slug: "7th-planet-international",
-    name: "7th Planet International",
-    category: "restaurant",
-    area: "Trans-Ekulu",
-    kind: "Local + continental, sports bar and lounge",
-    priceLevel: "$$",
-    address: "42 Community Estate Road, opposite Dental School, Trans-Ekulu, Enugu",
-    image: wikimedia("A_Nigeria_Jollof_Rice_with_chicken.jpg"),
-    note: "Local and continental dishes with a sports bar and live entertainment.",
-    description:
-      "A local-and-continental restaurant on Community Estate Road in Trans-Ekulu, opposite the Dental School, with a sports bar, lounge, and live entertainment. Popular for an evening out that combines food with a bar atmosphere.",
-  },
 ]
 
-export const nigeriaSpots: Place[] = [
+export const enuguNightlife: Place[] = [
   {
-    slug: "obudu-mountain-resort",
-    name: "Obudu Mountain Resort",
-    category: "nigeria",
-    area: "Cross River",
-    kind: "Mountain resort + cable car",
-    time: "2-3 days",
-    image: wikimedia(
-      "Cable_Car,_Obudu_Cattle_Ranch,_Obudu,_Cross_river_state_01.jpg"
-    ),
-    images: [
-      wikimedia(
-        "Obudu_Conservation_centre,_Obudu_Mountain_resort,_Cross_river_state.jpg"
-      ),
-    ],
-    note: "Cool highland air, cable car ride, waterfalls, a longer extension trip.",
+    slug: "toscana-villa-enugu",
+    name: "Toscana Villa",
+    category: "nightlife",
+    area: "Independence Layout",
+    kind: "Upscale lounge & events venue",
+    priceLevel: "₦5,000–₦20,000 per person",
+    address: "Independence Layout, Enugu",
+    image: "https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800",
+    note: "Enugu's top upscale lounge — cocktails, live music, and event nights.",
     description:
-      "A highland resort on the Obudu Plateau in Cross River State, reached by cable car, with cool mountain air, waterfalls, and hiking trails. A multi-day extension once an Enugu trip has the extra time and road budget.",
+      "Toscana Villa is one of Enugu's premier upscale entertainment venues in Independence Layout, offering cocktails, a curated wine list, live music performances, and themed event nights. A go-to spot for an elevated evening out in the city.",
   },
   {
-    slug: "yankari-game-reserve",
-    name: "Yankari Game Reserve",
-    category: "nigeria",
-    area: "Bauchi",
-    kind: "Wildlife reserve + warm spring",
-    time: "2-3 days",
-    image: wikimedia("Wikki_warm_spring,_YANKARI_Game_Reserve,_Bauchi.jpg"),
-    images: [wikimedia("Museum_in_Yankari_Game_Reserve.jpg")],
-    note: "Nigeria's top game reserve, elephants and the Wikki warm spring.",
+    slug: "volt-arena-enugu",
+    name: "Volt Arena",
+    category: "nightlife",
+    area: "GRA",
+    kind: "Gaming & entertainment centre",
+    priceLevel: "₦2,000–₦8,000 per session",
+    address: "GRA, Enugu",
+    image: "https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=800",
+    note: "Multi-level gaming and entertainment arena — VR, arcade, bowling, bar.",
     description:
-      "Nigeria's best-known wildlife reserve, in Bauchi State, home to elephants, baboons, and the naturally warm Wikki Spring. Worth the extra travel time for a wildlife-focused multi-day extension.",
+      "Volt Arena is a modern multi-level entertainment complex in GRA featuring VR gaming stations, arcade games, bowling alleys, and a full bar. A popular spot for groups looking for an active evening of fun before or after dinner.",
   },
   {
-    slug: "erin-ijesha-waterfall",
-    name: "Erin Ijesha Waterfall",
-    category: "nigeria",
-    area: "Osun",
-    kind: "Multi-tier waterfall",
-    time: "Full day",
-    image: wikimedia("Erin-Ijesha_Waterfalls_banner.jpg"),
-    images: [wikimedia("Erin-Ijesha_Waterfalls_05.jpg")],
-    note: "Olumirin's seven-level falls, a serious hike-and-climb day out.",
+    slug: "grand-east-man-enugu",
+    name: "Grand East Man",
+    category: "nightlife",
+    area: "Independence Layout",
+    kind: "Nightclub & lounge",
+    priceLevel: "₦3,000–₦15,000",
+    address: "Independence Layout, Enugu",
+    image: "https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=800",
+    note: "Vibrant nightclub with DJ sets, Afrobeats, and bottle service.",
     description:
-      "Also known as Olumirin Waterfalls, a seven-level waterfall in Erin-Ijesha, Osun State. A serious hike-and-climb day, not a casual stop, best attempted with sturdy footwear and daylight to spare.",
+      "Grand East Man is a high-energy nightclub in Independence Layout running nightly DJ sets, Afrobeats and Afrofusion mixes, and VIP bottle-service tables. One of Enugu's liveliest spots from Thursday through Sunday.",
   },
   {
-    slug: "kajuru-castle",
-    name: "Kajuru Castle",
-    category: "nigeria",
-    area: "Kaduna",
-    kind: "Hilltop castle stay",
-    time: "Overnight",
-    image: wikimedia("Kajuru_Castle.jpg"),
-    note: "Medieval-style granite castle on a mountaintop, unusual overnight stop.",
+    slug: "de-kash-enugu",
+    name: "De Kash",
+    category: "nightlife",
+    area: "New Haven",
+    kind: "Outdoor bar & hangout spot",
+    priceLevel: "₦1,500–₦8,000",
+    address: "New Haven, Enugu",
+    image: "https://images.pexels.com/photos/1268514/pexels-photo-1268514.jpeg?auto=compress&cs=tinysrgb&w=800",
+    note: "Laid-back outdoor bar popular for cold drinks, nyama-choma, and live music.",
     description:
-      "A medieval-inspired granite castle built between 1981 and 1989 on a mountaintop in Kajuru village, Kaduna State, roughly 45km from Kaduna city. An unusual overnight stop for a trip that wants something out of the ordinary.",
+      "De Kash is a popular outdoor bar and hangout in New Haven, known for chilled drinks, suya and nyama-choma grills, and regular live band or DJ nights. A relaxed, unpretentious vibe that draws a diverse crowd looking to unwind.",
   },
   {
-    slug: "lekki-conservation-centre",
-    name: "Lekki Conservation Centre",
-    category: "nigeria",
-    area: "Lagos",
-    kind: "Canopy walkway + nature reserve",
-    time: "Half day",
-    image: wikimedia("Canopy_walk_-_Lekki_conservation_center.jpg"),
-    images: [
-      wikimedia("Lekki_Conservation_Center,_Canopy_walk.jpg"),
-      wikimedia("Forest_Canopy_walkway.jpg"),
-    ],
-    note: "Africa's longest canopy walkway, easy add-on for a Lagos leg.",
+    slug: "cubana-enugu",
+    name: "Cubana",
+    category: "nightlife",
+    area: "Independence Layout",
+    kind: "Premium nightclub & lounge",
+    priceLevel: "₦5,000–₦30,000",
+    address: "Independence Layout, Enugu",
+    image: "https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800",
+    note: "Flagship premium nightclub chain — bottle service, celebrity appearances, big DJ nights.",
     description:
-      "A nature reserve in Lekki, Lagos, with a 401-metre canopy walkway billed as the longest in Africa. An easy half-day add-on if a trip extends into a Lagos leg.",
+      "Cubana is part of Nigeria's well-known premium nightclub and hospitality brand, with the Enugu location in Independence Layout. Expect elaborate bottle presentations, big DJ nights, celebrity appearances, and a high-energy atmosphere that runs until the early hours.",
   },
 ]
 
@@ -792,9 +801,10 @@ export const allEnuguPlaces: Place[] = [
   ...enuguHotels,
   ...enuguResorts,
   ...enuguRestaurants,
+  ...enuguNightlife,
 ]
 
-export const allPlaces: Place[] = [...allEnuguPlaces, ...nigeriaSpots]
+export const allPlaces: Place[] = [...allEnuguPlaces]
 
 export function findPlaceBySlug(slug: string): Place | undefined {
   return allPlaces.find((place) => place.slug === slug)

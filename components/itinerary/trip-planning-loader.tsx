@@ -10,7 +10,7 @@ interface TripPlanningLoaderProps {
   dossier?: Partial<TripDossier>
   steps?: PlanningStep[]
   onComplete?: () => void
-  estimatedDurationSeconds?: number
+  isReady?: boolean
 }
 
 const DEFAULT_STEPS = [
@@ -25,43 +25,44 @@ const DEFAULT_STEPS = [
   "Building your final route",
 ]
 
+const SLOW_INTERVAL = 2400
+const FAST_INTERVAL = 280
+const HOLD_AT_STEP = DEFAULT_STEPS.length - 2
+
 export function TripPlanningLoader({
   dossier,
   onComplete,
-  estimatedDurationSeconds = 4.5,
+  isReady = false,
 }: TripPlanningLoaderProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const totalSteps = DEFAULT_STEPS.length
 
+  // Slow advance while AI is still working — hold at second-to-last step
   useEffect(() => {
-    const stepInterval = (estimatedDurationSeconds * 1000) / totalSteps
+    if (isReady) return
+    const timer = setInterval(() => {
+      setCurrentStepIndex((prev) => (prev < HOLD_AT_STEP ? prev + 1 : prev))
+    }, SLOW_INTERVAL)
+    return () => clearInterval(timer)
+  }, [isReady])
+
+  // Fast-complete once AI finishes
+  useEffect(() => {
+    if (!isReady) return
     const timer = setInterval(() => {
       setCurrentStepIndex((prev) => {
-        if (prev < totalSteps - 1) {
-          return prev + 1
-        } else {
-          clearInterval(timer)
-          setTimeout(() => {
-            onComplete?.()
-          }, 600)
-          return prev
-        }
+        if (prev < totalSteps - 1) return prev + 1
+        clearInterval(timer)
+        setTimeout(() => onComplete?.(), 600)
+        return prev
       })
-    }, stepInterval)
-
+    }, FAST_INTERVAL)
     return () => clearInterval(timer)
-  }, [estimatedDurationSeconds, totalSteps, onComplete])
+  }, [isReady, totalSteps, onComplete])
 
   const progressPercent = Math.min(
     100,
     Math.round(((currentStepIndex + 1) / totalSteps) * 100)
-  )
-  const remainingSeconds = Math.max(
-    0,
-    Math.round(
-      (estimatedDurationSeconds * (totalSteps - (currentStepIndex + 1))) /
-        totalSteps
-    )
   )
 
   const daysLabel = dossier?.daysCount ? `${dossier.daysCount} days` : "3 days"
@@ -155,7 +156,7 @@ export function TripPlanningLoader({
         {/* Bottom ETA & Progress Bar */}
         <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-4 text-xs font-mono text-white/70">
           <span className="whitespace-nowrap">
-            ETA: {remainingSeconds} {remainingSeconds === 1 ? "second" : "seconds"}
+            {isReady ? "Finalizing plan..." : "AI agent working..."}
           </span>
 
           <div className="h-1.5 flex-1 max-w-xs overflow-hidden rounded-full bg-white/10">
