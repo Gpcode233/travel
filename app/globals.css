@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @theme inline {
   --color-background: var(--background);
@@ -56,6 +57,17 @@
     --border: #E4E0D8;
     --input: #E4E0D8;
     --ring: #CC5500;
+  }
+
+  /* Tailwind v4 dropped the v3 default border color (gray-200) in favor of
+     currentColor — without this, every bare `border`/`border-b`/etc. class
+     renders in near-black text color instead of a light divider. */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--border);
   }
 
   body {
