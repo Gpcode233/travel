@@ -8,16 +8,72 @@ generator client {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  createdAt DateTime @default(now())
-  trips     Trip[]
+  id            String           @id @default(uuid())
+  email         String           @unique
+  name          String?
+  phone         String?
+  picture       String?
+  createdAt     DateTime         @default(now())
+  trips         Trip[]
+  preferences   UserPreferences?
+  conversations Conversation[]
+  bookings      Booking[]
 }
 
 model Trip {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
+  id        String    @id @default(uuid())
+  user      User      @relation(fields: [userId], references: [id])
   userId    String
+  title     String?
   itinerary Json
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  bookings  Booking[]
+}
+
+model UserPreferences {
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @unique
+  theme        String   @default("system")
+  currency     String   @default("NGN")
+  updatedAt    DateTime @updatedAt
+}
+
+model Conversation {
+  id        String    @id @default(uuid())
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  title     String?
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  role           String
+  content        Json
+  createdAt      DateTime     @default(now())
+}
+
+model Booking {
+  id                  String   @id @default(uuid())
+  user                User     @relation(fields: [userId], references: [id])
+  userId              String
+  trip                Trip?    @relation(fields: [tripId], references: [id])
+  tripId              String?
+  hotelName           String
+  hotelArea           String?
+  nights              Int
+  pricePerNight       Int
+  accommodationTotal  Int
+  serviceFee          Int
+  totalAmountKobo     Int
+  currency            String   @default("NGN")
+  paystackReference   String?  @unique
+  paystackStatus      String   @default("pending")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }

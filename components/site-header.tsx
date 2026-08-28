@@ -59,17 +59,25 @@ export function SiteHeader({
         {!isLoading && (
           <>
             {isAuthenticated && user ? (
-              <div className="flex items-center gap-3">
-                <div
-                  className={cn(
-                    "flex items-center gap-2 text-xs",
-                    overlay ? "text-white/80" : "text-muted-foreground"
-                  )}
-                >
-                  <span className="hidden sm:inline font-medium">
-                    {user.given_name || user.email?.split("@")[0]}
-                  </span>
-                </div>
+              <div className="flex items-center gap-2">
+                <Link href="/account">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={cn(
+                      "h-8 gap-1.5 px-2.5 text-xs",
+                      overlay
+                        ? "text-white/80 hover:bg-white/10 hover:text-white"
+                        : "text-muted-foreground hover:text-foreground",
+                      pathname === "/account" && (overlay ? "text-white" : "text-foreground")
+                    )}
+                  >
+                    <HugeiconsIcon icon={UserIcon} className="size-3.5" />
+                    <span className="hidden sm:inline">
+                      {user.given_name || user.email?.split("@")[0]}
+                    </span>
+                  </Button>
+                </Link>
                 <LogoutLink>
                   <Button
                     variant="ghost"

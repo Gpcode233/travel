@@ -28,6 +28,7 @@ import { EstBudgetBreakdownCard } from "@/components/itinerary/est-budget-breakd
 import { WhereYoureStaying } from "@/components/itinerary/where-youre-staying"
 import { AskTrailsAssistant } from "@/components/itinerary/ask-trails-assistant"
 import { SaveTripBanner } from "@/components/itinerary/save-trip-banner"
+import { PromoTicker } from "@/components/promo-ticker"
 import { Button } from "@/components/ui/button"
 
 type AgentPageState = "loading" | "workspace" | "empty" | "error"
@@ -249,6 +250,7 @@ function AgentWorkspaceContent() {
 
   return (
     <div className="min-h-svh bg-background text-foreground flex flex-col">
+      <PromoTicker variant="light" />
       {/* Top Dossier Bar & Hero Section */}
       <TripHeader
         dossier={itinerary.dossier}

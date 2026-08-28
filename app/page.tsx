@@ -25,6 +25,7 @@ import {
 import { SiteHeader } from "@/components/site-header"
 import { PlaceCard } from "@/components/place-card"
 import { AppleCarousel } from "@/components/AppleCarousel"
+import { PromoTicker } from "@/components/promo-ticker"
 import { cn } from "@/lib/utils"
 import { enuguAttractions, nigeriaSpots } from "@/lib/enugu-data"
 import {
@@ -298,6 +299,8 @@ export default function Page() {
           </div>
         </div>
       </section>
+
+      <PromoTicker variant="light" />
 
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-1 lg:px-10">
         <AppleCarousel />

@@ -21,7 +21,13 @@
   --typeset-flow: 1em;
 }
 
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
 @theme inline {
+  --animate-marquee: marquee 30s linear infinite;
   --font-heading: var(--font-instrument-sans);
   --font-sans: var(--font-geist);
   --font-mono: var(--font-geist-mono);
