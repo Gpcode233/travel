@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
-import { eventConfig } from "@/lib/config";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { AuthProvider } from "./AuthProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 export const viewport: Viewport = {
-  themeColor: "#3B0764",
+  themeColor: "#CC5500",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -14,24 +13,16 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: `${eventConfig.name} · ${eventConfig.headline}`,
-    template: `%s · ${eventConfig.name}`,
+    default: "Trails · Plan a smarter adventure through Enugu",
+    template: "%s · Trails",
   },
-  description: `${eventConfig.description} Topic: ${eventConfig.topic}. Location: ${eventConfig.location}.`,
-  keywords: [
-    "Youth Program",
-    "Youth Conference",
-    "Enugu",
-    "Nigeria",
-    "Leadership",
-    "Purpose",
-    "Skills",
-    "2026",
-  ],
-  authors: [{ name: "Youth Program Foundation" }],
+  description:
+    "Browse waterfalls, hotels, restaurants, and cultural stops in Enugu, Nigeria, then hand off to the Trails agent to shape a practical itinerary with local context.",
+  keywords: ["Enugu", "Nigeria", "Travel", "Itinerary", "Trip planner"],
   openGraph: {
-    title: `${eventConfig.name} — ${eventConfig.headline}`,
-    description: eventConfig.description,
+    title: "Trails · Plan a smarter adventure through Enugu",
+    description:
+      "Browse waterfalls, hotels, restaurants, and cultural stops, then hand off to the Trails agent to shape a practical itinerary with local context.",
     type: "website",
     locale: "en_NG",
   },
@@ -59,10 +50,9 @@ export default function RootLayout({
       lang="en"
       className={`${playfair.variable} ${inter.variable}`}
     >
-      <body className="min-h-screen bg-white text-zinc-900 font-sans antialiased selection:bg-purple-900 selection:text-white flex flex-col justify-between">
-        <Navbar />
-        <div className="flex-1">{children}</div>
-        <Footer />
+      <body className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary selection:text-primary-foreground">
+        <AuthProvider>{children}</AuthProvider>
+        <Toaster />
       </body>
     </html>
   );

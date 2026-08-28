@@ -109,7 +109,7 @@ export function RouteMap({
           <h3 className="font-heading font-bold text-foreground text-base">Route Map</h3>
         </div>
         {timeSavedMinutes > 0 && (
-          <div className="flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-medium text-blue-600 dark:text-blue-400">
+          <div className="flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-medium text-blue-600">
             <HugeiconsIcon icon={FlashIcon} className="size-3" />
             <span>{timeSavedMinutes} min saved</span>
           </div>

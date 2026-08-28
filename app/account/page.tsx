@@ -2,14 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs"
-import { useTheme } from "next-themes"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Calendar01Icon,
   CompassIcon,
-  Moon02Icon,
-  Sun01Icon,
-  LaptopIcon,
   UserIcon,
   ClockIcon,
 } from "@hugeicons/core-free-icons"
@@ -44,17 +40,10 @@ type Preferences = {
   currency: string
 }
 
-const THEMES = [
-  { value: "light", label: "Light", icon: Sun01Icon },
-  { value: "dark", label: "Dark", icon: Moon02Icon },
-  { value: "system", label: "System", icon: LaptopIcon },
-]
-
 const CURRENCIES = ["NGN", "USD", "GBP", "EUR"]
 
 export default function AccountPage() {
   const { user, isAuthenticated, isLoading } = useKindeBrowserClient()
-  const { theme, setTheme } = useTheme()
 
   const [trips, setTrips] = useState<Trip[]>([])
   const [conversations, setConversations] = useState<Conversation[]>([])
@@ -79,10 +68,6 @@ export default function AccountPage() {
         setTrips(tripsData.trips ?? [])
         setConversations(convsData.conversations ?? [])
         setPrefs(prefsData.preferences ?? null)
-
-        if (prefsData.preferences?.theme) {
-          setTheme(prefsData.preferences.theme)
-        }
       } catch {
         toast.error("Failed to load account data")
       } finally {
@@ -91,21 +76,7 @@ export default function AccountPage() {
     }
 
     load()
-  }, [isAuthenticated, setTheme])
-
-  async function updateTheme(value: string) {
-    setTheme(value)
-    setPrefs((p) => (p ? { ...p, theme: value } : null))
-    try {
-      await fetch("/api/preferences", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ theme: value }),
-      })
-    } catch {
-      toast.error("Failed to save theme preference")
-    }
-  }
+  }, [isAuthenticated])
 
   async function updateCurrency(value: string) {
     setPrefs((p) => (p ? { ...p, currency: value } : null))
@@ -239,30 +210,6 @@ export default function AccountPage() {
                 isText
               />
             </div>
-
-            <div className="mt-8">
-              <h2 className="font-heading text-lg font-semibold">Theme</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Changes apply immediately and sync to your account.
-              </p>
-              <div className="mt-4 flex gap-3">
-                {THEMES.map((t) => (
-                  <button
-                    key={t.value}
-                    onClick={() => updateTheme(t.value)}
-                    className={cn(
-                      "flex flex-col items-center gap-2 rounded border px-5 py-3 text-sm transition",
-                      theme === t.value
-                        ? "border-foreground bg-foreground text-background"
-                        : "border-border hover:border-foreground/40"
-                    )}
-                  >
-                    <HugeiconsIcon icon={t.icon} className="size-4" />
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-            </div>
           </TabsContent>
 
           {/* TRIPS */}
@@ -359,30 +306,6 @@ export default function AccountPage() {
           {/* PREFERENCES */}
           <TabsContent value="preferences">
             <div className="max-w-md space-y-8">
-              <div>
-                <h2 className="font-heading text-base font-semibold">Theme</h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Choose your display preference.
-                </p>
-                <div className="mt-4 flex gap-3">
-                  {THEMES.map((t) => (
-                    <button
-                      key={t.value}
-                      onClick={() => updateTheme(t.value)}
-                      className={cn(
-                        "flex flex-col items-center gap-2 rounded border px-5 py-3 text-sm transition",
-                        theme === t.value
-                          ? "border-foreground bg-foreground text-background"
-                          : "border-border hover:border-foreground/40"
-                      )}
-                    >
-                      <HugeiconsIcon icon={t.icon} className="size-4" />
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <Separator />
 
               <div>

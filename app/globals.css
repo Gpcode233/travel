@@ -1,14 +1,66 @@
 @import "tailwindcss";
 
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-heading: var(--font-instrument-sans), "Instrument Sans", var(--font-sans);
+}
+
 @layer base {
   :root {
     --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
     --font-sans: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    /* Trails — light-only, burnt-orange accent */
+    --background: #FAF9F6;
+    --foreground: #1A1A1A;
+
+    --card: #FFFFFF;
+    --card-foreground: #1A1A1A;
+
+    --popover: #FFFFFF;
+    --popover-foreground: #1A1A1A;
+
+    --primary: #CC5500;
+    --primary-foreground: #FFFFFF;
+
+    --secondary: #F1EEE7;
+    --secondary-foreground: #1A1A1A;
+
+    --muted: #F1EEE7;
+    --muted-foreground: #6B6660;
+
+    --accent: #CC5500;
+    --accent-foreground: #FFFFFF;
+
+    --destructive: #C0392B;
+    --destructive-foreground: #FFFFFF;
+
+    --border: #E4E0D8;
+    --input: #E4E0D8;
+    --ring: #CC5500;
   }
 
   body {
-    background-color: #ffffff;
-    color: #18181b;
+    background-color: var(--background);
+    color: var(--foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -19,25 +71,25 @@
   }
 }
 
-/* Custom Deep Purple & Clean Styles */
+/* Burnt-orange accent (replaces the old deep-purple palette) */
 .bg-deep-purple {
-  background-color: #3B0764;
+  background-color: var(--primary);
 }
 
 .bg-deep-purple-hover:hover {
-  background-color: #2E1065;
+  background-color: #A64400;
 }
 
 .text-deep-purple {
-  color: #3B0764;
+  color: var(--primary);
 }
 
 .border-deep-purple {
-  border-color: #3B0764;
+  border-color: var(--primary);
 }
 
 .ring-deep-purple:focus-visible {
-  outline: 2px solid #3B0764;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 

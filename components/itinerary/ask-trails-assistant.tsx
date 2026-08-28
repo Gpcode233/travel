@@ -110,7 +110,7 @@ export function AskTrailsAssistant({ onApplyAction }: AskTrailsAssistantProps) {
         >
           <HugeiconsIcon
             icon={SparklesIcon}
-            className="size-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform"
+            className="size-4 text-blue-600 group-hover:scale-110 transition-transform"
           />
           <span>Ask Trails</span>
         </button>
@@ -135,7 +135,7 @@ export function AskTrailsAssistant({ onApplyAction }: AskTrailsAssistantProps) {
 
           {/* Assistant Status Feedback */}
           {lastActionStatus && (
-            <div className="my-3 flex items-center gap-2 rounded-xs border border-blue-500/30 bg-blue-500/10 p-3 text-xs text-blue-700 dark:text-blue-300">
+            <div className="my-3 flex items-center gap-2 rounded-xs border border-blue-500/30 bg-blue-500/10 p-3 text-xs text-blue-700">
               {isProcessing ? (
                 <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin shrink-0" />
               ) : (

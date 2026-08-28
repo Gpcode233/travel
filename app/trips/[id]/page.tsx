@@ -29,15 +29,15 @@ function formatNGN(amount: number) {
 }
 
 const categoryColors: Record<string, string> = {
-  food: "bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300",
-  hotel: "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
-  nature: "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300",
-  culture: "bg-yellow-100 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300",
-  attraction: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
-  adventure: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300",
-  relaxation: "bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300",
-  nightlife: "bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300",
-  transport: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
+  food: "bg-orange-100 text-orange-700",
+  hotel: "bg-purple-100 text-purple-700",
+  nature: "bg-green-100 text-green-700",
+  culture: "bg-yellow-100 text-yellow-700",
+  attraction: "bg-blue-100 text-blue-700",
+  adventure: "bg-red-100 text-red-700",
+  relaxation: "bg-teal-100 text-teal-700",
+  nightlife: "bg-indigo-100 text-indigo-700",
+  transport: "bg-gray-100 text-gray-700",
 }
 
 export default async function TripDetailPage({

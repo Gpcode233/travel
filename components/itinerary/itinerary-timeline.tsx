@@ -222,7 +222,7 @@ export function ItineraryTimeline({
                           e.stopPropagation()
                           onReplaceActivity?.(activity)
                         }}
-                        className="ml-1 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
+                        className="ml-1 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline"
                       >
                         <HugeiconsIcon icon={SparklesIcon} className="size-3" />
                         + Replace

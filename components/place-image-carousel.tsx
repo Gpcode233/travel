@@ -31,8 +31,8 @@ export function PlaceImageCarousel({
       </CarouselContent>
       {images.length > 1 && (
         <>
-          <CarouselPrevious className="left-3 border-transparent bg-black/60 text-white hover:bg-black/80 hover:text-white dark:border-transparent dark:bg-black/60 dark:text-white dark:hover:bg-black/80 dark:hover:text-white" />
-          <CarouselNext className="right-3 border-transparent bg-black/60 text-white hover:bg-black/80 hover:text-white dark:border-transparent dark:bg-black/60 dark:text-white dark:hover:bg-black/80 dark:hover:text-white" />
+          <CarouselPrevious className="left-3 border-transparent bg-black/60 text-white hover:bg-black/80 hover:text-white" />
+          <CarouselNext className="right-3 border-transparent bg-black/60 text-white hover:bg-black/80 hover:text-white" />
         </>
       )}
     </Carousel>

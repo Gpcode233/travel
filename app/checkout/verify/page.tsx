@@ -70,7 +70,7 @@ function VerifyContent() {
 
           {state === "success" && (
             <>
-              <div className="flex size-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-950">
+              <div className="flex size-16 items-center justify-center rounded-full bg-green-100">
                 <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-8 text-green-600" />
               </div>
               <div>
@@ -100,7 +100,7 @@ function VerifyContent() {
 
           {state === "failed" && (
             <>
-              <div className="flex size-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-950">
+              <div className="flex size-16 items-center justify-center rounded-full bg-red-100">
                 <HugeiconsIcon icon={CancelCircleIcon} className="size-8 text-red-600" />
               </div>
               <div>

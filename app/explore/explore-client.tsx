@@ -47,7 +47,7 @@ function SectionHeading({
       </div>
       <button
         onClick={onShowAll}
-        className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400"
+        className="text-sm font-medium text-blue-600 hover:underline"
       >
         See all →
       </button>

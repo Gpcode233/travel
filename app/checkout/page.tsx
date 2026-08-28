@@ -153,7 +153,7 @@ export default function CheckoutPage() {
           {/* Hotel — what you're paying for */}
           <div className="rounded border border-border bg-card p-5">
             <div className="flex items-start gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded bg-blue-50 dark:bg-blue-950">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded bg-blue-50">
                 <HugeiconsIcon icon={BedIcon} className="size-4 text-blue-600" />
               </div>
               <div className="flex-1">
