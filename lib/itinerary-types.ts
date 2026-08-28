@@ -25,6 +25,7 @@ export type ActivityCategory =
   | "adventure"
   | "transport"
   | "hotel"
+  | "nightlife"
 
 export interface ItineraryActivity {
   id: string

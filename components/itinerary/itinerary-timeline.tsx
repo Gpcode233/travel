@@ -31,6 +31,10 @@ interface ItineraryTimelineProps {
   onReplaceActivity?: (activity: ItineraryActivity) => void
 }
 
+function isBreakfast(activity: ItineraryActivity) {
+  return activity.title.toLowerCase().includes("breakfast")
+}
+
 function getCategoryIcon(category: string) {
   switch (category) {
     case "food":
@@ -216,17 +220,19 @@ export function ItineraryTimeline({
                         </span>
                       ))}
 
-                      {/* Replace Link / Action */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onReplaceActivity?.(activity)
-                        }}
-                        className="ml-1 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline"
-                      >
-                        <HugeiconsIcon icon={SparklesIcon} className="size-3" />
-                        + Replace
-                      </button>
+                      {/* Replace Link / Action — not available for breakfast */}
+                      {!isBreakfast(activity) && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onReplaceActivity?.(activity)
+                          }}
+                          className="ml-1 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                        >
+                          <HugeiconsIcon icon={SparklesIcon} className="size-3" />
+                          + Replace
+                        </button>
+                      )}
                     </div>
 
                     {/* Quick Tool Buttons: Map Focus & Remove */}

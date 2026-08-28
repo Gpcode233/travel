@@ -28,6 +28,14 @@ const filters: {
 
 const SECTION_ORDER: PlaceCategory[] = ["attraction", "hotel", "resort", "restaurant", "nightlife"]
 
+const categoryPlural: Record<PlaceCategory, string> = {
+  attraction: "Attractions",
+  hotel: "Hotels",
+  resort: "Resorts",
+  restaurant: "Restaurants",
+  nightlife: "Nightlife",
+}
+
 function SectionHeading({
   category,
   count,
@@ -42,12 +50,12 @@ function SectionHeading({
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
         <HugeiconsIcon icon={meta.icon} className="size-5 text-muted-foreground" />
-        <h2 className="font-heading text-xl font-semibold">{meta.label}s</h2>
+        <h2 className="font-heading text-xl font-semibold">{categoryPlural[category]}</h2>
         <span className="text-sm text-muted-foreground">({count})</span>
       </div>
       <button
         onClick={onShowAll}
-        className="text-sm font-medium text-blue-600 hover:underline"
+        className="text-sm font-medium text-primary hover:underline"
       >
         See all →
       </button>
@@ -112,7 +120,7 @@ export function ExploreClient({ places }: { places: Place[] }) {
                       onClick={() => setFilter(cat)}
                       className="mt-4 text-sm text-muted-foreground hover:text-foreground"
                     >
-                      +{items.length - 3} more {categoryMeta[cat].label.toLowerCase()}s
+                      +{items.length - 3} more {categoryPlural[cat].toLowerCase()}
                     </button>
                   )}
                 </section>

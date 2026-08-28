@@ -1,4 +1,4 @@
-import { generateText, tool } from "ai"
+import { generateText, tool, stepCountIs } from "ai"
 import { groq } from "@ai-sdk/groq"
 import { z } from "zod"
 import { NextResponse } from "next/server"
@@ -107,7 +107,48 @@ export async function POST(req: Request) {
       a.toLowerCase().includes("breakfast")
     ) ?? (budgetTier !== "lean")
 
-    const systemPrompt = `You are an expert Enugu, Nigeria travel planner. Generate a detailed, realistic day-by-day trip itinerary.
+    const researchModel = groq("openai/gpt-oss-120b")
+
+    const searchLocationsTool = tool({
+      description: "Search known Enugu travel places by keyword and category.",
+      inputSchema: z.object({
+        query: z.string(),
+        category: z.enum(["attraction", "hotel", "resort", "restaurant", "nightlife"]).optional(),
+      }),
+      execute: async ({ query, category }) => {
+        const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
+        const byCategory = category
+          ? allPlaces.filter((p) => p.category === category)
+          : allPlaces
+        const matches = words.length
+          ? byCategory.filter((p) => {
+              const haystack = [p.name, p.area, p.kind].join(" ").toLowerCase()
+              return words.some((w) => haystack.includes(w))
+            })
+          : byCategory
+        return {
+          count: matches.length,
+          results: matches.map(({ slug, name, category, area, kind, note }) => ({
+            slug, name, category, area, kind, note,
+            coordinates: PLACE_COORDINATES[slug] ?? null,
+          })),
+        }
+      },
+    })
+
+    // Phase 1: research with tools (real-world grounding). Free-form text output —
+    // no JSON instruction here, since asking a tool-enabled model for "JSON only"
+    // makes it occasionally hallucinate a nonexistent "json" tool call.
+    const researchPrompt = `Research real places for a ${daysCount}-day trip to ${destination}, Nigeria.
+Travelers: ${travelersCount}. Budget tier: ${budgetTier}. Pace: ${pace}. Interests: ${interestsList.join(", ")}.
+Hotel base: ${selectedHotel.name} (${selectedHotel.area}).
+${hotelHasBreakfast ? `This hotel includes breakfast.` : `This hotel does NOT include breakfast — find a nearby affordable breakfast spot.`}
+For each day, use search_locations to find real attractions matching the interests, plus real restaurants for lunch and dinner. If interests include nightlife, use search_locations with category "nightlife". Use browser_search for current prices or opening hours if useful.
+Write concise notes: for each day, list the specific places found (name, area, category) and a rough per-person cost in NGN.`
+
+    const research = await generateText({
+      model: researchModel,
+      system: `You are an expert Enugu, Nigeria travel researcher.
 
 PLATFORM PLACES (prefer these, they have known coordinates):
 ${platformPlacesContext}
@@ -115,28 +156,19 @@ ${platformPlacesContext}
 KNOWN COORDINATES (use these for platform places):
 ${coordinatesContext}
 
-For places not in the platform, use realistic Enugu coordinates (latitude 6.3–6.6, longitude 7.3–7.6).
+For places not in the platform, use realistic Enugu coordinates (latitude 6.3–6.6, longitude 7.3–7.6).`,
+      prompt: researchPrompt,
+      stopWhen: stepCountIs(6),
+      providerOptions: { groq: { reasoningEffort: "low" as const } },
+      tools: {
+        browser_search: groq.tools.browserSearch({}),
+        search_locations: searchLocationsTool,
+      },
+    })
 
-HOTEL BASE: ${selectedHotel.name} in ${selectedHotel.area}.
-${hotelHasBreakfast ? `This hotel includes breakfast — use title "Breakfast at ${selectedHotel.name}", estimatedCost 0, category "hotel", latitude/longitude matching the hotel.` : `This is a budget hotel with no included breakfast — suggest a nearby affordable breakfast spot.`}
-
-RULES:
-- Each day MUST have exactly these 3 meal slots (non-negotiable):
-  1. BREAKFAST: startTime "8:00 AM", durationMinutes 45, category "food" ${hotelHasBreakfast ? `(always "Breakfast at ${selectedHotel.name}", cost 0, category "hotel", use hotel coordinates)` : "(nearby breakfast spot, budget-appropriate cost)"}
-  2. LUNCH: startTime "12:30 PM", durationMinutes 60, category "food" (local restaurant, budget-appropriate)
-  3. DINNER: startTime "7:30 PM", durationMinutes 75, category "food" (dinner restaurant, include description)
-- Plus ${activitiesPerDay} additional non-meal activities spread across the day
-- Total activities per day = ${activitiesPerDay + 3} (3 meals + ${activitiesPerDay} activities)
-- Order activities chronologically by startTime
-- Mix: nature, food, culture, adventure, nightlife based on interests: ${interestsList.join(", ")}
-- For nightlife/entertainment interests, include evening stops at known Enugu nightlife venues (Toscana Villa, Volt Arena, Grand East Man, De Kash, Cubana, Hotel Presidential bar)
-- Use browser_search for current restaurant prices, opening hours, or new venues
-- Use search_locations to find platform places matching the activities (use category "nightlife" for evening entertainment)
-- Start each day at the hotel, end each day near the hotel
-- Costs in NGN (Nigerian Naira) per person
-- Budget tier: ${tierConfig.label} (₦${tierConfig.minPerPersonPerDay.toLocaleString()}–${tierConfig.maxPerPersonPerDay ? "₦" + tierConfig.maxPerPersonPerDay.toLocaleString() : "open"}/person/day)
-
-OUTPUT: Respond with ONLY valid JSON, no explanation, no markdown fences. Match this exact structure:
+    // Phase 2: format-only pass, no tools bound — asking a tool-free model for
+    // "JSON only" is reliable; mixing that instruction with live tools is not.
+    const formatSystemPrompt = `Turn the research notes into a detailed day-by-day trip itinerary JSON. Respond with ONLY valid JSON, no explanation, no markdown fences. Match this exact structure:
 {
   "tripTitle": "string",
   "days": [
@@ -162,60 +194,40 @@ OUTPUT: Respond with ONLY valid JSON, no explanation, no markdown fences. Match 
       ]
     }
   ]
-}`
+}
 
-    const userPrompt = `Plan a ${daysCount}-day trip to ${destination}, Nigeria.
-Travelers: ${travelersCount}
-Budget tier: ${budgetTier}
-Pace: ${pace}
-Interests: ${interestsList.join(", ")}
-Hotel base: ${selectedHotel.name} (${selectedHotel.area})
+RULES:
+- Each day MUST have exactly these 3 meal slots (non-negotiable):
+  1. BREAKFAST: startTime "8:00 AM", durationMinutes 45, category "food" ${hotelHasBreakfast ? `(always "Breakfast at ${selectedHotel.name}", cost 0, category "hotel", use hotel coordinates)` : "(the nearby breakfast spot from research, budget-appropriate cost)"}
+  2. LUNCH: startTime "12:30 PM", durationMinutes 60, category "food" (a real restaurant from research)
+  3. DINNER: startTime "7:30 PM", durationMinutes 75, category "food" (a real restaurant from research, include description)
+- Plus ${activitiesPerDay} additional non-meal activities spread across the day, using real places from research
+- Total activities per day = ${activitiesPerDay + 3} (3 meals + ${activitiesPerDay} activities)
+- Order activities chronologically by startTime
+- Generate exactly ${daysCount} unique days, no repeated activities across days
+- Costs in NGN (Nigerian Naira) per person
+- Budget tier: ${tierConfig.label} (₦${tierConfig.minPerPersonPerDay.toLocaleString()}–${tierConfig.maxPerPersonPerDay ? "₦" + tierConfig.maxPerPersonPerDay.toLocaleString() : "open"}/person/day)`
 
-Generate ${daysCount} unique days. Each day MUST have ${activitiesPerDay + 3} activities total: breakfast (8:00 AM), ${activitiesPerDay} daytime activities, lunch (12:30 PM), dinner (7:30 PM). Order all activities by startTime. Use browser_search to verify restaurant options and search_locations to find platform places. Output only JSON.`
+    async function requestFormattedJson(extra?: string) {
+      const { text } = await generateText({
+        model: researchModel,
+        system: formatSystemPrompt,
+        prompt: `Research notes:\n${research.text}${extra ? `\n\n${extra}` : ""}`,
+      })
+      const jsonMatch = text.match(/\{[\s\S]*\}/)
+      if (!jsonMatch) throw new Error("AI did not return valid JSON")
+      return JSON.parse(jsonMatch[0])
+    }
 
-    const { text } = await generateText({
-      model: groq("llama-3.3-70b-versatile"),
-      system: systemPrompt,
-      prompt: userPrompt,
-      tools: {
-        browser_search: groq.tools.browserSearch({}),
-        search_locations: tool({
-          description: "Search known Enugu travel places by keyword and category.",
-          inputSchema: z.object({
-            query: z.string(),
-            category: z.enum(["attraction", "hotel", "resort", "restaurant", "nightlife"]).optional(),
-          }),
-          execute: async ({ query, category }) => {
-            const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
-            const byCategory = category
-              ? allPlaces.filter((p) => p.category === category)
-              : allPlaces
-            const matches = words.length
-              ? byCategory.filter((p) => {
-                  const haystack = [p.name, p.area, p.kind].join(" ").toLowerCase()
-                  return words.some((w) => haystack.includes(w))
-                })
-              : byCategory
-            return {
-              count: matches.length,
-              results: matches.map(({ slug, name, category, area, kind, note }) => ({
-                slug, name, category, area, kind, note,
-                coordinates: PLACE_COORDINATES[slug] ?? null,
-              })),
-            }
-          },
-        }),
-      },
-      providerOptions: {
-        groq: { reasoningEffort: "low" as const },
-      },
-    })
-
-    // Extract JSON from response (handle potential markdown fences)
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) throw new Error("AI did not return valid JSON")
-
-    const aiData = JSON.parse(jsonMatch[0])
+    let aiData
+    try {
+      aiData = await requestFormattedJson()
+    } catch (err: any) {
+      // One repair attempt — most failures here are a stray trailing comma or truncation.
+      aiData = await requestFormattedJson(
+        `Your previous response failed to parse as JSON (${err?.message}). Return the corrected, complete, valid JSON only.`
+      )
+    }
 
     // Assemble full TripItinerary
     const baseDate = new Date()

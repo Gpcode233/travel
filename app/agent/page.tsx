@@ -18,6 +18,12 @@ import {
   PLACE_COORDINATES,
 } from "@/lib/itinerary-generator"
 import {
+  enuguAttractions,
+  enuguRestaurants,
+  enuguNightlife,
+  type Place,
+} from "@/lib/enugu-data"
+import {
   ItineraryActivity,
   TripDossier,
   TripItinerary,
@@ -111,31 +117,31 @@ function AgentWorkspaceContent() {
     setItinerary(updated)
   }
 
+  function getReplacementPool(activity: ItineraryActivity): Place[] {
+    const title = activity.title.toLowerCase()
+    if (title.includes("lunch") || title.includes("dinner")) return enuguRestaurants
+    if (activity.category === "nightlife") return enuguNightlife
+    return enuguAttractions
+  }
+
   function handleReplaceActivity(activity: ItineraryActivity) {
     if (!itinerary) return
-    // Swap with an alternative curated activity for this slot
-    const alternatives = [
-      {
-        title: "Artisan Coffee & Palm Wine Tasting",
-        description: "Relaxed morning tasting featuring single-origin Nigerian brews and fresh sweet palm wine.",
-        estimatedCost: 7_500,
-        formattedCost: "₦7,500",
-        category: "food" as const,
-        tags: ["Food", "Local Culture"],
-        imageUrl: "https://images.pexels.com/photos/103124/pexels-photo-103124.jpeg?auto=compress&cs=tinysrgb&w=800",
-      },
-      {
-        title: "Ezeagu Botanical Spring Walk",
-        description: "Gentle natural trail meandering alongside pristine spring waterways with tropical greenery.",
-        estimatedCost: 6_000,
-        formattedCost: "₦6,000",
-        category: "nature" as const,
-        tags: ["Nature", "Scenic"],
-        imageUrl: "https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=800",
-      },
-    ]
-    const replacement =
-      alternatives.find((alt) => alt.title !== activity.title) || alternatives[0]
+    if (activity.title.toLowerCase().includes("breakfast")) return
+
+    const pool = getReplacementPool(activity)
+    const usedTitles = new Set(
+      itinerary.days.flatMap((d) => d.activities.map((a) => a.title))
+    )
+    const candidates = pool.filter(
+      (p) => p.name !== activity.title && !usedTitles.has(p.name)
+    )
+    const choices = candidates.length
+      ? candidates
+      : pool.filter((p) => p.name !== activity.title)
+    if (choices.length === 0) return
+
+    const place = choices[Math.floor(Math.random() * choices.length)]
+    const coords = PLACE_COORDINATES[place.slug]
 
     const updatedDays = itinerary.days.map((day) => ({
       ...day,
@@ -143,12 +149,16 @@ function AgentWorkspaceContent() {
         act.id === activity.id
           ? {
               ...act,
-              title: replacement.title,
-              description: replacement.description,
-              estimatedCost: replacement.estimatedCost,
-              formattedCost: replacement.formattedCost,
-              tags: replacement.tags,
-              imageUrl: replacement.imageUrl,
+              title: place.name,
+              description: place.description,
+              tags: [place.kind],
+              imageUrl: place.image,
+              location: {
+                name: place.name,
+                area: place.area,
+                latitude: coords?.lat ?? act.location.latitude,
+                longitude: coords?.lng ?? act.location.longitude,
+              },
             }
           : act
       ),

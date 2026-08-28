@@ -30,7 +30,7 @@ function formatNGN(amount: number) {
 
 const categoryColors: Record<string, string> = {
   food: "bg-orange-100 text-orange-700",
-  hotel: "bg-purple-100 text-purple-700",
+  hotel: "bg-amber-100 text-amber-700",
   nature: "bg-green-100 text-green-700",
   culture: "bg-yellow-100 text-yellow-700",
   attraction: "bg-blue-100 text-blue-700",
@@ -52,6 +52,7 @@ export default async function TripDetailPage({
 
   const trip = await prisma.trip.findFirst({
     where: { id, userId: user.id },
+    include: { bookings: { orderBy: { createdAt: "desc" } } },
   })
 
   if (!trip) notFound()
@@ -61,6 +62,8 @@ export default async function TripDetailPage({
 
   const hotel: AccommodationOption | undefined =
     accommodations.find((a) => a.id === selectedAccommodationId) ?? accommodations[0]
+
+  const confirmedBooking = trip.bookings.find((b) => b.paystackStatus === "success")
 
   return (
     <main className="min-h-svh bg-background text-foreground">
@@ -128,7 +131,7 @@ export default async function TripDetailPage({
                 <div key={day.id}>
                   {/* Day header */}
                   <div className="flex items-center gap-3">
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                       {day.dayNumber}
                     </div>
                     <div>
@@ -146,7 +149,7 @@ export default async function TripDetailPage({
                   <div className="ml-4 mt-4 border-l-2 border-border pl-8 space-y-5">
                     {day.activities.map((act) => (
                       <div key={act.id} className="relative">
-                        <div className="absolute -left-[2.15rem] top-1.5 size-3.5 rounded-full border-2 border-blue-500 bg-background" />
+                        <div className="absolute -left-[2.15rem] top-1.5 size-3.5 rounded-full border-2 border-primary bg-background" />
                         <div className="flex flex-wrap items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
@@ -193,9 +196,29 @@ export default async function TripDetailPage({
 
           {/* Right: Hotel + Budget */}
           <div className="space-y-6 lg:sticky lg:top-6 lg:self-start">
+            {/* Confirmed booking */}
+            {confirmedBooking && (
+              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4">
+                <div className="flex items-center gap-2 text-primary">
+                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4" />
+                  <h3 className="font-heading text-sm font-semibold">Payment confirmed</h3>
+                </div>
+                <p className="mt-2 text-sm">
+                  You&apos;re staying at{" "}
+                  <span className="font-semibold">{confirmedBooking.hotelName}</span>
+                  {confirmedBooking.hotelArea ? `, ${confirmedBooking.hotelArea}` : ""}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {confirmedBooking.nights} night{confirmedBooking.nights === 1 ? "" : "s"} ·{" "}
+                  {formatNGN(confirmedBooking.pricePerNight)}/night · Total{" "}
+                  {formatNGN(confirmedBooking.totalAmountKobo / 100)}
+                </p>
+              </div>
+            )}
+
             {/* Hotel card */}
             {hotel && (
-              <div className="overflow-hidden rounded-sm border bg-card">
+              <div className="overflow-hidden rounded-2xl border bg-card">
                 <div className="relative h-40 w-full bg-muted">
                   {hotel.imageUrl && (
                     <img
@@ -205,7 +228,7 @@ export default async function TripDetailPage({
                     />
                   )}
                   {hotel.badge && (
-                    <span className="absolute left-3 top-3 rounded-full bg-blue-600 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                    <span className="absolute left-3 top-3 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
                       {hotel.badge}
                     </span>
                   )}
@@ -244,9 +267,9 @@ export default async function TripDetailPage({
             )}
 
             {/* Budget breakdown */}
-            <div className="rounded-sm border bg-card p-4">
+            <div className="rounded-2xl border bg-card p-4">
               <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={SparklesIcon} className="size-4 text-blue-500" />
+                <HugeiconsIcon icon={SparklesIcon} className="size-4 text-primary" />
                 <h3 className="font-heading font-semibold">Estimated Budget</h3>
               </div>
               <div className="mt-4 space-y-2">
@@ -258,7 +281,7 @@ export default async function TripDetailPage({
                 ))}
                 <div className="border-t pt-2 flex items-center justify-between font-heading font-semibold">
                   <span>Total estimate</span>
-                  <span className="text-blue-600">{budgetBreakdown.formattedRange}</span>
+                  <span className="text-primary">{budgetBreakdown.formattedRange}</span>
                 </div>
               </div>
             </div>

@@ -236,7 +236,7 @@ export default function AccountPage() {
                 {trips.map((trip) => (
                   <div
                     key={trip.id}
-                    className="flex items-center justify-between rounded border border-border p-4"
+                    className="flex items-center justify-between rounded-2xl border border-border p-4"
                   >
                     <div>
                       <p className="font-medium">{getTripName(trip)}</p>
@@ -249,7 +249,7 @@ export default function AccountPage() {
                       </p>
                     </div>
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href="/agent">Open planner</Link>
+                      <Link href={`/trips/${trip.id}`}>View trip</Link>
                     </Button>
                   </div>
                 ))}
@@ -281,7 +281,7 @@ export default function AccountPage() {
                 {conversations.map((conv) => (
                   <div
                     key={conv.id}
-                    className="flex items-center justify-between rounded border border-border p-4"
+                    className="flex items-center justify-between rounded-2xl border border-border p-4"
                   >
                     <div>
                       <p className="font-medium">{conv.title ?? "Planning session"}</p>

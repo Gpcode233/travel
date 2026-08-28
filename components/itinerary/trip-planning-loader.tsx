@@ -73,60 +73,59 @@ export function TripPlanningLoader({
   const paceLabel = dossier?.pace || "Relaxed"
 
   return (
-    <div className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-[#070b11] px-4 py-12 text-white selection:bg-primary selection:text-white">
-      {/* Ambient background glow matching reference image */}
+    <div className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-background px-4 py-12 text-foreground selection:bg-primary selection:text-primary-foreground">
+      {/* Ambient background glow in brand burnt-orange */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 82% 35%, rgba(29, 78, 216, 0.28) 0%, rgba(15, 23, 42, 0.05) 55%, transparent 80%)",
+            "radial-gradient(circle at 82% 35%, rgba(204, 85, 0, 0.14) 0%, rgba(204, 85, 0, 0.02) 55%, transparent 80%)",
         }}
       />
       <div
         className="pointer-events-none absolute -bottom-32 -left-32 size-96 rounded-full"
         style={{
           background:
-            "radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(204, 85, 0, 0.08) 0%, transparent 70%)",
         }}
       />
 
       <div className="relative z-10 w-full max-w-xl">
         {/* Top Tag Pill */}
-        <div className="mb-6 inline-flex items-center gap-2 rounded-sm border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-mono text-white/80 shadow-sm backdrop-blur-sm">
+        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-mono text-muted-foreground shadow-sm">
           <span>{daysLabel}</span>
-          <span className="text-white/40">·</span>
+          <span className="text-muted-foreground/40">·</span>
           <span>{travelersLabel}</span>
-          <span className="text-white/40">·</span>
+          <span className="text-muted-foreground/40">·</span>
           <span>{budgetLabel}</span>
-          <span className="text-white/40">·</span>
+          <span className="text-muted-foreground/40">·</span>
           <span>{paceLabel}</span>
         </div>
 
         {/* Heading & Subhead */}
-        <h1 className="text-3xl font-heading font-semibold tracking-tight text-white sm:text-4xl">
+        <h1 className="text-3xl font-heading font-semibold tracking-tight text-foreground sm:text-4xl">
           Trails is building your trip...
         </h1>
-        <p className="mt-3 text-sm leading-relaxed text-white/70 sm:text-base">
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
           Our AI agent is currently curating a personalized itinerary based on
           your dossier preferences.
         </p>
 
         {/* Steps Card */}
-        <div className="mt-8 space-y-1 rounded-sm border border-white/10 bg-black/40 p-3 shadow-2xl backdrop-blur-md">
+        <div className="mt-8 space-y-1 rounded-3xl border border-border bg-card p-3 shadow-lg">
           {DEFAULT_STEPS.map((step, idx) => {
             const isCompleted = idx < currentStepIndex
             const isActive = idx === currentStepIndex
-            const isPending = idx > currentStepIndex
 
             return (
               <div
                 key={step}
                 className={`relative flex items-center gap-3.5 px-3 py-2.5 transition-colors duration-300 ${
                   isActive
-                    ? "rounded-sm bg-blue-950/40 text-white font-medium before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-0.75 before:rounded-full before:bg-blue-500"
+                    ? "rounded-2xl bg-primary/10 font-medium text-foreground before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-0.75 before:rounded-full before:bg-primary"
                     : isCompleted
-                    ? "text-white/85"
-                    : "text-white/35"
+                    ? "text-foreground/80"
+                    : "text-muted-foreground/50"
                 }`}
               >
                 {/* Step Icon */}
@@ -134,15 +133,15 @@ export function TripPlanningLoader({
                   {isCompleted ? (
                     <HugeiconsIcon
                       icon={CheckmarkCircle02Icon}
-                      className="size-4.5 text-white/90"
+                      className="size-4.5 text-primary"
                     />
                   ) : isActive ? (
                     <HugeiconsIcon
                       icon={Loading03Icon}
-                      className="size-4.5 animate-spin text-blue-400"
+                      className="size-4.5 animate-spin text-primary"
                     />
                   ) : (
-                    <div className="size-3.5 rounded-full border border-white/30" />
+                    <div className="size-3.5 rounded-full border border-border" />
                   )}
                 </div>
 
@@ -154,21 +153,21 @@ export function TripPlanningLoader({
         </div>
 
         {/* Bottom ETA & Progress Bar */}
-        <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-4 text-xs font-mono text-white/70">
+        <div className="mt-6 flex items-center justify-between gap-4 border-t border-border pt-4 text-xs font-mono text-muted-foreground">
           <span className="whitespace-nowrap">
             {isReady ? "Finalizing plan..." : "AI agent working..."}
           </span>
 
-          <div className="h-1.5 flex-1 max-w-xs overflow-hidden rounded-full bg-white/10">
+          <div className="h-1.5 flex-1 max-w-xs overflow-hidden rounded-full bg-muted">
             <motion.div
-              className="h-full bg-blue-500"
+              className="h-full bg-primary"
               initial={{ width: "5%" }}
               animate={{ width: `${progressPercent}%` }}
               transition={{ ease: "easeInOut", duration: 0.3 }}
             />
           </div>
 
-          <span className="whitespace-nowrap font-medium text-white/90">
+          <span className="whitespace-nowrap font-medium text-foreground">
             {progressPercent}% Complete
           </span>
         </div>
