@@ -1,63 +1,69 @@
-import type { Metadata } from "next"
-import { Geist, Geist_Mono, Instrument_Sans } from "next/font/google"
+import type { Metadata, Viewport } from "next";
+import { Playfair_Display, Inter } from "next/font/google";
+import "./globals.css";
+import { eventConfig } from "@/lib/config";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { AuthProvider } from "./AuthProvider"
-import { Toaster } from "@/components/ui/sonner"
+export const viewport: Viewport = {
+  themeColor: "#3B0764",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   title: {
-    default: "Trails",
-    template: "%s · Trails",
+    default: `${eventConfig.name} · ${eventConfig.headline}`,
+    template: `%s · ${eventConfig.name}`,
   },
-  description:
-    "Plan a smarter Enugu-first Nigeria trip with an AI travel agent.",
-}
+  description: `${eventConfig.description} Topic: ${eventConfig.topic}. Location: ${eventConfig.location}.`,
+  keywords: [
+    "Youth Program",
+    "Youth Conference",
+    "Enugu",
+    "Nigeria",
+    "Leadership",
+    "Purpose",
+    "Skills",
+    "2026",
+  ],
+  authors: [{ name: "Youth Program Foundation" }],
+  openGraph: {
+    title: `${eventConfig.name} — ${eventConfig.headline}`,
+    description: eventConfig.description,
+    type: "website",
+    locale: "en_NG",
+  },
+};
 
-const geist = Geist({
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-geist",
-})
+  variable: "--font-playfair",
+  display: "swap",
+});
 
-const instrumentSans = Instrument_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-instrument-sans",
-})
-
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-})
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={cn(
-        "antialiased",
-        geist.variable,
-        instrumentSans.variable,
-        geistMono.variable
-      )}
+      className={`${playfair.variable} ${inter.variable}`}
     >
-      <body>
-        <ThemeProvider>
-          <AuthProvider>
-            <TooltipProvider>
-              {children}
-              <Toaster position="top-right" richColors />
-            </TooltipProvider>
-          </AuthProvider>
-        </ThemeProvider>
+      <body className="min-h-screen bg-white text-zinc-900 font-sans antialiased selection:bg-purple-900 selection:text-white flex flex-col justify-between">
+        <Navbar />
+        <div className="flex-1">{children}</div>
+        <Footer />
       </body>
     </html>
-  )
+  );
 }

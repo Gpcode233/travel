@@ -16,7 +16,7 @@ function VerifyContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [state, setState] = useState<VerifyState>("loading")
-  const [details, setDetails] = useState<{ amount?: number; email?: string } | null>(null)
+  const [details, setDetails] = useState<{ amount?: number; email?: string; tripId?: string } | null>(null)
 
   useEffect(() => {
     const reference = searchParams.get("reference")
@@ -25,12 +25,20 @@ function VerifyContent() {
       return
     }
 
+    // Read tripId from the checkout sessionStorage payload
+    let tripId: string | undefined
+    try {
+      const stored = sessionStorage.getItem("trails_checkout")
+      if (stored) tripId = JSON.parse(stored)?.tripId
+    } catch {}
+
     fetch(`/api/checkout/verify?reference=${reference}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.status === "success") {
+          sessionStorage.removeItem("trails_checkout")
           setState("success")
-          setDetails({ amount: data.amount, email: data.email })
+          setDetails({ amount: data.amount, email: data.email, tripId })
         } else {
           setState("failed")
         }
@@ -79,10 +87,12 @@ function VerifyContent() {
               </div>
               <div className="mt-2 flex gap-3">
                 <Button asChild>
-                  <Link href="/account">View bookings</Link>
+                  <Link href={details?.tripId ? `/trips/${details.tripId}` : "/account"}>
+                    View your trip
+                  </Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <Link href="/agent">Plan another trip</Link>
+                  <Link href="/">Plan another trip</Link>
                 </Button>
               </div>
             </>
