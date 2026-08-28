@@ -15,6 +15,7 @@ export const PLACE_COORDINATES: Record<string, { lat: number; lng: number; area?
   "awhum-waterfall": { lat: 6.5512, lng: 7.3789, area: "Udi" },
   "ngwo-pine-forest": { lat: 6.442, lng: 7.448, area: "Ngwo" },
   "nike-lake": { lat: 6.518, lng: 7.568, area: "Abakpa Nike" },
+  "landmark-resorts-enugu": { lat: 6.518, lng: 7.568, area: "Abakpa Nike" },
   "ezeagu-tourist-complex": { lat: 6.38, lng: 7.23, area: "Ezeagu" },
   "milliken-hill": { lat: 6.447, lng: 7.462, area: "Ngwo" },
   "national-museum-of-unity": { lat: 6.441, lng: 7.514, area: "Enugu city" },
