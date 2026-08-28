@@ -10,6 +10,7 @@ import {
 
 import type { Place, PlaceCategory } from "@/lib/enugu-data"
 import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 
 export const categoryMeta: Record<
   PlaceCategory,
@@ -40,19 +41,22 @@ export function PlaceCard({
     <Link
       href={`/explore/${place.slug}`}
       className={cn(
-        "group block overflow-hidden border transition hover:border-foreground/30",
+        "group block overflow-hidden rounded-3xl border transition hover:border-primary/40",
         className
       )}
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-4/3 overflow-hidden">
         <div
           className="size-full bg-cover bg-center transition duration-500 group-hover:scale-[1.03]"
           style={{ backgroundImage: `url(${place.image})` }}
         />
-        <span className="absolute top-3 left-3 inline-flex items-center gap-1 bg-background/90 px-2 py-1 text-xs font-medium backdrop-blur">
+        <Badge
+          variant="secondary"
+          className="absolute top-3 left-3 h-auto gap-1 bg-background/90 px-2.5 py-1 backdrop-blur"
+        >
           <HugeiconsIcon icon={meta.icon} className="size-3.5" />
           {meta.label}
-        </span>
+        </Badge>
       </div>
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
@@ -65,9 +69,9 @@ export function PlaceCard({
             </p>
           </div>
           {badge && (
-            <span className="shrink-0 border px-2 py-1 text-xs whitespace-nowrap">
+            <Badge variant="outline" className="h-auto shrink-0 px-2.5 py-1 whitespace-nowrap">
               {badge}
-            </span>
+            </Badge>
           )}
         </div>
         <p className="mt-4 text-sm leading-6 text-muted-foreground">

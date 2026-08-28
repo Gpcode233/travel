@@ -14,6 +14,13 @@ import {
 
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { PlaceCard } from "@/components/place-card"
 import { cn } from "@/lib/utils"
 import { travelerOptions, budgetTierList } from "@/lib/budget-tiers"
@@ -108,17 +115,23 @@ export default function HomePage() {
 
               <div className="mt-12 grid max-w-xl grid-cols-3 gap-6 border-t border-white/15 pt-6">
                 <div>
-                  <HugeiconsIcon icon={CompassIcon} className="size-5 text-primary" />
+                  <div className="flex size-9 items-center justify-center rounded-2xl bg-primary/20">
+                    <HugeiconsIcon icon={CompassIcon} className="size-5 text-primary" />
+                  </div>
                   <p className="mt-2 text-sm font-medium">Adventure fit</p>
                   <p className="mt-1 text-xs text-white/60">Matched to your pace and interests.</p>
                 </div>
                 <div>
-                  <HugeiconsIcon icon={MapsIcon} className="size-5 text-primary" />
+                  <div className="flex size-9 items-center justify-center rounded-2xl bg-primary/20">
+                    <HugeiconsIcon icon={MapsIcon} className="size-5 text-primary" />
+                  </div>
                   <p className="mt-2 text-sm font-medium">Local context</p>
                   <p className="mt-1 text-xs text-white/60">Real areas, real travel times.</p>
                 </div>
                 <div>
-                  <HugeiconsIcon icon={RestaurantIcon} className="size-5 text-primary" />
+                  <div className="flex size-9 items-center justify-center rounded-2xl bg-primary/20">
+                    <HugeiconsIcon icon={RestaurantIcon} className="size-5 text-primary" />
+                  </div>
                   <p className="mt-2 text-sm font-medium">Food, stays, and stops</p>
                   <p className="mt-1 text-xs text-white/60">A full trip, not just a list.</p>
                 </div>
@@ -126,7 +139,7 @@ export default function HomePage() {
             </div>
 
             {/* Planner form */}
-            <div className="border border-white/18 bg-black/30 p-6 backdrop-blur-md sm:p-8">
+            <div className="rounded-3xl border border-white/18 bg-black/30 p-6 backdrop-blur-md sm:p-8">
               <h2 className="font-heading text-lg font-semibold text-white">
                 Build your trip
               </h2>
@@ -137,32 +150,34 @@ export default function HomePage() {
               <div className="mt-6 grid grid-cols-2 gap-4">
                 <label className="flex flex-col gap-1.5 text-xs font-medium text-white/70">
                   Days
-                  <select
-                    value={days}
-                    onChange={(e) => setDays(e.target.value)}
-                    className="border border-white/20 bg-white/10 px-3 py-2 text-sm text-white outline-none"
-                  >
-                    {[1, 2, 3, 4, 5, 6, 7].map((n) => (
-                      <option key={n} value={n} className="text-black">
-                        {n} {n === 1 ? "day" : "days"}
-                      </option>
-                    ))}
-                  </select>
+                  <Select value={days} onValueChange={setDays}>
+                    <SelectTrigger className="w-full border-white/20 bg-white/10 text-white [&_svg]:text-white/70">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+                        <SelectItem key={n} value={String(n)}>
+                          {n} {n === 1 ? "day" : "days"}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </label>
 
                 <label className="flex flex-col gap-1.5 text-xs font-medium text-white/70">
                   Travelers
-                  <select
-                    value={travelers}
-                    onChange={(e) => setTravelers(e.target.value)}
-                    className="border border-white/20 bg-white/10 px-3 py-2 text-sm text-white outline-none"
-                  >
-                    {travelerOptions.map((t) => (
-                      <option key={t.value} value={t.value} className="text-black">
-                        {t.label}
-                      </option>
-                    ))}
-                  </select>
+                  <Select value={travelers} onValueChange={setTravelers}>
+                    <SelectTrigger className="w-full border-white/20 bg-white/10 text-white [&_svg]:text-white/70">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {travelerOptions.map((t) => (
+                        <SelectItem key={t.value} value={t.value}>
+                          {t.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </label>
               </div>
 
@@ -170,19 +185,19 @@ export default function HomePage() {
                 <p className="text-xs font-medium text-white/70">Budget</p>
                 <div className="mt-2 grid grid-cols-3 gap-2">
                   {budgetTierList.map((tier) => (
-                    <button
+                    <Button
                       key={tier.value}
                       type="button"
+                      size="sm"
+                      variant={budget === tier.value ? "default" : "outline"}
                       onClick={() => setBudget(tier.value)}
                       className={cn(
-                        "border px-2 py-2 text-xs font-medium transition",
-                        budget === tier.value
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-white/20 text-white/80 hover:border-white/40"
+                        budget !== tier.value &&
+                          "border-white/20 bg-transparent text-white/80 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       {tier.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -191,19 +206,19 @@ export default function HomePage() {
                 <p className="text-xs font-medium text-white/70">Pace</p>
                 <div className="mt-2 grid grid-cols-3 gap-2">
                   {paceOptions.map((p) => (
-                    <button
+                    <Button
                       key={p.value}
                       type="button"
+                      size="sm"
+                      variant={pace === p.value ? "default" : "outline"}
                       onClick={() => setPace(p.value)}
                       className={cn(
-                        "border px-2 py-2 text-xs font-medium transition",
-                        pace === p.value
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-white/20 text-white/80 hover:border-white/40"
+                        pace !== p.value &&
+                          "border-white/20 bg-transparent text-white/80 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       {p.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -212,28 +227,24 @@ export default function HomePage() {
                 <p className="text-xs font-medium text-white/70">Interests</p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {interestOptions.map((interest) => (
-                    <button
+                    <Button
                       key={interest}
                       type="button"
+                      size="sm"
+                      variant={interests.includes(interest) ? "secondary" : "outline"}
                       onClick={() => toggleInterest(interest)}
                       className={cn(
-                        "border px-3 py-1.5 text-xs transition",
-                        interests.includes(interest)
-                          ? "border-white bg-white text-black"
-                          : "border-white/20 text-white/80 hover:border-white/40"
+                        !interests.includes(interest) &&
+                          "border-white/20 bg-transparent text-white/80 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       {interest}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
 
-              <Button
-                size="lg"
-                className="mt-6 w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                onClick={handleGenerate}
-              >
+              <Button size="lg" className="mt-6 w-full" onClick={handleGenerate}>
                 Generate trip
                 <HugeiconsIcon icon={ArrowRight02Icon} className="size-4" />
               </Button>

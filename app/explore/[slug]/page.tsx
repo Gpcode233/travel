@@ -17,6 +17,7 @@ import { SiteHeader } from "@/components/site-header"
 import { PlaceCard } from "@/components/place-card"
 import { PlaceImageCarousel } from "@/components/place-image-carousel"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { allPlaces, findPlaceBySlug } from "@/lib/enugu-data"
 
 export function generateStaticParams() {
@@ -101,22 +102,22 @@ export default async function PlaceDetailsPage({
 
         <div className="mt-6 flex flex-wrap gap-4 text-sm">
           {place.time && (
-            <span className="inline-flex items-center gap-1.5 border px-3 py-1.5">
+            <Badge variant="outline" className="h-auto gap-1.5 px-3 py-1.5">
               <HugeiconsIcon icon={Clock01Icon} className="size-4" />
               {place.time}
-            </span>
+            </Badge>
           )}
           {place.priceLevel && (
-            <span className="inline-flex items-center gap-1.5 border px-3 py-1.5">
+            <Badge variant="outline" className="h-auto gap-1.5 px-3 py-1.5">
               <HugeiconsIcon icon={Tag01Icon} className="size-4" />
               {place.priceLevel}
-            </span>
+            </Badge>
           )}
           {place.address && (
-            <span className="inline-flex items-center gap-1.5 border px-3 py-1.5">
+            <Badge variant="outline" className="h-auto gap-1.5 px-3 py-1.5">
               <HugeiconsIcon icon={Location05Icon} className="size-4" />
               {place.address}
-            </span>
+            </Badge>
           )}
         </div>
 

@@ -29,8 +29,15 @@ export function SiteHeader({
           href="/"
           className="flex items-center gap-2 text-sm font-medium"
         >
-          <HugeiconsIcon icon={CompassIcon} className="size-5" />
-          <span className="font-heading font-bold text-base tracking-tight">Trails</span>
+          <HugeiconsIcon icon={CompassIcon} className="size-5 text-primary" />
+          <span
+            className={cn(
+              "font-heading font-bold text-base tracking-tight",
+              overlay ? "text-white" : "text-foreground"
+            )}
+          >
+            Trails
+          </span>
         </Link>
         <nav
           className={cn(
@@ -113,7 +120,7 @@ export function SiteHeader({
                 <RegisterLink>
                   <Button
                     size="sm"
-                    className="h-8 rounded-xs bg-blue-600 px-3.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-700"
+                    className="h-8 px-3.5 text-xs font-semibold"
                   >
                     Sign up
                   </Button>
