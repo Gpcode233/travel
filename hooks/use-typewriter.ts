@@ -10,7 +10,7 @@ interface UseTypewriterOptions {
 
 export function useTypewriter(
   phrases: string[],
-  { typingSpeed = 55, deletingSpeed = 30, pauseDuration = 2200 }: UseTypewriterOptions = {}
+  { typingSpeed = 95, deletingSpeed = 50, pauseDuration = 2200 }: UseTypewriterOptions = {}
 ) {
   const [phraseIndex, setPhraseIndex] = useState(0)
   const [charIndex, setCharIndex] = useState(0)

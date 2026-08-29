@@ -130,14 +130,14 @@ export default function HomePage() {
 
           <div className="mt-16 grid gap-10 lg:mt-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
             <div className="text-white">
-              <h1 className="mt-4 min-h-[2.2em] font-heading text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl lg:text-7xl">
+              <h1 className="mt-4 min-h-[3.3em] font-heading text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl lg:text-7xl">
                 {typedTitle}
                 <span className="animate-blink-cursor ml-0.5 inline-block w-0.5 bg-white align-middle" style={{ height: "0.85em" }} />
               </h1>
               <p className="mt-5 max-w-xl text-base leading-7 text-white/80 sm:text-lg">
-                Browse waterfalls, hotels, restaurants, and cultural stops, then
-                hand off to the Trails agent to shape a practical itinerary
-                with local context.
+                Discover Enugu on a budget, without the legwork. Trails finds the places worth 
+                experiencing, from waterfalls and resorts to hotels, restaurants, and cultural gems, 
+                then shapes them into a practical itinerary with local context.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
