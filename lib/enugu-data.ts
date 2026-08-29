@@ -177,7 +177,8 @@ export const enuguHotels: Place[] = [
     kind: "Budget hotel",
     priceLevel: "From $32/night",
     address: "New GRA, Trans-Ekulu, Enugu",
-    image: wikimedia("Oriental_Hotel.jpg"),
+    image: "/images/zubani_1.webp",
+    images: ["/images/zubani_2.webp", "/images/zubani_3.webp"],
     note: "Budget rooms 20 minutes from the airport, near Polo Park Mall.",
     description:
       "A budget-friendly hotel in New GRA, Trans-Ekulu, roughly a 21-minute drive from Akanu Ibiam International Airport and a 10-minute drive from Polo Park Mall and Enugu Golf Course. A practical base for a lean-budget trip that still wants a central location.",
@@ -190,9 +191,8 @@ export const enuguHotels: Place[] = [
     kind: "Budget hotel",
     priceLevel: "From $25/night",
     address: "52/6 Peace Ozor Street, Phase 6, Trans-Ekulu, Enugu",
-    image: wikimedia(
-      "Interior_of_the_Lagos_Oriental_Hotel_in_Victoria_Island,_Lagos_State._Nigeria_(6).jpg"
-    ),
+    image: "/images/golden_movida_1.webp",
+    images: ["/images/golden_movida_2.webp", "/images/golden_movida_3.webp"],
     note: "Straightforward budget stay in Trans-Ekulu, beside a police post.",
     description:
       "A budget hotel in the Trans-Ekulu district, beside a police post on Peace Ozor Street. Suits a lean-budget itinerary that needs simple, secure rooms without resort extras.",
@@ -239,47 +239,11 @@ export const enuguHotels: Place[] = [
     kind: "4-star hotel",
     priceLevel: "From $59/night",
     address: "10 Bissala Road, Independence Layout, Enugu",
-    image: wikimedia("Swimming_Pool_at_Kwara_Hotel.jpg"),
-    images: [
-      wikimedia(
-        "Interior_of_the_Lagos_Oriental_Hotel_in_Victoria_Island,_Lagos_State._Nigeria_(6).jpg"
-      ),
-    ],
+    image: "/images/GoldenRoyale_1.webp",
+    images: ["/images/GoldenRoyale_2.webp", "/images/GoldenRoyale_3.webp"],
     note: "Indoor + outdoor pool, sauna, gym and garden on Bissala Road.",
     description:
       "A 4-star hotel on Bissala Road in Independence Layout, with an indoor swimming pool, sauna, garden, and an outdoor pool. Rooms come with air-conditioning, balconies, kitchenette, and free Wi-Fi. Restaurant, bar, shared lounge, fitness room, cooked-to-order breakfast, laundry, and 24-hour front desk on site. A comfort-tier pick right in Independence Layout.",
-  },
-  {
-    slug: "grace-manor-hotels-and-suites",
-    name: "Grace Manor Hotels & Suites",
-    category: "hotel",
-    area: "Independence Layout",
-    kind: "Budget hotel",
-    priceLevel: "From ₦35,000/night",
-    address: "2A Nnanna Atuonwu Drive, Liberty Estate, Enugu",
-    image: wikimedia("Oriental_Hotel.jpg"),
-    note: "20-room budget stay off Liberty Estate, with an outdoor pool.",
-    description:
-      "A 20-room budget hotel on Nnanna Atuonwu Drive in Liberty Estate, near Independence Layout, with an outdoor pool, free Wi-Fi, and free parking. A lean-budget base that still gets a pool and a residential-estate location.",
-    recommendPriority: 6,
-    rooms: [
-      {
-        name: "Standard Room",
-        pricePerNight: 35_000,
-        formattedPrice: "₦35,000/night",
-        maxOccupancy: 2,
-        amenities: ["AC", "Double bed", "Free Wi-Fi", "Pool access", "Parking"],
-        description: "Simple, clean room in a quiet Liberty Estate residential setting.",
-      },
-      {
-        name: "Deluxe Room",
-        pricePerNight: 55_000,
-        formattedPrice: "₦55,000/night",
-        maxOccupancy: 2,
-        amenities: ["AC", "King bed", "Bathtub", "Free Wi-Fi", "Pool access"],
-        description: "Upgraded room with a king bed and bathtub.",
-      },
-    ],
   },
   {
     slug: "gold-rhino-hotel-and-suites",
@@ -341,34 +305,6 @@ export const enuguHotels: Place[] = [
     ],
   },
   {
-    slug: "nondon-international-hotel",
-    name: "Nondon International Hotel",
-    category: "hotel",
-    area: "New Haven",
-    kind: "3-star hotel",
-    priceLevel: "From $114/night",
-    address: "2 Ituku Street, Upper Chime Avenue, New Haven, Enugu",
-    image: wikimedia("Swimming_Pool_at_Kwara_Hotel.jpg"),
-    note: "13-room 3-star hotel in New Haven, pool, gym and poolside bar.",
-    description:
-      "A 3-star, 13-room hotel on Ituku Street off Upper Chime Avenue in New Haven, about 6km from Akanu Ibiam International Airport. Rooms span Standard, Executive, Super Executive, and Royal Suite tiers, each with bay windows, a granite work desk, Wi-Fi, air-conditioning, and a stocked mini bar. On-site restaurant serving local and continental food, poolside bar, swimming pool, and gym. Check-in from noon.",
-  },
-  {
-    slug: "budget-inn-by-maryjane",
-    name: "Budget Inn",
-    category: "hotel",
-    area: "New Haven",
-    kind: "Budget guest house / shortlet",
-    priceLevel: "₦5,000–₦15,000/night",
-    address: "New Haven, Enugu",
-    image: wikimedia(
-      "Interior_of_the_Lagos_Oriental_Hotel_in_Victoria_Island,_Lagos_State._Nigeria_(6).jpg"
-    ),
-    note: "Cheapest option on the list, simple shortlet rooms in New Haven.",
-    description:
-      "A budget guest house running shortlet rooms in New Haven from roughly ₦5,000 to ₦15,000 a night, the cheapest tier on this list. No resort extras, just a secure, simple room for travellers watching cost over comfort.",
-  },
-  {
     slug: "muse-boutique-hotel",
     name: "MUSE Boutique Hotel",
     category: "hotel",
@@ -376,8 +312,8 @@ export const enuguHotels: Place[] = [
     kind: "5-star premium hotel",
     priceLevel: "From ₦95,000/night",
     address: "189 Upper Chime Avenue, Enugu",
-    image: wikimedia("Swimming_Pool_at_Kwara_Hotel.jpg"),
-    images: [wikimedia("Oriental_Hotel.jpg")],
+    image: "/images/muse_boutique_1.webp",
+    images: ["/images/muse_boutique_2.webp", "/images/muse_boutique_3.webp"],
     note: "Newest premium hotel in Enugu, 7 minutes from the airport, spa + infinity-style pool.",
     description:
       "Enugu's newest 5-star boutique hotel, on Upper Chime Avenue, a 7-minute drive from Akanu Ibiam International Airport. 35 tastefully furnished rooms and suites with AC, flat-screen TVs, and safes. Full-service spa, fitness room, outdoor pool, free Wi-Fi, complimentary breakfast, tour desk, 24-hour front desk, and the O Lounge & Bar for indoor-outdoor dining with city views. The pick when the traveller wants the newest, most premium stay close to the airport.",
@@ -567,10 +503,8 @@ export const enuguHotels: Place[] = [
     kind: "Airport hotel",
     priceLevel: "From ₦55,000/night",
     address: "Airport Road, Enugu",
-    image: "https://images.pexels.com/photos/271619/pexels-photo-271619.jpeg?auto=compress&cs=tinysrgb&w=800",
-    images: [
-      "https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=800",
-    ],
+    image: "/images/oranto_airport_hotel_1.webp",
+    images: ["/images/oranto_airport_hotel_2.webp", "/images/oranto_airport_hotel_3.webp"],
     note: "5 minutes from Akanu Ibiam Airport, 24-hr reception, shuttle on request.",
     description:
       "Oranto International Airport Hotel sits on Airport Road within a short drive of Akanu Ibiam International Airport, making it the practical first-night or last-night choice for any Enugu trip. Rooms are well-maintained with all standard business amenities. A restaurant serves continental and local dishes around the clock, and the front desk can arrange airport shuttles and onward city transfers.",
@@ -610,10 +544,8 @@ export const enuguHotels: Place[] = [
     kind: "Mid-range hotel",
     priceLevel: "From ₦45,000/night",
     address: "New Haven, Enugu",
-    image: "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg?auto=compress&cs=tinysrgb&w=800",
-    images: [
-      "https://images.pexels.com/photos/1838554/pexels-photo-1838554.jpeg?auto=compress&cs=tinysrgb&w=800",
-    ],
+    image: "/images/bridgewaters_hotel_1.webp",
+    images: ["/images/bridgewaters_hotel_2.webp", "/images/bridgewaters_hotel_3.webp"],
     note: "Comfortable mid-range stay in New Haven with a pool, restaurant, and free parking.",
     description:
       "Bridgewaters Hotel is a well-regarded mid-range property in the New Haven district, a comfortable and well-connected neighbourhood close to restaurants, supermarkets, and the main Enugu ring road. The hotel offers en-suite rooms with AC, a swimming pool, an on-site restaurant, a bar, and free secure parking. A reliable choice for mid-budget travellers who want comfort without paying premium prices.",
@@ -672,22 +604,29 @@ export const enuguResorts: Place[] = [
     description:
       "Formerly Nike Lake Resort, Landmark Resorts Enugu sits on a 150-hectare lakefront estate in Abakpa Nike, roughly 15 minutes from the airport and 10 minutes from the city centre. Features renovated suites with lake views, a pool, watersports, the famous upside-down house, and lakeside dining. The natural anchor for a relaxed lakefront stay in Enugu.",
   },
-  {
-    slug: "eden-crest-hotel-and-resort",
-    name: "Eden Crest Hotel & Resort",
-    category: "resort",
-    area: "GRA",
-    kind: "Hotel + resort",
-    priceLevel: "From $45/night",
-    address: "4 Antrim Lane, off Abakaliki Road, GRA, Enugu",
-    image: wikimedia("Swimming_Pool_at_Kwara_Hotel.jpg"),
-    note: "Pool and Wi-Fi resort on Antrim Lane in GRA.",
-    description:
-      "A hotel-and-resort combo on Antrim Lane in GRA, off Abakaliki Road, with free Wi-Fi and a pool. A mid-priced resort option for a trip that wants pool downtime without Nike Lake Resort's scale.",
-  },
 ]
 
 export const enuguRestaurants: Place[] = [
+  {
+    slug: "roots-restaurant-and-cafe",
+    name: "Roots Restaurant & Café",
+    category: "restaurant",
+    area: "Independence Layout",
+    kind: "Café by day, upscale restaurant by night",
+    priceLevel: "₦3,000–₦15,000 per meal",
+    address: "Presidential Road / Plot 23C Independence Layout, by Okpara Square, Ogui, Enugu",
+    image: "/images/roots_1.webp",
+    images: [
+      "/images/roots_2.webp",
+      "/images/roots_3.webp",
+      "/images/roots_4.webp",
+      "/images/roots_5.webp",
+      "/images/roots_6.webp",
+    ],
+    note: "Cozy café by day, upscale dining by night — Africana, pastries, Chinese and continental.",
+    description:
+      "Roots Restaurant & Café bridges a relaxed daytime coffee house and an upscale evening restaurant on Presidential Road in Independence Layout, by Okpara Square. The menu spans authentic Nigerian 'Africana' dishes, fresh pastries, Chinese cuisine, and continental plates, served across indoor and outdoor seating, a café and coffee bar, private dining rooms, and a cocktail and wine bar. Free parking and event hosting are on site — a solid pick for both a daytime coffee stop and a proper sit-down dinner.",
+  },
   {
     slug: "the-manor",
     name: "The Manor",
@@ -696,23 +635,11 @@ export const enuguRestaurants: Place[] = [
     kind: "Fine dining, international + African",
     priceLevel: "₦5,000–₦20,000 per meal",
     address: "24 Chime Lane, GRA, Enugu",
-    image: wikimedia("A_well-garnished_Jollof_Rice.jpg"),
+    image: "/images/themanor_1.jpg",
+    images: ["/images/themanor_2.jpg", "/images/themanor_3.jpg"],
     note: "Fancy GRA dining room with spicy linguine and seafood platters.",
     description:
       "A fine-dining restaurant on Chime Lane in GRA, serving international and African dishes including spicy linguine with chicken and seafood platters. Meals run roughly ₦5,000 to ₦20,000. The pick for a sit-down evening rather than a quick food stop.",
-  },
-  {
-    slug: "dolphin-restaurant",
-    name: "Dolphin Restaurant",
-    category: "restaurant",
-    area: "GRA",
-    kind: "Nigerian + international, two-storey dining room",
-    priceLevel: "$$ (mid to upper)",
-    address: "1C Ekpunobi Street, GRA, Enugu",
-    image: wikimedia("A_tray_of_jollof_rice,_chicken_with_soft_drink.jpg"),
-    note: "Open since 1979, wide local and international menu over two floors.",
-    description:
-      "Open since 1979 on Ekpunobi Street in GRA, one of Enugu's oldest dining spots. A two-storey building with a wide range of local and international dishes, good soup choice, and a drinks list. Mid-to-upper priced, aimed at diners wanting a proper sit-down meal.",
   },
   {
     slug: "ntachi-osa",
@@ -731,6 +658,19 @@ export const enuguRestaurants: Place[] = [
 
 export const enuguNightlife: Place[] = [
   {
+    slug: "bush-house-arena",
+    name: "Bush House Arena",
+    category: "nightlife",
+    area: "Independence Layout",
+    kind: "Grill restaurant & bar",
+    priceLevel: "₦2,000–₦10,000 per person",
+    address: "42 Nza Street, Independence Layout, Enugu",
+    image: "/images/bushman_1.jpg",
+    note: "Vibrant grill spot with an extensive drinks menu and lively atmosphere.",
+    description:
+      "Bush House Arena is a vibrant grill restaurant and bar on Nza Street in Independence Layout, known for its lively atmosphere and extensive drinks menu alongside grilled meat and suya-style dishes. A solid pick for a relaxed evening of good food and drinks before moving on to a proper nightclub.",
+  },
+  {
     slug: "toscana-villa-enugu",
     name: "Toscana Villa",
     category: "nightlife",
@@ -738,7 +678,12 @@ export const enuguNightlife: Place[] = [
     kind: "Upscale lounge & events venue",
     priceLevel: "₦5,000–₦20,000 per person",
     address: "Independence Layout, Enugu",
-    image: "https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/Villa_Toscana_Hotel_Enugu_1.jpg",
+    images: [
+      "/images/Villa_Toscana_Hotel_Enugu_2.jpg",
+      "/images/Villa_Toscana_Hotel_Enugu_3.jpg",
+      "/images/Villa_Toscana_Hotel_Enugu_4.jpg",
+    ],
     note: "Enugu's top upscale lounge — cocktails, live music, and event nights.",
     description:
       "Toscana Villa is one of Enugu's premier upscale entertainment venues in Independence Layout, offering cocktails, a curated wine list, live music performances, and themed event nights. A go-to spot for an elevated evening out in the city.",
@@ -751,7 +696,8 @@ export const enuguNightlife: Place[] = [
     kind: "Gaming & entertainment centre",
     priceLevel: "₦2,000–₦8,000 per session",
     address: "GRA, Enugu",
-    image: "https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/volt_arena_1.webp",
+    images: ["/images/volt_arena_2.webp", "/images/volt_arena_3.webp"],
     note: "Multi-level gaming and entertainment arena — VR, arcade, bowling, bar.",
     description:
       "Volt Arena is a modern multi-level entertainment complex in GRA featuring VR gaming stations, arcade games, bowling alleys, and a full bar. A popular spot for groups looking for an active evening of fun before or after dinner.",
@@ -764,7 +710,13 @@ export const enuguNightlife: Place[] = [
     kind: "Nightclub & lounge",
     priceLevel: "₦3,000–₦15,000",
     address: "Independence Layout, Enugu",
-    image: "https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/grand_eastman_1.webp",
+    images: [
+      "/images/grand_eastman_2.webp",
+      "/images/grand_eastman_3.webp",
+      "/images/grand_eastman_4.webp",
+      "/images/grand_eastman_5.webp",
+    ],
     note: "Vibrant nightclub with DJ sets, Afrobeats, and bottle service.",
     description:
       "Grand East Man is a high-energy nightclub in Independence Layout running nightly DJ sets, Afrobeats and Afrofusion mixes, and VIP bottle-service tables. One of Enugu's liveliest spots from Thursday through Sunday.",
@@ -790,7 +742,7 @@ export const enuguNightlife: Place[] = [
     kind: "Premium nightclub & lounge",
     priceLevel: "₦5,000–₦30,000",
     address: "Independence Layout, Enugu",
-    image: "https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800",
+    image: "/images/gustavobycubana_1.webp",
     note: "Flagship premium nightclub chain — bottle service, celebrity appearances, big DJ nights.",
     description:
       "Cubana is part of Nigeria's well-known premium nightclub and hospitality brand, with the Enugu location in Independence Layout. Expect elaborate bottle presentations, big DJ nights, celebrity appearances, and a high-energy atmosphere that runs until the early hours.",
