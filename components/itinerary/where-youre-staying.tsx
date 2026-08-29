@@ -50,7 +50,7 @@ export function WhereYoureStaying({
                   <div
                     className={`absolute top-2.5 left-2.5 rounded-xs px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase text-white shadow-sm ${
                       hotel.badge === "BEST MATCH"
-                        ? "bg-blue-600"
+                        ? "bg-primary"
                         : "bg-black/65 backdrop-blur-sm"
                     }`}
                   >
@@ -105,7 +105,7 @@ export function WhereYoureStaying({
                     variant={isSelected ? "default" : "outline"}
                     className={`w-full rounded-xs text-xs font-semibold ${
                       isSelected
-                        ? "bg-blue-600 hover:bg-blue-700 text-white"
+                        ? "bg-primary hover:bg-primary/90 text-primary-foreground"
                         : "border-border hover:bg-muted text-foreground"
                     }`}
                   >

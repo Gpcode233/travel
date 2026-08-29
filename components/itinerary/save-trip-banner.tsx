@@ -159,7 +159,7 @@ export function SaveTripBanner({
       <div className="sticky bottom-0 z-30 w-full border-t border-border/80 bg-background/95 py-3.5 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={SparklesIcon} className="size-4 text-blue-500 hidden sm:inline-block" />
+            <HugeiconsIcon icon={SparklesIcon} className="size-4 text-primary hidden sm:inline-block" />
             <p className="text-xs sm:text-sm font-medium text-foreground">
               {saved ? "Saved to dossier · Ready to book" : "Ready to book? Save and reserve your hotel."}
             </p>
@@ -192,7 +192,7 @@ export function SaveTripBanner({
 
             <Button
               onClick={handleBookClick}
-              className="rounded-xs bg-blue-600 px-5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700"
+              className="rounded-xs bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90"
             >
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={ShoppingCart01Icon} className="size-4" />
@@ -206,7 +206,7 @@ export function SaveTripBanner({
       <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="space-y-2">
-            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-blue-500/10 text-blue-600">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <HugeiconsIcon icon={Bookmark02Icon} className="size-6" />
             </div>
             <DialogTitle className="text-center font-heading text-xl">
@@ -219,7 +219,7 @@ export function SaveTripBanner({
 
           <div className="mt-4 flex flex-col gap-3">
             <LoginLink className="w-full" postLoginRedirectURL={postLoginUrl}>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium flex items-center justify-center gap-2">
+              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium flex items-center justify-center gap-2">
                 <HugeiconsIcon icon={Mail01Icon} className="size-4" />
                 Sign in with Email
               </Button>

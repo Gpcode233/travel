@@ -109,7 +109,7 @@ export function RouteMap({
           <h3 className="font-heading font-bold text-foreground text-base">Route Map</h3>
         </div>
         {timeSavedMinutes > 0 && (
-          <div className="flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-medium text-blue-600">
+          <div className="flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
             <HugeiconsIcon icon={FlashIcon} className="size-3" />
             <span>{timeSavedMinutes} min saved</span>
           </div>
@@ -155,8 +155,8 @@ export function RouteMap({
                   <div
                     className={`flex size-6 items-center justify-center rounded-full text-[11px] font-bold text-white shadow-md transition-all duration-200 ${
                       isSelected || isHovered
-                        ? "scale-125 bg-blue-600 ring-4 ring-blue-500/30"
-                        : "bg-blue-500 hover:scale-110 hover:bg-blue-600"
+                        ? "scale-125 bg-primary ring-4 ring-primary/30"
+                        : "bg-primary hover:scale-110 hover:bg-primary/90"
                     }`}
                   >
                     {idx + 1}

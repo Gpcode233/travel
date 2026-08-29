@@ -66,7 +66,7 @@ export function EstBudgetBreakdownCard({ breakdown }: EstBudgetBreakdownProps) {
           <span className="font-heading font-bold text-foreground text-base sm:text-lg">
             Total
           </span>
-          <span className="font-heading font-bold text-blue-600 text-lg sm:text-xl tracking-tight">
+          <span className="font-heading font-bold text-primary text-lg sm:text-xl tracking-tight">
             {breakdown.formattedTotal}
           </span>
         </div>

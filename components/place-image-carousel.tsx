@@ -19,7 +19,7 @@ export function PlaceImageCarousel({
   alt: string
 }) {
   const autoplay = useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: true, stopOnMouseEnter: true })
+    Autoplay({ delay: 2300, stopOnInteraction: true, stopOnMouseEnter: true })
   )
 
   return (

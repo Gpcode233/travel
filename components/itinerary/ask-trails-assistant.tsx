@@ -110,7 +110,7 @@ export function AskTrailsAssistant({ onApplyAction }: AskTrailsAssistantProps) {
         >
           <HugeiconsIcon
             icon={SparklesIcon}
-            className="size-4 text-blue-600 group-hover:scale-110 transition-transform"
+            className="size-4 text-primary group-hover:scale-110 transition-transform"
           />
           <span>Ask Trails</span>
         </button>
@@ -121,7 +121,7 @@ export function AskTrailsAssistant({ onApplyAction }: AskTrailsAssistantProps) {
         <SheetContent side="right" className="w-full sm:max-w-md flex flex-col p-6">
           <SheetHeader className="text-left border-b pb-4">
             <div className="flex items-center gap-2">
-              <div className="flex size-7 items-center justify-center rounded-xs bg-blue-600 text-white">
+              <div className="flex size-7 items-center justify-center rounded-xs bg-primary text-primary-foreground">
                 <HugeiconsIcon icon={SparklesIcon} className="size-4" />
               </div>
               <SheetTitle className="font-heading text-lg font-bold">
@@ -135,11 +135,11 @@ export function AskTrailsAssistant({ onApplyAction }: AskTrailsAssistantProps) {
 
           {/* Assistant Status Feedback */}
           {lastActionStatus && (
-            <div className="my-3 flex items-center gap-2 rounded-xs border border-blue-500/30 bg-blue-500/10 p-3 text-xs text-blue-700">
+            <div className="my-3 flex items-center gap-2 rounded-xs border border-primary/30 bg-primary/10 p-3 text-xs text-primary">
               {isProcessing ? (
                 <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin shrink-0" />
               ) : (
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-blue-600 shrink-0" />
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-primary shrink-0" />
               )}
               <span>{lastActionStatus}</span>
             </div>
@@ -191,7 +191,7 @@ export function AskTrailsAssistant({ onApplyAction }: AskTrailsAssistantProps) {
               <button
                 type="submit"
                 disabled={!customPrompt.trim() || isProcessing}
-                className="absolute right-1.5 top-1.5 flex size-7 items-center justify-center rounded-xs bg-blue-600 text-white disabled:opacity-40 hover:bg-blue-700"
+                className="absolute right-1.5 top-1.5 flex size-7 items-center justify-center rounded-xs bg-primary text-primary-foreground disabled:opacity-40 hover:bg-primary/90"
               >
                 <HugeiconsIcon icon={SentIcon} className="size-3.5" />
               </button>

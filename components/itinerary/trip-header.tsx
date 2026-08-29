@@ -158,7 +158,7 @@ export function TripHeader({
             </h1>
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
-              <span className="rounded-xs bg-blue-600 px-2 py-0.5 text-[11px] font-bold tracking-wider text-white uppercase">
+              <span className="rounded-xs bg-primary px-2 py-0.5 text-[11px] font-bold tracking-wider text-primary-foreground uppercase">
                 EST. COST
               </span>
               <span className="text-lg font-heading font-semibold text-white sm:text-2xl">

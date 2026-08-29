@@ -114,6 +114,15 @@
   animation: marquee 25s linear infinite;
 }
 
+@keyframes blink-cursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.animate-blink-cursor {
+  animation: blink-cursor 1s step-end infinite;
+}
+
 @keyframes shake {
   10%, 90% { transform: translateX(-1px); }
   20%, 80% { transform: translateX(2px); }

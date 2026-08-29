@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select"
 import { PlaceCard } from "@/components/place-card"
 import { PromoTicker } from "@/components/promo-ticker"
+import { useTypewriter } from "@/hooks/use-typewriter"
 import { cn } from "@/lib/utils"
 import { travelerOptions, budgetTierList } from "@/lib/budget-tiers"
 import { enuguAttractions, enuguHotels } from "@/lib/enugu-data"
@@ -36,13 +37,23 @@ const interestOptions = ["Nature", "Food", "Culture", "Adventure", "Nightlife"]
 
 const featuredPlaces = [...enuguAttractions.slice(0, 3), ...enuguHotels.slice(0, 1)]
 
+const heroCopies = [
+  "Discover Enugu. Experience it your way.",
+  "Your perfect Enugu experience starts here.",
+  "Explore Enugu with a trip built around you.",
+]
+
 const heroBackgrounds = [
   "/images/trails-background-2.png",
-  "/images/trails-background-3.webp",
+  "/images/trails_background_3.png",
+  "/images/trails_background_4.webp",
+  "/images/trails_background_5.jpg",
+  "/images/trails_background_6.webp",
 ]
 
 export default function HomePage() {
   const router = useRouter()
+  const typedTitle = useTypewriter(heroCopies)
 
   const [days, setDays] = useState("")
   const [travelers, setTravelers] = useState("")
@@ -51,7 +62,7 @@ export default function HomePage() {
   const [interests, setInterests] = useState<string[]>([])
   const [daysError, setDaysError] = useState(false)
   const [isShaking, setIsShaking] = useState(false)
-
+ 
   const formRef = useRef<HTMLDivElement>(null)
 
   const [heroIndex, setHeroIndex] = useState(0)
@@ -119,8 +130,9 @@ export default function HomePage() {
 
           <div className="mt-16 grid gap-10 lg:mt-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
             <div className="text-white">
-              <h1 className="mt-4 font-heading text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl lg:text-7xl">
-                Plan a smarter adventure through Enugu.
+              <h1 className="mt-4 min-h-[2.2em] font-heading text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl lg:text-7xl">
+                {typedTitle}
+                <span className="animate-blink-cursor ml-0.5 inline-block w-0.5 bg-white align-middle" style={{ height: "0.85em" }} />
               </h1>
               <p className="mt-5 max-w-xl text-base leading-7 text-white/80 sm:text-lg">
                 Browse waterfalls, hotels, restaurants, and cultural stops, then
