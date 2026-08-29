@@ -48,13 +48,8 @@ export const enuguAttractions: Place[] = [
     kind: "Waterfall + cave monastery",
     time: "Half day",
     priceLevel: "₦500–₦2,000 entry",
-    image: wikimedia(
-      "Awhum_monastery_cave_and_waterfall,_Enugu,_Nigeria.jpg"
-    ),
-    images: [
-      wikimedia("Awhum_monastery_cave_and_waterfall,_Enugu,_Nigeria_2.jpg"),
-      wikimedia("Awhum_monastery_cave_and_waterfall,_Enugu,_Nigeria_6.jpg"),
-    ],
+    image: "/images/awhum_waterfall_1.jpeg",
+    images: ["/images/awhum_waterfall_2.jpeg", "/images/awhum_waterfall_3.jpg"],
     note: "Cool valley walk, limestone scenery, prayer cave, strong photo stop.",
     description:
       "A 30-metre waterfall at Amu-Ugwu village in Udi Local Government Area, next to the Our Lady of Mount Calvary Monastery. The walk down the valley passes a limestone cave used for prayer before opening onto the falls. Wear grip footwear, the path is slippery after rain, and a local guide makes the cave section much easier to navigate.",
@@ -67,10 +62,11 @@ export const enuguAttractions: Place[] = [
     kind: "Forest trail + cave",
     time: "3-4 hours",
     priceLevel: "~₦500–₦1,000 entry (informal)",
-    image: wikimedia("Ngwo_Pine_Forest_Enugu.jpg"),
+    image: "/images/ngwo_pine_forest_1.jpg",
     images: [
-      wikimedia("Ngwo_Pine_Forest_Ngwo_Enugu.jpg"),
-      wikimedia("Through_the_pines.jpg"),
+      "/images/ngwo_pine_forest_2.jpg",
+      "/images/ngwo_pine_forest_3.webp",
+      "/images/ngwo_pine_forest_4.webp",
     ],
     note: "Pine canopy, short hike, cave stream, best with a local guide.",
     description:
@@ -121,7 +117,7 @@ export const enuguAttractions: Place[] = [
     kind: "Panoramic hill road",
     time: "1-2 hours",
     priceLevel: "Free",
-    image: wikimedia("IDANRE_HILLS_AKURE_iooj.jpg"),
+    image: "/images/miliken_hill_1.jpg",
     note: "Coal-mine-era hill road with a sweeping dusk view of Enugu city.",
     description:
       "A winding road built in 1909 through Enugu-Ngwo, named for the engineer who built it after coal was found in the hill. It sits about 100m above sea level and gives a panoramic view of Enugu metropolis, best at dawn or dusk. Old coal-mine tunnels remain beneath the hill.",
@@ -134,8 +130,7 @@ export const enuguAttractions: Place[] = [
     kind: "History + culture museum",
     time: "1-2 hours",
     priceLevel: "₦1,000 entry",
-    image: wikimedia("National_Museum_Of_Unity,Enugu.jpg"),
-    images: [wikimedia("Nat_Museum,_Enugu.jpg")],
+    image: "/images/national_musuem_enugu.jpg",
     note: "Coal City history and Igbo cultural galleries, easy indoor stop.",
     description:
       "Three galleries in the city centre: a Unity Gallery on shared belief systems across Nigerian ethnic groups, an Igbo Gallery on architectural, religious, and social life, and an 'Enugu the Coal City' gallery tracing the city's growth from coal discovery. An easy, air-conditioned stop to pair with a city-day itinerary.",
@@ -148,7 +143,8 @@ export const enuguAttractions: Place[] = [
     kind: "Urban park",
     time: "Short stop",
     priceLevel: "~₦1,000–₦2,000 entry",
-    image: wikimedia("Gigantic_Lion_Statue_in_Enugu_Unity_Park.jpg"),
+    image: "/images/unitypark_1.jpg",
+    images: ["/images/unitypark_2.jpg"],
     note: "Central green space with a landmark lion statue, good rest break.",
     description:
       "A central Enugu city park known for its large lion statue landmark, used for community gatherings and casual walks. Good for a short rest break between museum and city-square stops rather than a destination on its own.",
@@ -161,7 +157,7 @@ export const enuguAttractions: Place[] = [
     kind: "City square + events ground",
     time: "Short stop",
     priceLevel: "Free",
-    image: wikimedia("Tafawa_Balewa_Square,_Lagos,_Nigeria.jpg"),
+    image: "/images/micheal_okpara_square_1.png",
     note: "Civic square used for parades and fitness walks, easy city-day add-on.",
     description:
       "A civic square named for Michael Okpara, Premier of the former Eastern Nigeria region, used for national events, sports, and political rallies, and popular with locals as a morning fitness-walk spot. A quick add-on to a city-day route.",

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -9,7 +9,6 @@ import {
   CompassIcon,
   MapsIcon,
   RestaurantIcon,
-  SparklesIcon,
 } from "@hugeicons/core-free-icons"
 
 import { SiteHeader } from "@/components/site-header"
@@ -22,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { PlaceCard } from "@/components/place-card"
+import { PromoTicker } from "@/components/promo-ticker"
 import { cn } from "@/lib/utils"
 import { travelerOptions, budgetTierList } from "@/lib/budget-tiers"
 import { enuguAttractions, enuguHotels } from "@/lib/enugu-data"
@@ -36,14 +36,32 @@ const interestOptions = ["Nature", "Food", "Culture", "Adventure", "Nightlife"]
 
 const featuredPlaces = [...enuguAttractions.slice(0, 3), ...enuguHotels.slice(0, 1)]
 
+const heroBackgrounds = [
+  "/images/trails-background-2.png",
+  "/images/trails-background-3.webp",
+]
+
 export default function HomePage() {
   const router = useRouter()
 
-  const [days, setDays] = useState("3")
-  const [travelers, setTravelers] = useState("2")
-  const [budget, setBudget] = useState("mid-range")
-  const [pace, setPace] = useState("relaxed")
-  const [interests, setInterests] = useState<string[]>(["Nature", "Food", "Culture"])
+  const [days, setDays] = useState("")
+  const [travelers, setTravelers] = useState("")
+  const [budget, setBudget] = useState("")
+  const [pace, setPace] = useState("")
+  const [interests, setInterests] = useState<string[]>([])
+  const [daysError, setDaysError] = useState(false)
+  const [isShaking, setIsShaking] = useState(false)
+
+  const formRef = useRef<HTMLDivElement>(null)
+
+  const [heroIndex, setHeroIndex] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % heroBackgrounds.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [])
 
   function toggleInterest(interest: string) {
     setInterests((prev) =>
@@ -54,6 +72,14 @@ export default function HomePage() {
   }
 
   function handleGenerate() {
+    if (!days) {
+      setDaysError(true)
+      setIsShaking(true)
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+      setTimeout(() => setIsShaking(false), 500)
+      return
+    }
+
     const params = new URLSearchParams({
       days,
       travelers,
@@ -67,13 +93,18 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-background">
+      <PromoTicker variant="orange" />
+
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
-          <div
-            className="size-full bg-cover bg-center"
-            style={{ backgroundImage: "url(/images/landmark-resort-1.webp)" }}
-          />
+          {heroBackgrounds.map((src, index) => (
+            <div
+              key={src}
+              className="absolute inset-0 size-full bg-cover bg-center transition-opacity duration-1000"
+              style={{ backgroundImage: `url(${src})`, opacity: index === heroIndex ? 1 : 0 }}
+            />
+          ))}
           <div
             className="absolute inset-0"
             style={{
@@ -88,10 +119,6 @@ export default function HomePage() {
 
           <div className="mt-16 grid gap-10 lg:mt-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
             <div className="text-white">
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium tracking-[.16em] text-white/70 uppercase">
-                <HugeiconsIcon icon={SparklesIcon} className="size-3.5" />
-                Trails AI
-              </span>
               <h1 className="mt-4 font-heading text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl lg:text-7xl">
                 Plan a smarter adventure through Enugu.
               </h1>
@@ -139,7 +166,14 @@ export default function HomePage() {
             </div>
 
             {/* Planner form */}
-            <div className="rounded-3xl border border-white/18 bg-black/30 p-6 backdrop-blur-md sm:p-8">
+            <div
+              ref={formRef}
+              className={cn(
+                "rounded-3xl border bg-black/30 p-6 backdrop-blur-md sm:p-8",
+                daysError ? "border-destructive" : "border-white/18",
+                isShaking && "animate-shake"
+              )}
+            >
               <h2 className="font-heading text-lg font-semibold text-white">
                 Build your trip
               </h2>
@@ -150,9 +184,20 @@ export default function HomePage() {
               <div className="mt-6 grid grid-cols-2 gap-4">
                 <label className="flex flex-col gap-1.5 text-xs font-medium text-white/70">
                   Days
-                  <Select value={days} onValueChange={setDays}>
-                    <SelectTrigger className="w-full border-white/20 bg-white/10 text-white [&_svg]:text-white/70">
-                      <SelectValue />
+                  <Select
+                    value={days}
+                    onValueChange={(value) => {
+                      setDays(value)
+                      setDaysError(false)
+                    }}
+                  >
+                    <SelectTrigger
+                      className={cn(
+                        "w-full bg-white/10 text-white [&_svg]:text-white/70",
+                        daysError ? "border-destructive" : "border-white/20"
+                      )}
+                    >
+                      <SelectValue placeholder="Select days" />
                     </SelectTrigger>
                     <SelectContent>
                       {[1, 2, 3, 4, 5, 6, 7].map((n) => (
@@ -162,13 +207,18 @@ export default function HomePage() {
                       ))}
                     </SelectContent>
                   </Select>
+                  {daysError && (
+                    <span className="text-[11px] font-normal text-destructive">
+                      Number of days is required
+                    </span>
+                  )}
                 </label>
 
                 <label className="flex flex-col gap-1.5 text-xs font-medium text-white/70">
                   Travelers
                   <Select value={travelers} onValueChange={setTravelers}>
                     <SelectTrigger className="w-full border-white/20 bg-white/10 text-white [&_svg]:text-white/70">
-                      <SelectValue />
+                      <SelectValue placeholder="Select travelers" />
                     </SelectTrigger>
                     <SelectContent>
                       {travelerOptions.map((t) => (

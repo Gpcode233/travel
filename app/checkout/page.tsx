@@ -12,6 +12,7 @@ import {
   CheckmarkCircle02Icon,
   ShieldCheckIcon,
   InformationCircleIcon,
+  GiftIcon,
 } from "@hugeicons/core-free-icons"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
@@ -149,7 +150,22 @@ export default function CheckoutPage() {
           )}
         </div>
 
-        <div className="mt-8 space-y-4">
+        {/* Free airport pickup incentive */}
+        <div className="mt-8 flex items-start gap-3 rounded-2xl border border-primary/30 bg-primary/10 p-4">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <HugeiconsIcon icon={GiftIcon} className="size-4.5" />
+          </div>
+          <div>
+            <p className="font-heading text-sm font-semibold text-foreground">
+              You get a free gift: airport pickup included
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Book this stay and we'll drive you from the airport straight to your hotel — no extra charge, already covered by your booking.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 space-y-4">
           {/* Hotel — what you're paying for */}
           <div className="rounded border border-border bg-card p-5">
             <div className="flex items-start gap-3">
@@ -193,9 +209,6 @@ export default function CheckoutPage() {
               </div>
               <span className="font-mono font-medium">{formatNGN(serviceFee)}</span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Includes complimentary airport pickup to your hotel.
-            </p>
           </div>
 
           {/* Total */}

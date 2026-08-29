@@ -12,18 +12,21 @@ const messages = [
 ]
 
 interface PromoTickerProps {
-  variant?: "dark" | "light"
+  variant?: "dark" | "light" | "orange"
   className?: string
 }
 
 export function PromoTicker({ variant = "light", className }: PromoTickerProps) {
   const dark = variant === "dark"
+  const orange = variant === "orange"
 
   return (
     <div
       className={cn(
         "w-full overflow-hidden py-2.5",
-        dark
+        orange
+          ? "bg-primary"
+          : dark
           ? "border-y border-white/15 bg-white/8"
           : "border-y border-border bg-muted/60",
         className
@@ -35,15 +38,18 @@ export function PromoTicker({ variant = "light", className }: PromoTickerProps) 
             key={i}
             className={cn(
               "inline-flex items-center gap-2 px-8 text-xs font-medium",
-              dark ? "text-white/80" : "text-foreground/70"
+              orange ? "text-primary-foreground" : dark ? "text-white/80" : "text-foreground/70"
             )}
           >
             <HugeiconsIcon
               icon={AirplaneTakeOff01Icon}
-              className={cn("size-3.5 shrink-0", dark ? "text-white/50" : "text-muted-foreground")}
+              className={cn(
+                "size-3.5 shrink-0",
+                orange ? "text-primary-foreground/80" : dark ? "text-white/50" : "text-muted-foreground"
+              )}
             />
             {msg}
-            <span className={cn("mx-2", dark ? "text-white/25" : "text-border")}>·</span>
+            <span className={cn("mx-2", orange ? "text-primary-foreground/40" : dark ? "text-white/25" : "text-border")}>·</span>
           </span>
         ))}
       </div>

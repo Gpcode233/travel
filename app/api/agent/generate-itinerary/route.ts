@@ -1,4 +1,4 @@
-import { generateText, tool, stepCountIs } from "ai"
+import { generateText, generateObject, tool, stepCountIs } from "ai"
 import { groq } from "@ai-sdk/groq"
 import { z } from "zod"
 import { NextResponse } from "next/server"
@@ -166,68 +166,62 @@ For places not in the platform, use realistic Enugu coordinates (latitude 6.3–
       },
     })
 
-    // Phase 2: format-only pass, no tools bound — asking a tool-free model for
-    // "JSON only" is reliable; mixing that instruction with live tools is not.
-    const formatSystemPrompt = `Turn the research notes into a detailed day-by-day trip itinerary JSON. Respond with ONLY valid JSON, no explanation, no markdown fences. Match this exact structure:
-{
-  "tripTitle": "string",
-  "days": [
-    {
-      "title": "string (e.g. 'Waterfalls & Heritage')",
-      "summary": "string (1-2 sentences about the day)",
-      "activities": [
-        {
-          "title": "string",
-          "description": "string (2-3 sentences)",
-          "startTime": "string (e.g. '9:00 AM')",
-          "durationMinutes": number,
-          "estimatedCost": number,
-          "category": "food|nature|culture|attraction|adventure|relaxation|transport|hotel|nightlife",
-          "tags": ["string"],
-          "locationName": "string",
-          "locationArea": "string",
-          "latitude": number,
-          "longitude": number,
-          "travelFromPreviousMinutes": number,
-          "travelMode": "drive|walk|transit"
-        }
-      ]
-    }
-  ]
-}
+    // Phase 2: format pass, one day at a time. Asking for the whole trip's JSON
+    // in a single call made the model truncate or malform later days once the
+    // output got long (5+ days worth of activities) — generating one day per
+    // call keeps each response small enough to come back complete and valid
+    // every time, and a schema-validated generateObject call can't return
+    // unparsable JSON the way a raw text completion could.
+    const activitySchema = z.object({
+      title: z.string(),
+      description: z.string(),
+      startTime: z.string(),
+      durationMinutes: z.number(),
+      estimatedCost: z.number(),
+      category: z.enum([
+        "food", "nature", "culture", "attraction", "adventure",
+        "relaxation", "transport", "hotel", "nightlife",
+      ]),
+      tags: z.array(z.string()),
+      locationName: z.string(),
+      locationArea: z.string(),
+      latitude: z.number(),
+      longitude: z.number(),
+      travelFromPreviousMinutes: z.number(),
+      travelMode: z.enum(["drive", "walk", "transit"]),
+    })
+
+    const daySchema = z.object({
+      title: z.string(),
+      summary: z.string(),
+      activities: z.array(activitySchema).length(activitiesPerDay + 3),
+    })
+
+    const formatSystemPrompt = (dayNumber: number, usedTitles: string[]) => `Produce day ${dayNumber} of a ${daysCount}-day Enugu trip itinerary from the research notes below. Respond with structured data only.
 
 RULES:
-- Each day MUST have exactly these 3 meal slots (non-negotiable):
+- EXACTLY ${activitiesPerDay + 3} activities: 3 meals + ${activitiesPerDay} non-meal activities, ordered chronologically by startTime.
   1. BREAKFAST: startTime "8:00 AM", durationMinutes 45, category "food" ${hotelHasBreakfast ? `(always "Breakfast at ${selectedHotel.name}", cost 0, category "hotel", use hotel coordinates)` : "(the nearby breakfast spot from research, budget-appropriate cost)"}
   2. LUNCH: startTime "12:30 PM", durationMinutes 60, category "food" (a real restaurant from research)
   3. DINNER: startTime "7:30 PM", durationMinutes 75, category "food" (a real restaurant from research, include description)
-- Plus ${activitiesPerDay} additional non-meal activities spread across the day, using real places from research
-- Total activities per day = ${activitiesPerDay + 3} (3 meals + ${activitiesPerDay} activities)
-- Order activities chronologically by startTime
-- Generate exactly ${daysCount} unique days, no repeated activities across days
+- The ${activitiesPerDay} non-meal activities must use real places from the research notes
+- Do not repeat any of these activities already used on earlier days: ${usedTitles.length ? usedTitles.join(", ") : "none yet"}
 - Costs in NGN (Nigerian Naira) per person
 - Budget tier: ${tierConfig.label} (₦${tierConfig.minPerPersonPerDay.toLocaleString()}–${tierConfig.maxPerPersonPerDay ? "₦" + tierConfig.maxPerPersonPerDay.toLocaleString() : "open"}/person/day)`
 
-    async function requestFormattedJson(extra?: string) {
-      const { text } = await generateText({
+    const days_: Array<{ title: string; summary: string; activities: any[] }> = []
+    for (let dayNumber = 1; dayNumber <= daysCount; dayNumber++) {
+      const usedTitles = days_.flatMap((d) => d.activities.map((a) => a.title))
+      const { object } = await generateObject({
         model: researchModel,
-        system: formatSystemPrompt,
-        prompt: `Research notes:\n${research.text}${extra ? `\n\n${extra}` : ""}`,
+        schema: daySchema,
+        system: formatSystemPrompt(dayNumber, usedTitles),
+        prompt: `Research notes:\n${research.text}`,
       })
-      const jsonMatch = text.match(/\{[\s\S]*\}/)
-      if (!jsonMatch) throw new Error("AI did not return valid JSON")
-      return JSON.parse(jsonMatch[0])
+      days_.push(object)
     }
 
-    let aiData
-    try {
-      aiData = await requestFormattedJson()
-    } catch (err: any) {
-      // One repair attempt — most failures here are a stray trailing comma or truncation.
-      aiData = await requestFormattedJson(
-        `Your previous response failed to parse as JSON (${err?.message}). Return the corrected, complete, valid JSON only.`
-      )
-    }
+    const aiData = { tripTitle: undefined as string | undefined, days: days_ }
 
     // Assemble full TripItinerary
     const baseDate = new Date()
