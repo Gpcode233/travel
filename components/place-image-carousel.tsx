@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useMemo, useRef } from "react"
 import Autoplay from "embla-carousel-autoplay"
 
 import {
@@ -22,12 +22,18 @@ export function PlaceImageCarousel({
     Autoplay({ delay: 2300, stopOnInteraction: true, stopOnMouseEnter: true })
   )
 
+  // embla-carousel requires opts/plugins to be stable references — a new
+  // array or object literal on every render forces it to keep re-initializing,
+  // which can prevent autoplay from ever settling into its loop.
+  const hasMultiple = images.length > 1
+  const opts = useMemo(() => ({ loop: hasMultiple }), [hasMultiple])
+  const plugins = useMemo(
+    () => (hasMultiple ? [autoplay.current] : []),
+    [hasMultiple]
+  )
+
   return (
-    <Carousel
-      className="mt-6 w-full"
-      opts={{ loop: images.length > 1 }}
-      plugins={images.length > 1 ? [autoplay.current] : []}
-    >
+    <Carousel className="mt-6 w-full" opts={opts} plugins={plugins}>
       <CarouselContent>
         {images.map((src, index) => (
           <CarouselItem key={src}>

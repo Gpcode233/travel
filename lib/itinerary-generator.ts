@@ -69,6 +69,17 @@ export const DEFAULT_PLANNING_STEPS: PlanningStep[] = [
   { id: "9", label: "Building your final route", status: "pending" },
 ]
 
+// Look up the real listing photo for a named place instead of falling back
+// to generic category stock photography.
+function findPlaceImage(name: string): string | undefined {
+  const needle = name.toLowerCase()
+  const match = allPlaces.find(
+    (p) =>
+      needle.includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(needle)
+  )
+  return match?.image
+}
+
 export function formatCurrency(amount: number): string {
   return `₦${amount.toLocaleString()}`
 }
@@ -389,19 +400,19 @@ export function generateDynamicTripItinerary(params: {
       activities: [
         {
           id: "act-1-1",
-          title: "Breakfast at Cafe",
-          description: "A local modern cafe offering traditional fusion dishes and fresh artisanal coffee.",
+          title: `Breakfast at ${selectedHotel.name}`,
+          description: `Start the day with breakfast at ${selectedHotel.name} before heading out.`,
           startTime: "9:00 AM",
           durationMinutes: 60,
           durationLabel: "1 hr",
-          estimatedCost: 8_000,
-          formattedCost: "₦8,000",
-          category: "food" as const,
-          tags: ["Food", "Cafe"],
-          imageUrl: "https://images.pexels.com/photos/103124/pexels-photo-103124.jpeg?auto=compress&cs=tinysrgb&w=800",
+          estimatedCost: 0,
+          formattedCost: "Included",
+          category: "hotel" as const,
+          tags: ["Food", "Hotel"],
+          imageUrl: selectedHotel.imageUrl,
           location: {
-            name: "The Manor / Chime Cafe",
-            area: "GRA",
+            name: selectedHotel.name,
+            area: selectedHotel.area,
             latitude: 6.456,
             longitude: 7.506,
           },
@@ -419,7 +430,7 @@ export function generateDynamicTripItinerary(params: {
           formattedCost: "₦5,000",
           category: "nature" as const,
           tags: ["Nature", "Hiking"],
-          imageUrl: "https://images.pexels.com/photos/142497/pexels-photo-142497.jpeg?auto=compress&cs=tinysrgb&w=800",
+          imageUrl: findPlaceImage("Ngwo Pine Forest") ?? "https://images.pexels.com/photos/142497/pexels-photo-142497.jpeg?auto=compress&cs=tinysrgb&w=800",
           location: {
             name: "Ngwo Pine Forest & Caves",
             area: "Ngwo",
@@ -440,7 +451,7 @@ export function generateDynamicTripItinerary(params: {
           formattedCost: "₦6,500",
           category: "food" as const,
           tags: ["Food", "Culture"],
-          imageUrl: "https://images.pexels.com/photos/6740517/pexels-photo-6740517.jpeg?auto=compress&cs=tinysrgb&w=800",
+          imageUrl: findPlaceImage("Ntachi-Osa") ?? "https://images.pexels.com/photos/6740517/pexels-photo-6740517.jpeg?auto=compress&cs=tinysrgb&w=800",
           location: {
             name: "Ntachi-Osa Restaurant",
             area: "New Haven",
@@ -461,7 +472,7 @@ export function generateDynamicTripItinerary(params: {
           formattedCost: "Free",
           category: "attraction" as const,
           tags: ["Sightseeing", "Sunset"],
-          imageUrl: "https://images.pexels.com/photos/38099166/pexels-photo-38099166.jpeg?auto=compress&cs=tinysrgb&w=800",
+          imageUrl: findPlaceImage("Milliken Hill") ?? "https://images.pexels.com/photos/38099166/pexels-photo-38099166.jpeg?auto=compress&cs=tinysrgb&w=800",
           location: {
             name: "Milliken Hill Lookout",
             area: "Ngwo / Enugu",
@@ -490,7 +501,7 @@ export function generateDynamicTripItinerary(params: {
           formattedCost: "₦8,000",
           category: "adventure" as const,
           tags: ["Nature", "Waterfall", "Hiking"],
-          imageUrl: "https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=800",
+          imageUrl: findPlaceImage("Awhum Waterfall") ?? "https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=800",
           location: {
             name: "Awhum Monastery & Falls",
             area: "Udi LGA",
@@ -511,7 +522,7 @@ export function generateDynamicTripItinerary(params: {
           formattedCost: "₦2,500",
           category: "culture" as const,
           tags: ["Culture", "History"],
-          imageUrl: "https://images.pexels.com/photos/20967/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=800",
+          imageUrl: findPlaceImage("National Museum of Unity") ?? "https://images.pexels.com/photos/20967/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=800",
           location: {
             name: "National Museum of Unity",
             area: "Enugu City",
@@ -532,7 +543,7 @@ export function generateDynamicTripItinerary(params: {
           formattedCost: "₦15,000",
           category: "food" as const,
           tags: ["Food", "Dinner"],
-          imageUrl: "https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=800",
+          imageUrl: findPlaceImage("Dolphin Restaurant") ?? "https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=800",
           location: {
             name: "Dolphin Restaurant",
             area: "GRA",
@@ -560,7 +571,7 @@ export function generateDynamicTripItinerary(params: {
           formattedCost: "₦6,000",
           category: "relaxation" as const,
           tags: ["Relaxation", "Boating"],
-          imageUrl: "https://images.pexels.com/photos/1430677/pexels-photo-1430677.jpeg?auto=compress&cs=tinysrgb&w=800",
+          imageUrl: findPlaceImage("Landmark Resorts Enugu") ?? "https://images.pexels.com/photos/1430677/pexels-photo-1430677.jpeg?auto=compress&cs=tinysrgb&w=800",
           location: {
             name: "Nike Lake Waterfront",
             area: "Abakpa Nike",
@@ -581,7 +592,7 @@ export function generateDynamicTripItinerary(params: {
           formattedCost: "₦10,000",
           category: "attraction" as const,
           tags: ["Shopping", "Culture"],
-          imageUrl: "https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg?auto=compress&cs=tinysrgb&w=800",
+          imageUrl: findPlaceImage("Michael Okpara Square") ?? "https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg?auto=compress&cs=tinysrgb&w=800",
           location: {
             name: "Michael Okpara Square",
             area: "Independence Layout",
@@ -602,7 +613,7 @@ export function generateDynamicTripItinerary(params: {
           formattedCost: "₦18,000",
           category: "food" as const,
           tags: ["Food", "Fine Dining"],
-          imageUrl: "https://images.pexels.com/photos/941861/pexels-photo-941861.jpeg?auto=compress&cs=tinysrgb&w=800",
+          imageUrl: findPlaceImage("The Manor") ?? "https://images.pexels.com/photos/941861/pexels-photo-941861.jpeg?auto=compress&cs=tinysrgb&w=800",
           location: {
             name: "The Manor",
             area: "GRA",

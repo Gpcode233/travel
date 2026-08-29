@@ -1,5 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "streamdown/styles.css";
+
+/* Streamdown (markdown renderer for AI chat responses) bakes real Tailwind
+   utility classes into its component bundle — without this, Tailwind's
+   default node_modules exclusion means those classes never get generated,
+   so tables/code blocks/lists render unstyled. */
+@source "../node_modules/streamdown/dist";
 
 @theme inline {
   --color-background: var(--background);

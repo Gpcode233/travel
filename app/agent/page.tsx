@@ -23,6 +23,7 @@ import {
   enuguNightlife,
   type Place,
 } from "@/lib/enugu-data"
+import { budgetTiers, type BudgetTierValue } from "@/lib/budget-tiers"
 import {
   ItineraryActivity,
   TripDossier,
@@ -48,6 +49,7 @@ function AgentWorkspaceContent() {
   const { isAuthenticated } = useKindeBrowserClient()
   const [pageState, setPageState] = useState<AgentPageState>("loading")
   const [itinerary, setItinerary] = useState<TripItinerary | null>(null)
+  const [requestedDossier, setRequestedDossier] = useState<Partial<TripDossier> | undefined>()
   const [activeDayNumber, setActiveDayNumber] = useState(1)
   const [hoveredActivityId, setHoveredActivityId] = useState<string | null>(null)
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null)
@@ -78,6 +80,17 @@ function AgentWorkspaceContent() {
 
     setPageState("loading")
     setActiveDayNumber(1)
+
+    // Show what was actually requested on the loading screen immediately,
+    // instead of waiting for the itinerary (whose dossier wasn't ready yet,
+    // so the loader was always falling back to its own hardcoded defaults).
+    const budgetTier = (budget as BudgetTierValue) in budgetTiers ? (budget as BudgetTierValue) : "mid-range"
+    setRequestedDossier({
+      daysCount: Number(days) || 3,
+      travelersCount: Number(travelers) || 2,
+      budgetTierLabel: budgetTiers[budgetTier].label,
+      pace: pace.charAt(0).toUpperCase() + pace.slice(1),
+    })
 
     // Try AI-generated itinerary; fall back to static generator on failure
     fetch("/api/agent/generate-itinerary", {
@@ -257,7 +270,7 @@ function AgentWorkspaceContent() {
   if (pageState === "loading") {
     return (
       <TripPlanningLoader
-        dossier={itinerary?.dossier}
+        dossier={itinerary?.dossier ?? requestedDossier}
         onComplete={handleLoaderComplete}
         isReady={itinerary !== null}
       />

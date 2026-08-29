@@ -69,6 +69,18 @@ function pickImage(category: string): string {
   return pool[idx]
 }
 
+// Prefer the real listing photo for a named place over generic category
+// stock photography, when the AI picked somewhere in the platform catalog.
+function findPlaceImage(name: string): string | undefined {
+  const needle = name.trim().toLowerCase()
+  if (!needle) return undefined
+  const match = allPlaces.find(
+    (p) =>
+      needle.includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(needle)
+  )
+  return match?.image
+}
+
 const platformPlacesContext = allPlaces
   .map((p) => `- ${p.name} (${p.category}, ${p.area}): ${p.note}`)
   .join("\n")
@@ -102,10 +114,6 @@ export async function POST(req: Request) {
     imageCounters = {}
     const accommodations = generateAccommodations(destination, budgetTier)
     const selectedHotel = accommodations[0]
-
-    const hotelHasBreakfast = selectedHotel.amenities?.some((a: string) =>
-      a.toLowerCase().includes("breakfast")
-    ) ?? (budgetTier !== "lean")
 
     const researchModel = groq("openai/gpt-oss-120b")
 
@@ -142,7 +150,7 @@ export async function POST(req: Request) {
     const researchPrompt = `Research real places for a ${daysCount}-day trip to ${destination}, Nigeria.
 Travelers: ${travelersCount}. Budget tier: ${budgetTier}. Pace: ${pace}. Interests: ${interestsList.join(", ")}.
 Hotel base: ${selectedHotel.name} (${selectedHotel.area}).
-${hotelHasBreakfast ? `This hotel includes breakfast.` : `This hotel does NOT include breakfast — find a nearby affordable breakfast spot.`}
+Every day's breakfast happens at the hotel itself.
 For each day, use search_locations to find real attractions matching the interests, plus real restaurants for lunch and dinner. If interests include nightlife, use search_locations with category "nightlife". Use browser_search for current prices or opening hours if useful.
 Write concise notes: for each day, list the specific places found (name, area, category) and a rough per-person cost in NGN.`
 
@@ -201,7 +209,7 @@ For places not in the platform, use realistic Enugu coordinates (latitude 6.3–
 
 RULES:
 - EXACTLY ${activitiesPerDay + 3} activities: 3 meals + ${activitiesPerDay} non-meal activities, ordered chronologically by startTime.
-  1. BREAKFAST: startTime "8:00 AM", durationMinutes 45, category "food" ${hotelHasBreakfast ? `(always "Breakfast at ${selectedHotel.name}", cost 0, category "hotel", use hotel coordinates)` : "(the nearby breakfast spot from research, budget-appropriate cost)"}
+  1. BREAKFAST: startTime "8:00 AM", durationMinutes 45, category "hotel", always titled "Breakfast at ${selectedHotel.name}", cost 0, locationName "${selectedHotel.name}", use the hotel's coordinates
   2. LUNCH: startTime "12:30 PM", durationMinutes 60, category "food" (a real restaurant from research)
   3. DINNER: startTime "7:30 PM", durationMinutes 75, category "food" (a real restaurant from research, include description)
 - The ${activitiesPerDay} non-meal activities must use real places from the research notes
@@ -246,7 +254,10 @@ RULES:
             formattedCost: act.estimatedCost ? formatCurrency(act.estimatedCost) : "Free",
             category: act.category ?? "attraction",
             tags: act.tags ?? [],
-            imageUrl: pickImage(act.category ?? "attraction"),
+            imageUrl:
+              findPlaceImage(act.locationName ?? "") ??
+              (act.category === "hotel" ? selectedHotel.imageUrl : undefined) ??
+              pickImage(act.category ?? "attraction"),
             location: {
               name: act.locationName,
               area: act.locationArea,

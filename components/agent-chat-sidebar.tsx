@@ -19,7 +19,7 @@ import {
   ConversationContent,
   ConversationEmptyState,
 } from "@/components/ai-elements/conversation"
-import { Message, MessageContent } from "@/components/ai-elements/message"
+import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message"
 
 interface AgentChatSidebarProps {
   open: boolean
@@ -81,15 +81,20 @@ export function AgentChatSidebar({
                 description="Get local context, prices, and tips grounded in real places."
               />
             )}
-            {messages.map((message) => (
-              <Message key={message.id} from={message.role}>
-                <MessageContent>
-                  {message.parts.map((part, i) =>
-                    part.type === "text" ? <span key={i}>{part.text}</span> : null
-                  )}
-                </MessageContent>
-              </Message>
-            ))}
+            {messages.map((message) => {
+              const text = message.parts
+                .filter((part) => part.type === "text")
+                .map((part) => part.text)
+                .join("")
+
+              return (
+                <Message key={message.id} from={message.role}>
+                  <MessageContent>
+                    <MessageResponse>{text}</MessageResponse>
+                  </MessageContent>
+                </Message>
+              )
+            })}
             {isBusy && (
               <Message from="assistant">
                 <MessageContent>

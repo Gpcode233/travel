@@ -18,7 +18,26 @@ import { prisma } from "@/lib/prisma"
 import { getOrCreateDbUser } from "@/lib/db-user"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
+import { allPlaces } from "@/lib/enugu-data"
 import type { TripItinerary, ItineraryDay, AccommodationOption } from "@/lib/itinerary-types"
+
+// Bookings don't capture a room tier directly — the accommodation prices in
+// itinerary-generator's HOTEL_POOL were deliberately set to match specific
+// room-tier prices in enugu-data.ts, so the closest-priced room tier for the
+// booked hotel is a reliable way to show what room they're actually in.
+function findBookedRoomName(hotelName: string, pricePerNight: number): string | undefined {
+  const place = allPlaces.find(
+    (p) => p.category === "hotel" && p.name.toLowerCase() === hotelName.toLowerCase()
+  )
+  if (!place?.rooms?.length) return undefined
+
+  return place.rooms.reduce((closest, room) =>
+    Math.abs(room.pricePerNight - pricePerNight) <
+    Math.abs(closest.pricePerNight - pricePerNight)
+      ? room
+      : closest
+  ).name
+}
 
 function formatNGN(amount: number) {
   return new Intl.NumberFormat("en-NG", {
@@ -64,6 +83,9 @@ export default async function TripDetailPage({
     accommodations.find((a) => a.id === selectedAccommodationId) ?? accommodations[0]
 
   const confirmedBooking = trip.bookings.find((b) => b.paystackStatus === "success")
+  const bookedRoomName = confirmedBooking
+    ? findBookedRoomName(confirmedBooking.hotelName, confirmedBooking.pricePerNight)
+    : undefined
 
   return (
     <main className="min-h-svh bg-background text-foreground">
@@ -207,6 +229,7 @@ export default async function TripDetailPage({
                   You&apos;re staying at{" "}
                   <span className="font-semibold">{confirmedBooking.hotelName}</span>
                   {confirmedBooking.hotelArea ? `, ${confirmedBooking.hotelArea}` : ""}
+                  {bookedRoomName ? ` — ${bookedRoomName}` : ""}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {confirmedBooking.nights} night{confirmedBooking.nights === 1 ? "" : "s"} ·{" "}
