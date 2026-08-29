@@ -16,6 +16,7 @@ import {
 import { SiteHeader } from "@/components/site-header"
 import { PlaceCard } from "@/components/place-card"
 import { PlaceImageCarousel } from "@/components/place-image-carousel"
+import { PlaceAgentActions } from "@/components/place-agent-actions"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { allPlaces, findPlaceBySlug } from "@/lib/enugu-data"
@@ -58,8 +59,6 @@ export default async function PlaceDetailsPage({
     .filter((item) => item.category === place.category && item.slug !== place.slug)
     .slice(0, 3)
 
-  const agentPrompt = `Tell me more about ${place.name} in ${place.area} and how to fit it into an Enugu itinerary.`
-
   return (
     <main className="min-h-svh bg-background text-foreground">
       <div className="border-b px-5 py-5 sm:px-8 lg:px-10">
@@ -92,12 +91,7 @@ export default async function PlaceDetailsPage({
             </h1>
             <p className="mt-2 text-muted-foreground">{place.kind}</p>
           </div>
-          <Button asChild size="lg">
-            <Link href={`/agent?prompt=${encodeURIComponent(agentPrompt)}`}>
-              <HugeiconsIcon icon={SparklesIcon} />
-              Ask the agent
-            </Link>
-          </Button>
+          <PlaceAgentActions place={place} />
         </div>
 
         <div className="mt-6 flex flex-wrap gap-4 text-sm">

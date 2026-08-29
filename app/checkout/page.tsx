@@ -157,10 +157,10 @@ export default function CheckoutPage() {
           </div>
           <div>
             <p className="font-heading text-sm font-semibold text-foreground">
-              You get a free gift: airport pickup included
+              Gift from us: Free Airport Pickup
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Book this stay and we'll drive you from the airport straight to your hotel — no extra charge, already covered by your booking.
+              Book this stay and we&apos;ll drive you from the airport straight to your hotel — no extra charge, already covered by your booking.
             </p>
           </div>
         </div>
