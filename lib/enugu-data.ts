@@ -572,6 +572,50 @@ export const enuguHotels: Place[] = [
     description:
       "A 4-star hotel on Nza Street in Independence Layout, right beside Government House. Free Wi-Fi and a pool make it a solid mid-to-premium pick for a comfort-focused Enugu stay close to the city centre.",
   },
+  {
+    slug: "hotel-new-york",
+    name: "Hotel New York",
+    category: "hotel",
+    area: "Independence Layout",
+    kind: "Premium hotel",
+    priceLevel: "From ₦70,000/night",
+    address: "Independence Layout, Enugu",
+    image: "/images/new_york_hotel_1.webp",
+    images: [
+      "/images/new_york_hotel_2.webp",
+      "/images/new_york_hotel_3.jpg",
+      "/images/new_york_hotel_4.jpg",
+    ],
+    note: "City-style premium hotel in Independence Layout with modern rooms and event space.",
+    description:
+      "Hotel New York brings a modern, city-inspired stay to Independence Layout, with well-furnished rooms, an on-site restaurant and bar, and event and conference facilities. A strong premium pick for travellers who want contemporary comfort close to Enugu's main business and dining strip.",
+    rooms: [
+      {
+        name: "Standard Room",
+        pricePerNight: 70_000,
+        formattedPrice: "₦70,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "Queen bed", "Smart TV", "Free Wi-Fi", "Breakfast"],
+        description: "Modern standard room with clean city-style furnishings.",
+      },
+      {
+        name: "Deluxe Room",
+        pricePerNight: 105_000,
+        formattedPrice: "₦105,000/night",
+        maxOccupancy: 2,
+        amenities: ["AC", "King bed", "Bathtub", "Minibar", "Work desk"],
+        description: "Upgraded deluxe room with premium finishes and a dedicated work desk.",
+      },
+      {
+        name: "Executive Suite",
+        pricePerNight: 160_000,
+        formattedPrice: "₦160,000/night",
+        maxOccupancy: 3,
+        amenities: ["AC", "Living room", "King bed", "Minibar", "Airport transfer"],
+        description: "Spacious suite with separate living area and complimentary airport transfer.",
+      },
+    ],
+  },
 ]
 
 export const enuguResorts: Place[] = [

@@ -217,17 +217,23 @@ RULES:
 - Costs in NGN (Nigerian Naira) per person
 - Budget tier: ${tierConfig.label} (₦${tierConfig.minPerPersonPerDay.toLocaleString()}–${tierConfig.maxPerPersonPerDay ? "₦" + tierConfig.maxPerPersonPerDay.toLocaleString() : "open"}/person/day)`
 
-    const days_: Array<{ title: string; summary: string; activities: any[] }> = []
-    for (let dayNumber = 1; dayNumber <= daysCount; dayNumber++) {
-      const usedTitles = days_.flatMap((d) => d.activities.map((a) => a.title))
-      const { object } = await generateObject({
-        model: researchModel,
-        schema: daySchema,
-        system: formatSystemPrompt(dayNumber, usedTitles),
-        prompt: `Research notes:\n${research.text}`,
+    // One generateObject call per day, fired in parallel — cuts wall-clock
+    // time from ~daysCount sequential LLM round-trips to one. Cross-day
+    // duplicate avoidance ("usedTitles") can't work in parallel since no day
+    // knows what the others picked; each day instead gets an explicit slice
+    // of the research notes to draw from, which keeps them naturally distinct.
+    const days_ = await Promise.all(
+      Array.from({ length: daysCount }, (_, i) => i + 1).map(async (dayNumber) => {
+        const { object } = await generateObject({
+          model: researchModel,
+          schema: daySchema,
+          system: formatSystemPrompt(dayNumber, []),
+          prompt: `Research notes (use only the places relevant to day ${dayNumber}; avoid places better suited to other days):\n${research.text}`,
+          providerOptions: { groq: { reasoningEffort: "low" as const } },
+        })
+        return object
       })
-      days_.push(object)
-    }
+    )
 
     const aiData = { tripTitle: undefined as string | undefined, days: days_ }
 

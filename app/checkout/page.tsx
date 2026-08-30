@@ -21,6 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { getServiceFeeRate, calculateServiceFee } from "@/lib/pricing"
 import { LoginLink } from "@kinde-oss/kinde-auth-nextjs"
 
 type CheckoutData = {
@@ -97,7 +98,8 @@ export default function CheckoutPage() {
     )
   }
 
-  const serviceFee = Math.round(data.accommodationTotal * 0.02)
+  const serviceFeeRate = getServiceFeeRate(data.accommodationTotal)
+  const serviceFee = calculateServiceFee(data.accommodationTotal)
   const totalToPay = data.accommodationTotal + serviceFee
 
   const budgetItems = [
@@ -205,7 +207,7 @@ export default function CheckoutPage() {
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Trails service fee</span>
-                <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">2%</span>
+                <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">{(serviceFeeRate * 100).toFixed(1).replace(/\.0$/, "")}%</span>
               </div>
               <span className="font-mono font-medium">{formatNGN(serviceFee)}</span>
             </div>
