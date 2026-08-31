@@ -9,6 +9,7 @@ import {
   CompassIcon,
   MapsIcon,
   RestaurantIcon,
+  Calendar01Icon,
 } from "@hugeicons/core-free-icons"
 
 import { SiteHeader } from "@/components/site-header"
@@ -20,6 +21,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { PlaceCard } from "@/components/place-card"
 import { PromoTicker } from "@/components/promo-ticker"
 import { useTypewriter } from "@/hooks/use-typewriter"
@@ -60,6 +67,8 @@ export default function HomePage() {
   const [budget, setBudget] = useState("")
   const [pace, setPace] = useState("")
   const [interests, setInterests] = useState<string[]>([])
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
+  const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [daysError, setDaysError] = useState(false)
   const [isShaking, setIsShaking] = useState(false)
  
@@ -98,6 +107,7 @@ export default function HomePage() {
       pace,
       interests: interests.join(", "),
       destination: "Enugu",
+      ...(startDate ? { startDate: startDate.toISOString().slice(0, 10) } : {}),
     })
     router.push(`/agent?${params.toString()}`)
   }
@@ -240,6 +250,40 @@ export default function HomePage() {
                       ))}
                     </SelectContent>
                   </Select>
+                </label>
+
+                <label className="col-span-2 flex flex-col gap-1.5 text-xs font-medium text-white/70">
+                  Start date
+                  <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full justify-start border-white/20 bg-white/10 text-left font-normal text-white hover:bg-white/15 hover:text-white [&_svg]:text-white/70"
+                      >
+                        <HugeiconsIcon icon={Calendar01Icon} className="size-4" />
+                        {startDate
+                          ? startDate.toLocaleDateString("en-GB", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })
+                          : "Pick a date (optional)"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={startDate}
+                        onSelect={(date) => {
+                          setStartDate(date)
+                          setDatePickerOpen(false)
+                        }}
+                        disabled={{ before: new Date() }}
+                        autoFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </label>
               </div>
 

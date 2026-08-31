@@ -10,14 +10,14 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json()
-    const { itinerary } = body
+    const { itinerary, title } = body
 
     if (!itinerary) {
       return NextResponse.json({ error: "Missing itinerary data." }, { status: 400 })
     }
 
     const trip = await prisma.trip.create({
-      data: { userId: dbUser.id, itinerary },
+      data: { userId: dbUser.id, itinerary, title: title?.trim() || null },
     })
 
     return NextResponse.json({ success: true, trip }, { status: 201 })

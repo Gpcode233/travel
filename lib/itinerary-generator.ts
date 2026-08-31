@@ -387,6 +387,7 @@ export function generateDynamicTripItinerary(params: {
   budget?: string
   pace?: string
   interests?: string[] | string
+  startDate?: string
 }): TripItinerary {
   const destination = params.destination?.trim() || "Enugu"
   const daysCount = Math.max(1, Math.min(14, Number(params.days) || 3))
@@ -649,8 +650,10 @@ export function generateDynamicTripItinerary(params: {
   const days: ItineraryDay[] = []
   const allActivitiesList: ItineraryActivity[] = []
 
-  const baseDate = new Date()
-  baseDate.setDate(baseDate.getDate() + 14) // default 2 weeks out
+  const parsedStartDate = params.startDate ? new Date(params.startDate) : null
+  const baseDate =
+    parsedStartDate && !isNaN(parsedStartDate.getTime()) ? parsedStartDate : new Date()
+  if (!parsedStartDate) baseDate.setDate(baseDate.getDate() + 14) // default 2 weeks out
 
   for (let i = 1; i <= daysCount; i++) {
     const templateIndex = (i - 1) % dayTemplates.length

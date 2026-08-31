@@ -77,6 +77,7 @@ function AgentWorkspaceContent() {
     const pace = searchParams.get("pace") || "relaxed"
     const interests = searchParams.get("interests") || "Nature, Food, Culture"
     const destination = searchParams.get("destination") || "Enugu"
+    const startDate = searchParams.get("startDate") || undefined
 
     setPageState("loading")
     setActiveDayNumber(1)
@@ -96,7 +97,7 @@ function AgentWorkspaceContent() {
     fetch("/api/agent/generate-itinerary", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ days, travelers, budget, pace, interests, destination }),
+      body: JSON.stringify({ days, travelers, budget, pace, interests, destination, startDate }),
     })
       .then(async (res) => {
         if (!res.ok) throw new Error(await res.text())
@@ -108,7 +109,7 @@ function AgentWorkspaceContent() {
       .catch(() => {
         // Fallback to static generator
         const generated = generateDynamicTripItinerary({
-          days, travelers, budget, pace, interests, destination,
+          days, travelers, budget, pace, interests, destination, startDate,
         })
         setItinerary(generated)
       })

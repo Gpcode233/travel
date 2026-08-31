@@ -99,6 +99,7 @@ export async function POST(req: Request) {
       pace = "relaxed",
       interests = "Nature, Food, Culture",
       destination = "Enugu",
+      startDate,
     } = body
 
     const daysCount = Math.max(1, Math.min(14, Number(daysParam) || 3))
@@ -238,8 +239,10 @@ RULES:
     const aiData = { tripTitle: undefined as string | undefined, days: days_ }
 
     // Assemble full TripItinerary
-    const baseDate = new Date()
-    baseDate.setDate(baseDate.getDate() + 14)
+    const parsedStartDate = startDate ? new Date(startDate) : null
+    const baseDate =
+      parsedStartDate && !isNaN(parsedStartDate.getTime()) ? parsedStartDate : new Date()
+    if (!parsedStartDate) baseDate.setDate(baseDate.getDate() + 14)
 
     const days: ItineraryDay[] = aiData.days.slice(0, daysCount).map(
       (d: any, dayIdx: number) => {

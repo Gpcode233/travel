@@ -13,10 +13,13 @@ import {
   ShoppingCart01Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -44,19 +47,37 @@ export function SaveTripBanner({
   const [isSaving, setIsSaving] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [pendingAction, setPendingAction] = useState<"save" | "book" | null>(null)
+  const [showNameDialog, setShowNameDialog] = useState(false)
+  const [tripName, setTripName] = useState("")
+  const [nameDialogAction, setNameDialogAction] = useState<"save" | "book" | null>(null)
 
   useEffect(() => {
     if (isAuthenticated && itinerary) {
       const pending = sessionStorage.getItem("trails_pending_action")
       if (pending === "save" || pending === "book") {
         sessionStorage.removeItem("trails_pending_action")
-        if (pending === "save") handleSaveToDb()
-        else handleBookNow()
+        openNameDialog(pending)
       }
     }
   }, [isAuthenticated, itinerary])
 
-  async function handleSaveToDb(): Promise<string | null> {
+  function openNameDialog(action: "save" | "book") {
+    setTripName(itinerary?.dossier?.title ?? "")
+    setNameDialogAction(action)
+    setShowNameDialog(true)
+  }
+
+  function handleConfirmName() {
+    if (!tripName.trim()) {
+      toast.error("Give your trip a name.")
+      return
+    }
+    setShowNameDialog(false)
+    if (nameDialogAction === "save") handleSaveToDb(tripName)
+    else if (nameDialogAction === "book") handleBookNow(tripName)
+  }
+
+  async function handleSaveToDb(title?: string): Promise<string | null> {
     if (!itinerary) {
       toast.error("No itinerary available to save.")
       return null
@@ -66,7 +87,7 @@ export function SaveTripBanner({
       const res = await fetch("/api/trip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itinerary }),
+        body: JSON.stringify({ itinerary, title }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Failed to save trip")
@@ -83,7 +104,7 @@ export function SaveTripBanner({
     }
   }
 
-  async function handleBookNow() {
+  async function handleBookNow(title?: string) {
     if (!itinerary) return
 
     const selectedHotel = itinerary.accommodations.find(
@@ -100,7 +121,7 @@ export function SaveTripBanner({
     // Save trip first if not already saved
     let resolvedTripId = tripId
     if (!saved) {
-      resolvedTripId = await handleSaveToDb()
+      resolvedTripId = await handleSaveToDb(title)
     }
 
     const breakdown = itinerary.budgetBreakdown
@@ -143,13 +164,14 @@ export function SaveTripBanner({
   function handleSaveClick() {
     if (isLoading) return
     if (!isAuthenticated) { openAuthModal("save"); return }
-    handleSaveToDb()
+    openNameDialog("save")
   }
 
   function handleBookClick() {
     if (isLoading) return
     if (!isAuthenticated) { openAuthModal("book"); return }
-    handleBookNow()
+    if (saved) { handleBookNow(); return }
+    openNameDialog("book")
   }
 
   const postLoginUrl = typeof window !== "undefined" ? window.location.href : ""
@@ -235,6 +257,52 @@ export function SaveTripBanner({
           <div className="mt-2 text-center text-xs text-muted-foreground">
             No credit card or complex setup required.
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Name your trip</DialogTitle>
+            <DialogDescription>
+              Give this itinerary a name so you can find it later on My Trips.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-2">
+            <Label htmlFor="trip-name" className="sr-only">
+              Trip name
+            </Label>
+            <Input
+              id="trip-name"
+              autoFocus
+              value={tripName}
+              onChange={(e) => setTripName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleConfirmName()
+              }}
+              placeholder="e.g. Enugu getaway with the crew"
+              maxLength={80}
+            />
+          </div>
+
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setShowNameDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmName} disabled={isSaving}>
+              {isSaving ? (
+                <span className="flex items-center gap-1.5">
+                  <Spinner className="size-3.5" />
+                  Saving...
+                </span>
+              ) : nameDialogAction === "book" ? (
+                "Save & continue to booking"
+              ) : (
+                "Save trip"
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
