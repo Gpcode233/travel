@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useRef } from "react"
+import Image from "next/image"
 import Autoplay from "embla-carousel-autoplay"
 
 import {
@@ -40,9 +41,18 @@ export function PlaceImageCarousel({
             <div
               role="img"
               aria-label={`${alt} photo ${index + 1} of ${images.length}`}
-              className="aspect-video w-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${src})` }}
-            />
+              className="relative aspect-video w-full bg-muted"
+            >
+              <Image
+                src={src}
+                alt={`${alt} photo ${index + 1} of ${images.length}`}
+                fill
+                sizes="(min-width: 1024px) 800px, 100vw"
+                className="object-cover"
+                priority={index === 0}
+                loading={index === 0 ? undefined : "lazy"}
+              />
+            </div>
           </CarouselItem>
         ))}
       </CarouselContent>

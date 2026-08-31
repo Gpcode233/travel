@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Edit02Icon,
@@ -146,10 +147,19 @@ export function TripHeader({
       {/* Hero Destination Banner matching reference image 2 */}
       <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
         <div className="relative min-h-[220px] sm:min-h-[260px] w-full overflow-hidden rounded-sm border bg-black shadow-lg">
+          <Image
+            src={dossier.heroImageUrl}
+            alt={dossier.title}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
           <div
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0"
             style={{
-              backgroundImage: `linear-gradient(90deg, rgba(8,12,18,.92) 0%, rgba(8,12,18,.65) 50%, rgba(8,12,18,.35) 100%), url(${dossier.heroImageUrl})`,
+              background:
+                "linear-gradient(90deg, rgba(8,12,18,.92) 0%, rgba(8,12,18,.65) 50%, rgba(8,12,18,.35) 100%)",
             }}
           />
           <div className="relative z-10 flex h-full min-h-[220px] sm:min-h-[260px] flex-col justify-end p-6 sm:p-10 text-white">

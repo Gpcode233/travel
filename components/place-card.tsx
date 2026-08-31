@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import {
   BeachIcon,
@@ -46,9 +47,13 @@ export function PlaceCard({
       )}
     >
       <div className="relative aspect-4/3 overflow-hidden">
-        <div
-          className="size-full bg-cover bg-center transition duration-500 group-hover:scale-[1.03]"
-          style={{ backgroundImage: `url(${place.image})` }}
+        <Image
+          src={place.image}
+          alt={place.name}
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          className="object-cover transition duration-500 group-hover:scale-[1.03]"
+          loading="lazy"
         />
         <Badge
           variant="secondary"

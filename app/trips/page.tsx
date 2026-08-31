@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Calendar01Icon,
@@ -10,17 +11,17 @@ import {
 } from "@hugeicons/core-free-icons"
 
 import { prisma } from "@/lib/prisma"
-import { getOrCreateDbUser } from "@/lib/db-user"
+import { getSessionUserId } from "@/lib/db-user"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import type { TripItinerary } from "@/lib/itinerary-types"
 
 export default async function TripsPage() {
-  const user = await getOrCreateDbUser()
-  if (!user) redirect("/")
+  const userId = await getSessionUserId()
+  if (!userId) redirect("/")
 
   const trips = await prisma.trip.findMany({
-    where: { userId: user.id },
+    where: { userId },
     orderBy: { createdAt: "desc" },
   })
 
@@ -61,14 +62,18 @@ export default async function TripsPage() {
                   href={`/trips/${trip.id}`}
                   className="group block overflow-hidden rounded-3xl border transition hover:border-primary/40"
                 >
-                  <div
-                    className="relative aspect-4/3 overflow-hidden bg-muted bg-cover bg-center transition duration-500 group-hover:scale-[1.03]"
-                    style={
-                      dossier?.heroImageUrl
-                        ? { backgroundImage: `url(${dossier.heroImageUrl})` }
-                        : undefined
-                    }
-                  />
+                  <div className="relative aspect-4/3 overflow-hidden bg-muted">
+                    {dossier?.heroImageUrl && (
+                      <Image
+                        src={dossier.heroImageUrl}
+                        alt={trip.title || dossier?.title || "Trip plan"}
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                        loading="lazy"
+                      />
+                    )}
+                  </div>
                   <div className="p-4">
                     <h3 className="text-lg font-heading font-semibold">
                       {trip.title || dossier?.title || "Trip plan"}

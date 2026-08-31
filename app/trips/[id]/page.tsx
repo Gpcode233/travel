@@ -15,7 +15,7 @@ import {
 } from "@hugeicons/core-free-icons"
 
 import { prisma } from "@/lib/prisma"
-import { getOrCreateDbUser } from "@/lib/db-user"
+import { getSessionUserId } from "@/lib/db-user"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import { allPlaces } from "@/lib/enugu-data"
@@ -66,11 +66,11 @@ export default async function TripDetailPage({
 }) {
   const { id } = await params
 
-  const user = await getOrCreateDbUser()
-  if (!user) redirect("/")
+  const userId = await getSessionUserId()
+  if (!userId) redirect("/")
 
   const trip = await prisma.trip.findFirst({
-    where: { id, userId: user.id },
+    where: { id, userId },
     include: { bookings: { orderBy: { createdAt: "desc" } } },
   })
 
@@ -97,10 +97,15 @@ export default async function TripDetailPage({
       </div>
 
       {/* Hero */}
-      <div
-        className="relative h-64 sm:h-80 w-full bg-cover bg-center"
-        style={{ backgroundImage: `url(${dossier.heroImageUrl})` }}
-      >
+      <div className="relative h-64 sm:h-80 w-full bg-muted">
+        <Image
+          src={dossier.heroImageUrl}
+          alt={dossier.title}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-end px-5 pb-8 sm:px-8 lg:px-10">
           <div className="mx-auto w-full max-w-7xl">
@@ -244,10 +249,13 @@ export default async function TripDetailPage({
               <div className="overflow-hidden rounded-2xl border bg-card">
                 <div className="relative h-40 w-full bg-muted">
                   {hotel.imageUrl && (
-                    <img
+                    <Image
                       src={hotel.imageUrl}
                       alt={hotel.name}
-                      className="h-full w-full object-cover"
+                      fill
+                      sizes="340px"
+                      className="object-cover"
+                      loading="lazy"
                     />
                   )}
                   {hotel.badge && (
