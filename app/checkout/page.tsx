@@ -63,6 +63,8 @@ export default function CheckoutPage() {
   })
   const [transferModalOpen, setTransferModalOpen] = useState(false)
   const [userPhone, setUserPhone] = useState<string | null>(null)
+  const [isPaystackLoading, setIsPaystackLoading] = useState(false)
+  const [paystackError, setPaystackError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!data) router.replace("/agent")
@@ -78,6 +80,40 @@ export default function CheckoutPage() {
         .catch(() => {})
     }
   }, [isAuthenticated])
+
+  async function handlePaystackCheckout() {
+    if (!data) return
+    setIsPaystackLoading(true)
+    setPaystackError(null)
+
+    try {
+      const res = await fetch("/api/checkout/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tripId: data.tripId,
+          hotelName: data.hotelName,
+          hotelArea: data.hotelArea,
+          nights: data.nights,
+          pricePerNight: data.pricePerNight,
+          accommodationTotal: data.accommodationTotal,
+          serviceFee,
+        }),
+      })
+
+      const json = await res.json()
+
+      if (!res.ok || !json.authorization_url) {
+        throw new Error(json.error || "Failed to initialize payment.")
+      }
+
+      window.location.href = json.authorization_url
+    } catch (err: any) {
+      console.error("Paystack checkout error:", err)
+      setPaystackError(err.message || "Could not connect to payment gateway. Please try again.")
+      setIsPaystackLoading(false)
+    }
+  }
 
   if (isLoading || !data) {
     return (
@@ -234,36 +270,44 @@ export default function CheckoutPage() {
 
         {/* Pay buttons */}
         <div className="mt-8 space-y-3">
+          {paystackError && (
+            <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+              {paystackError}
+            </div>
+          )}
+
+          <Button
+            type="button"
+            onClick={handlePaystackCheckout}
+            disabled={isPaystackLoading}
+            className="w-full bg-primary py-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-sm"
+          >
+            <span className="flex items-center gap-2">
+              <CreditCard className="size-4" />
+              {isPaystackLoading ? "Connecting to Paystack..." : `Pay ${formatNGN(totalToPay)} with Card / Paystack`}
+            </span>
+          </Button>
+
+          {/* Bank Transfer button - commented out
           <Button
             type="button"
             onClick={() => setTransferModalOpen(true)}
-            className="w-full bg-primary py-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-sm"
+            variant="outline"
+            className="w-full py-5 text-sm font-medium"
           >
             <span className="flex items-center gap-2">
               <Building2 className="size-4" />
               Pay {formatNGN(totalToPay)} with Bank Transfer
             </span>
           </Button>
-
-          <Button
-            type="button"
-            disabled
-            variant="outline"
-            className="w-full border-dashed py-5 text-xs text-muted-foreground opacity-75 cursor-not-allowed"
-          >
-            <span className="flex items-center gap-2">
-              <CreditCard className="size-3.5" />
-              Pay with Card / Paystack
-              <Badge variant="secondary" className="text-[10px] ml-1">Coming Soon</Badge>
-            </span>
-          </Button>
+          */}
 
           <p className="text-center text-xs text-muted-foreground">
-            Hotel reservation confirmed immediately upon payment notification
+            Secured by Paystack · Card, USSD, and Bank Transfer available on checkout
           </p>
         </div>
 
-        {/* Bank Transfer Modal Popup */}
+        {/* Bank Transfer Modal Popup - commented out
         <BankTransferModal
           isOpen={transferModalOpen}
           onClose={() => setTransferModalOpen(false)}
@@ -279,6 +323,7 @@ export default function CheckoutPage() {
           userName={[user?.given_name, user?.family_name].filter(Boolean).join(" ")}
           userPhone={userPhone}
         />
+        */}
       </div>
     </main>
   )

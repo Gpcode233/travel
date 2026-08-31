@@ -32,9 +32,9 @@ export async function POST(req: Request) {
     const amountKobo = totalNGN * 100
 
     const secretKey =
-      process.env.PAYSTACK_LIVE_SECRET_KEY ??
+      process.env.PAYSTACK_TEST_SECRET_KEY ??
       process.env.PAYSTACK_SECRET_KEY ??
-      process.env.PAYSTACK_TEST_SECRET_KEY
+      process.env.PAYSTACK_LIVE_SECRET_KEY
     if (!secretKey) {
       return NextResponse.json({ error: "Payment service not configured." }, { status: 500 })
     }
