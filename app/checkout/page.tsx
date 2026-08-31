@@ -58,6 +58,7 @@ export default function CheckoutPage() {
   const { isAuthenticated, isLoading, user } = useKindeBrowserClient()
   const [data, setData] = useState<CheckoutData | null>(null)
   const [transferModalOpen, setTransferModalOpen] = useState(false)
+  const [userPhone, setUserPhone] = useState<string | null>(null)
 
   useEffect(() => {
     const raw = sessionStorage.getItem("trails_checkout")
@@ -72,6 +73,17 @@ export default function CheckoutPage() {
       router.replace("/agent")
     }
   }, [router])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetch("/api/auth/profile-sync")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data?.user?.phone) setUserPhone(data.user.phone)
+        })
+        .catch(() => {})
+    }
+  }, [isAuthenticated])
 
   if (isLoading || !data) {
     return (
@@ -115,19 +127,6 @@ export default function CheckoutPage() {
     { key: "transport", label: "Local transport", icon: Car01Icon, amount: data.budgetBreakdown?.transport },
     { key: "activities", label: "Activities & entry fees", icon: Ticket01Icon, amount: data.budgetBreakdown?.activities },
   ].filter((item) => item.amount)
-
-  const [userPhone, setUserPhone] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetch("/api/auth/profile-sync")
-        .then((r) => r.json())
-        .then((data) => {
-          if (data?.user?.phone) setUserPhone(data.user.phone)
-        })
-        .catch(() => {})
-    }
-  }, [isAuthenticated])
 
   return (
     <main className="min-h-svh bg-background text-foreground">

@@ -24,7 +24,7 @@ import {
   enuguNightlife,
   type Place,
 } from "@/lib/enugu-data"
-import { budgetTiers, type BudgetTierValue } from "@/lib/budget-tiers"
+import { budgetTiers, normalizeBudgetTier, type BudgetTierValue } from "@/lib/budget-tiers"
 import {
   ItineraryActivity,
   TripDossier,
@@ -87,7 +87,8 @@ function AgentWorkspaceContent() {
 
     const days = searchParams.get("days") || "3"
     const travelers = searchParams.get("travelers") || "2"
-    const budget = searchParams.get("budget") || "mid-range"
+    const budgetRaw = searchParams.get("budget")
+    const budgetTier = normalizeBudgetTier(budgetRaw)
     const pace = searchParams.get("pace") || "relaxed"
     const interests = searchParams.get("interests") || "Nature, Food, Culture"
     const destination = searchParams.get("destination") || "Enugu"
@@ -96,13 +97,11 @@ function AgentWorkspaceContent() {
     setPageState("loading")
     setActiveDayNumber(1)
 
-    // Show what was actually requested on the loading screen immediately,
-    // instead of waiting for the itinerary (whose dossier wasn't ready yet,
-    // so the loader was always falling back to its own hardcoded defaults).
-    const budgetTier = (budget as BudgetTierValue) in budgetTiers ? (budget as BudgetTierValue) : "mid-range"
+    // Show what was actually requested on the loading screen immediately
     setRequestedDossier({
       daysCount: Number(days) || 3,
       travelersCount: Number(travelers) || 2,
+      budgetTier: budgetTier,
       budgetTierLabel: budgetTiers[budgetTier].label,
       pace: pace.charAt(0).toUpperCase() + pace.slice(1),
     })
@@ -111,7 +110,7 @@ function AgentWorkspaceContent() {
     fetch("/api/agent/generate-itinerary", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ days, travelers, budget, pace, interests, destination, startDate }),
+      body: JSON.stringify({ days, travelers, budget: budgetTier, pace, interests, destination, startDate }),
     })
       .then(async (res) => {
         if (!res.ok) throw new Error(await res.text())
@@ -123,7 +122,7 @@ function AgentWorkspaceContent() {
       .catch(() => {
         // Fallback to static generator
         const generated = generateDynamicTripItinerary({
-          days, travelers, budget, pace, interests, destination, startDate,
+          days, travelers, budget: budgetTier, pace, interests, destination, startDate,
         })
         setItinerary(generated)
       })

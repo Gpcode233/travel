@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     model,
     system: systemPrompt,
     messages: await convertToModelMessages(messages),
-    stopWhen: stepCountIs(10),
+    stopWhen: stepCountIs(3),
     maxOutputTokens: 2048,
     // Force a grounding tool call on the first step of every turn so the
     // model can't skip straight to answering from (potentially hallucinated)

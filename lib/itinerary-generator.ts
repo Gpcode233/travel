@@ -1,5 +1,5 @@
 import { allPlaces, Place } from "./enugu-data"
-import { BudgetTierValue, budgetTiers } from "./budget-tiers"
+import { BudgetTierValue, budgetTiers, normalizeBudgetTier } from "./budget-tiers"
 import {
   AccommodationOption,
   EstBudgetBreakdown,
@@ -212,8 +212,8 @@ const HOTEL_POOL: AccommodationOption[] = [
     address: "Independence Layout, Enugu",
     rating: 4.5,
     reviewCount: 41,
-    pricePerNight: 70_000,
-    formattedPrice: "₦70,000/night",
+    pricePerNight: 38_000,
+    formattedPrice: "₦38,000/night",
     imageUrl: "/images/new_york_hotel_1.webp",
     badge: "ALTERNATIVE",
     isSelected: false,
@@ -246,9 +246,9 @@ const HOTEL_POOL: AccommodationOption[] = [
     address: "New Haven, Enugu",
     rating: 4.3,
     reviewCount: 59,
-    pricePerNight: 75_000,
-    formattedPrice: "₦75,000/night",
-    imageUrl: "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg?auto=compress&cs=tinysrgb&w=800",
+    pricePerNight: 35_000,
+    formattedPrice: "₦35,000/night",
+    imageUrl: "/images/bridgewaters_hotel_1.webp",
     badge: "VALUE",
     isSelected: false,
     amenities: ["Pool", "Restaurant", "Bar", "Free Wi-Fi", "Parking"],
@@ -392,7 +392,7 @@ export function generateDynamicTripItinerary(params: {
   const destination = params.destination?.trim() || "Enugu"
   const daysCount = Math.max(1, Math.min(14, Number(params.days) || 3))
   const travelersCount = Math.max(1, Number(params.travelers) || 2)
-  const budgetTier = (params.budget as BudgetTierValue) || "mid-range"
+  const budgetTier = normalizeBudgetTier(params.budget)
   const pace = (params.pace as string) || "relaxed"
 
   const interestsList = Array.isArray(params.interests)

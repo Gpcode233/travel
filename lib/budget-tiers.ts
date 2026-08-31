@@ -66,9 +66,19 @@ export const budgetTierList: BudgetTier[] = [
   budgetTiers.premium,
 ]
 
-export function getBudgetTier(value: string | null): BudgetTier | null {
+export function normalizeBudgetTier(value: string | null | undefined): BudgetTierValue {
+  if (!value) return "mid-range"
+  const clean = value.toLowerCase().trim().replace("midrange", "mid-range")
+  if (clean === "lean") return "lean"
+  if (clean === "premium") return "premium"
+  if (clean === "mid-range") return "mid-range"
+  return "mid-range"
+}
+
+export function getBudgetTier(value: string | null | undefined): BudgetTier | null {
   if (!value) return null
-  return budgetTiers[value as BudgetTierValue] ?? null
+  const tier = normalizeBudgetTier(value)
+  return budgetTiers[tier] ?? null
 }
 
 export const travelerOptions = [
