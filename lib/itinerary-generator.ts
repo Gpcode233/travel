@@ -744,7 +744,28 @@ export function updateAccommodationInItinerary(
   const selectedHotel =
     updatedAccommodations.find((a) => a.isSelected) || updatedAccommodations[0]
 
-  const allActivities = trip.days.flatMap((d) => d.activities)
+  // Keep hotel-based activities (breakfast, etc.) in sync with the new pick.
+  const updatedDays = trip.days.map((day) => ({
+    ...day,
+    activities: day.activities.map((act) =>
+      act.category === "hotel"
+        ? {
+            ...act,
+            title: act.title.replace(/at .+$/, `at ${selectedHotel.name}`),
+            description: `Start the day with breakfast at ${selectedHotel.name} before heading out.`,
+            imageUrl: selectedHotel.imageUrl,
+            location: {
+              name: selectedHotel.name,
+              area: selectedHotel.area,
+              latitude: act.location.latitude,
+              longitude: act.location.longitude,
+            },
+          }
+        : act
+    ),
+  }))
+
+  const allActivities = updatedDays.flatMap((d) => d.activities)
   const updatedBudget = calculateBreakdown(
     selectedHotel,
     trip.dossier.daysCount,
@@ -755,6 +776,7 @@ export function updateAccommodationInItinerary(
 
   return {
     ...trip,
+    days: updatedDays,
     accommodations: updatedAccommodations,
     selectedAccommodationId: accommodationId,
     budgetBreakdown: updatedBudget,

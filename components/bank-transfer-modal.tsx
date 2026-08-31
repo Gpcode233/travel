@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   Dialog,
@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import {
   Building2,
@@ -24,6 +26,11 @@ import {
   CheckCircle2,
   PhoneCall,
 } from "lucide-react"
+
+function isValidWhatsappNumber(value: string) {
+  const digits = value.replace(/[^\d]/g, "")
+  return digits.length >= 10 && digits.length <= 15
+}
 
 type BankTransferModalProps = {
   isOpen: boolean
@@ -78,6 +85,41 @@ export function BankTransferModal({
     reference: string
     bookingId: string
   } | null>(null)
+  const [phone, setPhone] = useState(userPhone || "")
+  const [phoneConfirmed, setPhoneConfirmed] = useState(false)
+  const [savingPhone, setSavingPhone] = useState(false)
+
+  useEffect(() => {
+    if (isOpen) {
+      setPhone(userPhone || "")
+      setPhoneConfirmed(false)
+      setConfirmedBooking(null)
+    }
+  }, [isOpen, userPhone])
+
+  async function handleConfirmPhone() {
+    if (!isValidWhatsappNumber(phone)) {
+      toast.error("Enter a valid WhatsApp number.")
+      return
+    }
+    setSavingPhone(true)
+    try {
+      const res = await fetch("/api/checkout/save-phone", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || "Could not save number.")
+      }
+      setPhoneConfirmed(true)
+    } catch (err: any) {
+      toast.error(err.message || "Could not save number. Please try again.")
+    } finally {
+      setSavingPhone(false)
+    }
+  }
 
   function copyAccountNumber() {
     navigator.clipboard.writeText(BANK_DETAILS.accountNumber)
@@ -102,7 +144,7 @@ export function BankTransferModal({
           serviceFee,
           totalAmount,
           customerName: userName,
-          customerPhone: userPhone,
+          customerPhone: phone,
           customerEmail: userEmail,
         }),
       })
@@ -144,7 +186,56 @@ export function BankTransferModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-lg p-6 sm:p-7">
-        {!confirmedBooking ? (
+        {!phoneConfirmed && !confirmedBooking ? (
+          <>
+            <DialogHeader className="space-y-1 text-left">
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="gap-1 text-xs">
+                  <PhoneCall className="size-3 text-primary" />
+                  WhatsApp Number
+                </Badge>
+              </div>
+              <DialogTitle className="font-heading text-xl font-bold">
+                Where should we reach you?
+              </DialogTitle>
+              <DialogDescription className="text-xs">
+                We'll use this WhatsApp number to verify your transfer and follow up on your booking.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-2 pt-2">
+              <Label htmlFor="whatsapp-phone" className="text-xs text-muted-foreground">
+                WhatsApp phone number
+              </Label>
+              <Input
+                id="whatsapp-phone"
+                type="tel"
+                inputMode="tel"
+                placeholder="e.g. 08012345678"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                autoFocus
+              />
+            </div>
+
+            <Button
+              type="button"
+              size="lg"
+              disabled={savingPhone}
+              onClick={handleConfirmPhone}
+              className="mt-4 w-full bg-primary py-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              {savingPhone ? (
+                <span className="flex items-center gap-2">
+                  <Clock className="size-4 animate-spin" />
+                  Saving...
+                </span>
+              ) : (
+                "Continue to payment"
+              )}
+            </Button>
+          </>
+        ) : !confirmedBooking ? (
           <>
             <DialogHeader className="space-y-1 text-left">
               <div className="flex items-center gap-2">

@@ -25,9 +25,10 @@ const DEFAULT_STEPS = [
   "Building your final route",
 ]
 
-const SLOW_INTERVAL = 2400
+const MAX_DURATION_MS = 16_000
 const FAST_INTERVAL = 280
 const HOLD_AT_STEP = DEFAULT_STEPS.length - 2
+const SLOW_INTERVAL = MAX_DURATION_MS / HOLD_AT_STEP
 
 export function TripPlanningLoader({
   dossier,
@@ -45,6 +46,15 @@ export function TripPlanningLoader({
     }, SLOW_INTERVAL)
     return () => clearInterval(timer)
   }, [isReady])
+
+  // Hard cap: never let the "thinking" flow run past MAX_DURATION_MS
+  useEffect(() => {
+    const cap = setTimeout(() => {
+      setCurrentStepIndex(totalSteps - 1)
+      onComplete?.()
+    }, MAX_DURATION_MS)
+    return () => clearTimeout(cap)
+  }, [onComplete, totalSteps])
 
   // Fast-complete once AI finishes
   useEffect(() => {

@@ -9,18 +9,13 @@ import {
   SpoonAndForkIcon,
   Car01Icon,
   Ticket01Icon,
-  CheckmarkCircle02Icon,
-  ShieldCheckIcon,
   InformationCircleIcon,
   GiftIcon,
 } from "@hugeicons/core-free-icons"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
-import { toast } from "sonner"
-import { cn } from "@/lib/utils"
 import { getServiceFeeRate, calculateServiceFee } from "@/lib/pricing"
 import { BankTransferModal } from "@/components/bank-transfer-modal"
 import Link from "next/link"
@@ -47,7 +42,7 @@ type CheckoutData = {
   isTestTrip?: boolean
 }
 
-const EASTER_EGG_EMAIL = "godspowerojini8@gmail.com"
+// const EASTER_EGG_EMAIL = "godspowerojini8@gmail.com"
 
 function formatNGN(amount: number) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(amount)
@@ -56,23 +51,22 @@ function formatNGN(amount: number) {
 export default function CheckoutPage() {
   const router = useRouter()
   const { isAuthenticated, isLoading, user } = useKindeBrowserClient()
-  const [data, setData] = useState<CheckoutData | null>(null)
+  const [data, setData] = useState<CheckoutData | null>(() => {
+    if (typeof window === "undefined") return null
+    const raw = sessionStorage.getItem("trails_checkout")
+    if (!raw) return null
+    try {
+      return JSON.parse(raw)
+    } catch {
+      return null
+    }
+  })
   const [transferModalOpen, setTransferModalOpen] = useState(false)
   const [userPhone, setUserPhone] = useState<string | null>(null)
 
   useEffect(() => {
-    const raw = sessionStorage.getItem("trails_checkout")
-    if (!raw) {
-      router.replace("/agent")
-      return
-    }
-    try {
-      const parsed = JSON.parse(raw)
-      setData(parsed)
-    } catch {
-      router.replace("/agent")
-    }
-  }, [router])
+    if (!data) router.replace("/agent")
+  }, [data, router])
 
   useEffect(() => {
     if (isAuthenticated) {
