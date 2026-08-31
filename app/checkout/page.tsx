@@ -42,7 +42,10 @@ type CheckoutData = {
     dateRangeLabel: string
     daysCount: number
   }
+  isTestTrip?: boolean
 }
+
+const EASTER_EGG_EMAIL = "godspowerojini8@gmail.com"
 
 function formatNGN(amount: number) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(amount)
@@ -98,8 +101,8 @@ export default function CheckoutPage() {
     )
   }
 
-  const serviceFeeRate = getServiceFeeRate(data.accommodationTotal)
-  const serviceFee = calculateServiceFee(data.accommodationTotal)
+  const serviceFeeRate = data.isTestTrip ? 0 : getServiceFeeRate(data.accommodationTotal)
+  const serviceFee = data.isTestTrip ? 0 : calculateServiceFee(data.accommodationTotal)
   const totalToPay = data.accommodationTotal + serviceFee
 
   const budgetItems = [
@@ -110,6 +113,13 @@ export default function CheckoutPage() {
 
   async function handlePay() {
     if (!data) return
+
+    if (data.isTestTrip && user?.email !== EASTER_EGG_EMAIL) {
+      sessionStorage.setItem("trails_denied_shake", "1")
+      router.push("/")
+      return
+    }
+
     setPaying(true)
     try {
       const res = await fetch("/api/checkout/initialize", {

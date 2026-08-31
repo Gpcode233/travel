@@ -17,6 +17,7 @@ import {
   updateAccommodationInItinerary,
   PLACE_COORDINATES,
 } from "@/lib/itinerary-generator"
+import { generateTestTripItinerary } from "@/lib/test-trip"
 import {
   enuguAttractions,
   enuguRestaurants,
@@ -71,6 +72,19 @@ function AgentWorkspaceContent() {
 
   // Initialize or re-generate itinerary based on query parameters
   useEffect(() => {
+    if (searchParams.get("testTrip") === "1") {
+      setPageState("loading")
+      setActiveDayNumber(1)
+      setRequestedDossier({
+        daysCount: 1,
+        travelersCount: 1,
+        budgetTierLabel: budgetTiers.lean.label,
+        pace: "Packed",
+      })
+      setItinerary(generateTestTripItinerary())
+      return
+    }
+
     const days = searchParams.get("days") || "3"
     const travelers = searchParams.get("travelers") || "2"
     const budget = searchParams.get("budget") || "mid-range"

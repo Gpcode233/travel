@@ -27,12 +27,24 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Kbd } from "@/components/ui/kbd"
 import { PlaceCard } from "@/components/place-card"
 import { PromoTicker } from "@/components/promo-ticker"
 import { useTypewriter } from "@/hooks/use-typewriter"
 import { cn } from "@/lib/utils"
 import { travelerOptions, budgetTierList } from "@/lib/budget-tiers"
 import { enuguAttractions, enuguHotels } from "@/lib/enugu-data"
+
+const EASTER_EGG_PASSWORD = "tyger, tyger"
 
 const paceOptions = [
   { value: "relaxed", label: "Relaxed" },
@@ -71,10 +83,19 @@ export default function HomePage() {
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [daysError, setDaysError] = useState(false)
   const [isShaking, setIsShaking] = useState(false)
- 
+  const [accessDenied, setAccessDenied] = useState(false)
+
   const formRef = useRef<HTMLDivElement>(null)
 
   const [heroIndex, setHeroIndex] = useState(0)
+
+  // Easter egg: press spacebar 5x on the hero to open a password prompt
+  // that unlocks a ₦500 test trip for exercising the payment flow.
+  const [showEasterEgg, setShowEasterEgg] = useState(false)
+  const [eggPassword, setEggPassword] = useState("")
+  const [eggError, setEggError] = useState(false)
+  const spacePressCount = useRef(0)
+  const spacePressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -82,6 +103,59 @@ export default function HomePage() {
     }, 5000)
     return () => clearInterval(timer)
   }, [])
+
+  // Flag set by /checkout when a non-authorized account tries to pay the
+  // test-trip listing — bounce them here and shake the form red.
+  useEffect(() => {
+    if (sessionStorage.getItem("trails_denied_shake") === "1") {
+      sessionStorage.removeItem("trails_denied_shake")
+      setAccessDenied(true)
+      setIsShaking(true)
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+      setTimeout(() => setIsShaking(false), 500)
+    }
+  }, [])
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.code !== "Space") {
+        spacePressCount.current = 0
+        return
+      }
+      const target = e.target as HTMLElement | null
+      const isInteractive =
+        target &&
+        (["INPUT", "TEXTAREA", "BUTTON", "SELECT"].includes(target.tagName) ||
+          target.isContentEditable ||
+          target.closest('[role="button"], [role="dialog"], [role="listbox"]'))
+      if (isInteractive || showEasterEgg) return
+
+      e.preventDefault()
+      spacePressCount.current += 1
+      if (spacePressTimer.current) clearTimeout(spacePressTimer.current)
+      spacePressTimer.current = setTimeout(() => {
+        spacePressCount.current = 0
+      }, 1500)
+
+      if (spacePressCount.current >= 5) {
+        spacePressCount.current = 0
+        setEggPassword("")
+        setEggError(false)
+        setShowEasterEgg(true)
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [showEasterEgg])
+
+  function handleEggSubmit() {
+    if (eggPassword.trim().toLowerCase() === EASTER_EGG_PASSWORD) {
+      setShowEasterEgg(false)
+      router.push("/agent?testTrip=1")
+    } else {
+      setEggError(true)
+    }
+  }
 
   function toggleInterest(interest: string) {
     setInterests((prev) =>
@@ -192,7 +266,7 @@ export default function HomePage() {
               ref={formRef}
               className={cn(
                 "rounded-3xl border bg-black/30 p-6 backdrop-blur-md sm:p-8",
-                daysError ? "border-destructive" : "border-white/18",
+                daysError || accessDenied ? "border-destructive" : "border-white/18",
                 isShaking && "animate-shake"
               )}
             >
@@ -211,6 +285,7 @@ export default function HomePage() {
                     onValueChange={(value) => {
                       setDays(value)
                       setDaysError(false)
+                      setAccessDenied(false)
                     }}
                   >
                     <SelectTrigger
@@ -358,6 +433,46 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Easter egg: spacebar x5 password prompt */}
+      <Dialog open={showEasterEgg} onOpenChange={setShowEasterEgg}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Who goes there?</DialogTitle>
+            <DialogDescription>
+              Enter the password to unlock the test trip.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Input
+            autoFocus
+            type="password"
+            value={eggPassword}
+            onChange={(e) => {
+              setEggPassword(e.target.value)
+              setEggError(false)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleEggSubmit()
+            }}
+            placeholder="Password"
+            className={cn(eggError && "border-destructive")}
+          />
+          {eggError && (
+            <p className="text-xs text-destructive">Wrong password. Try again.</p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            Hint: <Kbd>Space</Kbd> ×5 got you here — the answer is a Blake poem.
+          </p>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEasterEgg(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleEggSubmit}>Unlock</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Featured places */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">

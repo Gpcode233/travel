@@ -74,7 +74,9 @@ function VerifyContent() {
                 <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-8 text-green-600" />
               </div>
               <div>
-                <h1 className="font-heading text-2xl font-semibold">Booking confirmed!</h1>
+                <h1 className="font-heading text-2xl font-semibold">
+                  Congratulations! Your booking is secured and paid for.
+                </h1>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {details?.email && `Receipt sent to ${details.email}. `}
                   Your hotel is reserved and your airport pickup is arranged.
@@ -104,13 +106,18 @@ function VerifyContent() {
                 <HugeiconsIcon icon={CancelCircleIcon} className="size-8 text-red-600" />
               </div>
               <div>
-                <h1 className="font-heading text-2xl font-semibold">Payment not completed</h1>
+                <h1 className="font-heading text-2xl font-semibold">
+                  Sorry, please try again.
+                </h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Your card was not charged. You can try again or contact us for help.
+                  Your payment wasn&apos;t completed and your card was not charged.
                 </p>
               </div>
               <div className="mt-2 flex gap-3">
                 <Button asChild>
+                  <Link href="/checkout">Try again</Link>
+                </Button>
+                <Button variant="outline" asChild>
                   <Link href="/agent">Back to planner</Link>
                 </Button>
               </div>

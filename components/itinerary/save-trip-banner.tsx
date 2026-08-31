@@ -131,6 +131,8 @@ export function SaveTripBanner({
       activities: breakdown.categories.find((c) => c.key === "activities")?.amount,
     }
 
+    const isTestTrip = selectedHotel.id === "acc-test-hotel"
+
     sessionStorage.setItem(
       "trails_checkout",
       JSON.stringify({
@@ -141,6 +143,7 @@ export function SaveTripBanner({
         pricePerNight: selectedHotel.pricePerNight,
         accommodationTotal,
         budgetBreakdown,
+        isTestTrip,
         dossier: {
           destination: itinerary.dossier.destination,
           travelersLabel: itinerary.dossier.travelersLabel,
