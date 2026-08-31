@@ -10,6 +10,27 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Missing reference" }, { status: 400 })
     }
 
+    if (reference.startsWith("TRF-")) {
+      const booking = await prisma.booking.findFirst({
+        where: { paystackReference: reference },
+        include: { user: true },
+      })
+
+      if (!booking) {
+        return NextResponse.json({ error: "Booking reference not found." }, { status: 404 })
+      }
+
+      return NextResponse.json({
+        status: booking.paystackStatus, // e.g. "awaiting_transfer_verification" or "success"
+        amount: booking.totalAmountKobo,
+        email: booking.user.email,
+        hotelName: booking.hotelName,
+        nights: booking.nights,
+        reference,
+        paymentType: "bank_transfer",
+      })
+    }
+
     const secretKey =
       process.env.PAYSTACK_LIVE_SECRET_KEY ??
       process.env.PAYSTACK_SECRET_KEY ??
@@ -40,6 +61,7 @@ export async function GET(req: Request) {
       amount,
       email: customer?.email,
       reference,
+      paymentType: "card",
     })
   } catch (error: any) {
     console.error("Checkout verify error:", error)

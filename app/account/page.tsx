@@ -11,6 +11,8 @@ import {
 } from "@hugeicons/core-free-icons"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
@@ -18,7 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import Link from "next/link"
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs"
+import { Phone, Check } from "lucide-react"
 
 type Trip = {
   id: string
@@ -48,6 +50,8 @@ export default function AccountPage() {
   const [trips, setTrips] = useState<Trip[]>([])
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [prefs, setPrefs] = useState<Preferences | null>(null)
+  const [phone, setPhone] = useState<string>("")
+  const [savingPhone, setSavingPhone] = useState(false)
   const [dataLoading, setDataLoading] = useState(true)
 
   useEffect(() => {
@@ -56,18 +60,23 @@ export default function AccountPage() {
     async function load() {
       setDataLoading(true)
       try {
-        const [tripsRes, convsRes, prefsRes] = await Promise.all([
+        const [tripsRes, convsRes, prefsRes, profileRes] = await Promise.all([
           fetch("/api/trip"),
           fetch("/api/conversations"),
           fetch("/api/preferences"),
+          fetch("/api/auth/profile-sync"),
         ])
         const tripsData = await tripsRes.json()
         const convsData = await convsRes.json()
         const prefsData = await prefsRes.json()
+        const profileData = await profileRes.json()
 
         setTrips(tripsData.trips ?? [])
         setConversations(convsData.conversations ?? [])
         setPrefs(prefsData.preferences ?? null)
+        if (profileData?.user?.phone) {
+          setPhone(profileData.user.phone)
+        }
       } catch {
         toast.error("Failed to load account data")
       } finally {
@@ -89,6 +98,23 @@ export default function AccountPage() {
       toast.success("Currency updated")
     } catch {
       toast.error("Failed to save currency preference")
+    }
+  }
+
+  async function savePhoneNumber() {
+    setSavingPhone(true)
+    try {
+      const res = await fetch("/api/auth/profile-sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      })
+      if (!res.ok) throw new Error("Failed to save")
+      toast.success("WhatsApp phone number updated")
+    } catch {
+      toast.error("Failed to save phone number")
+    } finally {
+      setSavingPhone(false)
     }
   }
 
@@ -130,9 +156,9 @@ export default function AccountPage() {
             <p className="text-muted-foreground">
               Save trips, track conversations, and manage preferences.
             </p>
-            <LoginLink>
-              <Button size="lg" className="mt-2">Sign in</Button>
-            </LoginLink>
+            <Button size="lg" className="mt-2" asChild>
+              <Link href="/login">Sign in</Link>
+            </Button>
           </div>
         </div>
       </main>
@@ -306,6 +332,40 @@ export default function AccountPage() {
           {/* PREFERENCES */}
           <TabsContent value="preferences">
             <div className="max-w-md space-y-8">
+              {/* WhatsApp Contact */}
+              <div>
+                <h2 className="font-heading text-base font-semibold">Concierge & Contact</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Your WhatsApp phone number allows our local team to verify bookings and coordinate airport pickups.
+                </p>
+                <div className="mt-4 space-y-2">
+                  <Label htmlFor="account-phone" className="text-xs font-medium">
+                    WhatsApp Phone Number
+                  </Label>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                      <Input
+                        id="account-phone"
+                        type="tel"
+                        placeholder="+234 801 234 5678"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="pl-9.5"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      disabled={savingPhone}
+                      onClick={savePhoneNumber}
+                      size="default"
+                    >
+                      {savingPhone ? "Saving..." : "Save"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
               <Separator />
 
               <div>

@@ -1,5 +1,6 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { cookies } from "next/headers"
 
 /**
  * Session-only user id, no DB round-trip. User.id is set to the Kinde user
@@ -23,21 +24,37 @@ export async function getOrCreateDbUser() {
   const user = await getUser()
   if (!user?.id || !user?.email) return null
 
-  const name = [user.given_name, user.family_name].filter(Boolean).join(" ") || null
+  const kindeName = [user.given_name, user.family_name].filter(Boolean).join(" ") || null
+
+  let pendingPhone: string | null = null
+  let pendingName: string | null = null
+
+  try {
+    const cookieStore = await cookies()
+    const raw = cookieStore.get("trails_pending_profile")?.value
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (parsed.phone) pendingPhone = parsed.phone
+      if (parsed.name) pendingName = parsed.name
+    }
+  } catch {}
+
+  const resolvedName = kindeName || pendingName || null
+  const resolvedPhone = user.phone_number || pendingPhone || null
 
   return prisma.user.upsert({
     where: { email: user.email },
     update: {
-      ...(name && { name }),
+      ...(resolvedName && { name: resolvedName }),
       ...(user.picture && { picture: user.picture }),
-      ...(user.phone_number && { phone: user.phone_number }),
+      ...(resolvedPhone && { phone: resolvedPhone }),
     },
     create: {
       id: user.id,
       email: user.email,
-      name,
+      name: resolvedName,
       picture: user.picture ?? null,
-      phone: user.phone_number ?? null,
+      phone: resolvedPhone,
     },
   })
 }

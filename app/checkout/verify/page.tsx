@@ -10,13 +10,20 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import Link from "next/link"
 
-type VerifyState = "loading" | "success" | "failed"
+type VerifyState = "loading" | "success" | "awaiting_verification" | "failed"
 
 function VerifyContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [state, setState] = useState<VerifyState>("loading")
-  const [details, setDetails] = useState<{ amount?: number; email?: string; tripId?: string } | null>(null)
+  const [details, setDetails] = useState<{
+    amount?: number
+    email?: string
+    tripId?: string
+    hotelName?: string
+    reference?: string
+    paymentType?: string
+  } | null>(null)
 
   useEffect(() => {
     const reference = searchParams.get("reference")
@@ -38,7 +45,25 @@ function VerifyContent() {
         if (data.status === "success") {
           sessionStorage.removeItem("trails_checkout")
           setState("success")
-          setDetails({ amount: data.amount, email: data.email, tripId })
+          setDetails({
+            amount: data.amount,
+            email: data.email,
+            tripId,
+            hotelName: data.hotelName,
+            reference,
+            paymentType: data.paymentType,
+          })
+        } else if (data.status === "awaiting_transfer_verification") {
+          sessionStorage.removeItem("trails_checkout")
+          setState("awaiting_verification")
+          setDetails({
+            amount: data.amount,
+            email: data.email,
+            tripId,
+            hotelName: data.hotelName,
+            reference,
+            paymentType: "bank_transfer",
+          })
         } else {
           setState("failed")
         }
@@ -95,6 +120,58 @@ function VerifyContent() {
                 </Button>
                 <Button variant="outline" asChild>
                   <Link href="/">Plan another trip</Link>
+                </Button>
+              </div>
+            </>
+          )}
+
+          {state === "awaiting_verification" && (
+            <>
+              <div className="flex size-16 items-center justify-center rounded-full bg-amber-100">
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-8 text-amber-600" />
+              </div>
+              <div>
+                <h1 className="font-heading text-2xl font-semibold">
+                  Transfer Received & Queued for Verification!
+                </h1>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {details?.hotelName ? `Your reservation for ${details.hotelName} has been recorded. ` : "Your reservation has been recorded. "}
+                  Our concierge team is immediately verifying your transfer.
+                </p>
+                {details?.amount && (
+                  <p className="mt-3 font-heading text-xl font-bold text-foreground">
+                    {formatNGN(details.amount)} transferred
+                  </p>
+                )}
+                {details?.reference && (
+                  <p className="mt-1 font-mono text-xs text-muted-foreground">
+                    Reference: {details.reference}
+                  </p>
+                )}
+              </div>
+              <div className="mt-2 flex flex-col sm:flex-row gap-3 w-full justify-center">
+                <Button
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  asChild
+                >
+                  <a
+                    href={`https://wa.me/2347044206737?text=${encodeURIComponent(
+                      `Hi Godspower / Trails Team, I sent ${
+                        details?.amount ? formatNGN(details.amount) : "the funds"
+                      } for my booking (Ref: ${
+                        details?.reference || ""
+                      }). Here is my payment receipt.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Share Receipt on WhatsApp
+                  </a>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href={details?.tripId ? `/trips/${details.tripId}` : "/account"}>
+                    View your trip
+                  </Link>
                 </Button>
               </div>
             </>

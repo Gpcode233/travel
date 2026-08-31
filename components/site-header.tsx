@@ -104,7 +104,7 @@ export function SiteHeader({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <LoginLink>
+                <Link href="/login">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -117,15 +117,15 @@ export function SiteHeader({
                   >
                     Sign in
                   </Button>
-                </LoginLink>
-                <RegisterLink>
+                </Link>
+                <Link href="/signup">
                   <Button
                     size="sm"
                     className="h-8 px-3.5 text-xs font-semibold"
                   >
                     Sign up
                   </Button>
-                </RegisterLink>
+                </Link>
               </div>
             )}
           </>

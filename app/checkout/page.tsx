@@ -22,7 +22,9 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { getServiceFeeRate, calculateServiceFee } from "@/lib/pricing"
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs"
+import { BankTransferModal } from "@/components/bank-transfer-modal"
+import Link from "next/link"
+import { Building2, CreditCard } from "lucide-react"
 
 type CheckoutData = {
   tripId?: string
@@ -55,7 +57,7 @@ export default function CheckoutPage() {
   const router = useRouter()
   const { isAuthenticated, isLoading, user } = useKindeBrowserClient()
   const [data, setData] = useState<CheckoutData | null>(null)
-  const [paying, setPaying] = useState(false)
+  const [transferModalOpen, setTransferModalOpen] = useState(false)
 
   useEffect(() => {
     const raw = sessionStorage.getItem("trails_checkout")
@@ -64,7 +66,8 @@ export default function CheckoutPage() {
       return
     }
     try {
-      setData(JSON.parse(raw))
+      const parsed = JSON.parse(raw)
+      setData(parsed)
     } catch {
       router.replace("/agent")
     }
@@ -91,10 +94,12 @@ export default function CheckoutPage() {
           <SiteHeader />
           <div className="mt-24 flex flex-col items-center gap-4 text-center">
             <h1 className="font-heading text-2xl font-semibold">Sign in to complete your booking</h1>
-            <p className="text-sm text-muted-foreground">We need your account details to confirm your reservation.</p>
-            <LoginLink>
-              <Button size="lg" className="mt-2">Sign in to continue</Button>
-            </LoginLink>
+            <p className="text-sm text-muted-foreground">We need your account details to confirm your reservation and arrange airport pickup.</p>
+            <Button size="lg" className="mt-2" asChild>
+              <Link href="/login?post_login_redirect_url=/checkout">
+                Sign in to continue
+              </Link>
+            </Button>
           </div>
         </div>
       </main>
@@ -111,41 +116,18 @@ export default function CheckoutPage() {
     { key: "activities", label: "Activities & entry fees", icon: Ticket01Icon, amount: data.budgetBreakdown?.activities },
   ].filter((item) => item.amount)
 
-  async function handlePay() {
-    if (!data) return
+  const [userPhone, setUserPhone] = useState<string | null>(null)
 
-    if (data.isTestTrip && user?.email !== EASTER_EGG_EMAIL) {
-      sessionStorage.setItem("trails_denied_shake", "1")
-      router.push("/")
-      return
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetch("/api/auth/profile-sync")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data?.user?.phone) setUserPhone(data.user.phone)
+        })
+        .catch(() => {})
     }
-
-    setPaying(true)
-    try {
-      const res = await fetch("/api/checkout/initialize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tripId: data.tripId,
-          hotelName: data.hotelName,
-          hotelArea: data.hotelArea,
-          nights: data.nights,
-          pricePerNight: data.pricePerNight,
-          accommodationTotal: data.accommodationTotal,
-          serviceFee,
-        }),
-      })
-
-      const result = await res.json()
-      if (!res.ok) throw new Error(result.error || "Payment failed to initialize")
-
-      sessionStorage.removeItem("trails_checkout")
-      window.location.href = result.authorization_url
-    } catch (err: any) {
-      toast.error(err.message || "Failed to start payment. Try again.")
-      setPaying(false)
-    }
-  }
+  }, [isAuthenticated])
 
   return (
     <main className="min-h-svh bg-background text-foreground">
@@ -257,26 +239,53 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        {/* Pay button */}
+        {/* Pay buttons */}
         <div className="mt-8 space-y-3">
           <Button
-            onClick={handlePay}
-            disabled={paying}
-            className="w-full bg-blue-600 py-6 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-80"
+            type="button"
+            onClick={() => setTransferModalOpen(true)}
+            className="w-full bg-primary py-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-sm"
           >
-            {paying ? (
-              "Redirecting to Paystack..."
-            ) : (
-              <span className="flex items-center gap-2">
-                <HugeiconsIcon icon={ShieldCheckIcon} className="size-4" />
-                Pay {formatNGN(totalToPay)} securely
-              </span>
-            )}
+            <span className="flex items-center gap-2">
+              <Building2 className="size-4" />
+              Pay {formatNGN(totalToPay)} with Bank Transfer
+            </span>
           </Button>
+
+          <Button
+            type="button"
+            disabled
+            variant="outline"
+            className="w-full border-dashed py-5 text-xs text-muted-foreground opacity-75 cursor-not-allowed"
+          >
+            <span className="flex items-center gap-2">
+              <CreditCard className="size-3.5" />
+              Pay with Card / Paystack
+              <Badge variant="secondary" className="text-[10px] ml-1">Coming Soon</Badge>
+            </span>
+          </Button>
+
           <p className="text-center text-xs text-muted-foreground">
-            Secured by Paystack · Hotel reservation confirmed on payment
+            Hotel reservation confirmed immediately upon payment notification
           </p>
         </div>
+
+        {/* Bank Transfer Modal Popup */}
+        <BankTransferModal
+          isOpen={transferModalOpen}
+          onClose={() => setTransferModalOpen(false)}
+          totalAmount={totalToPay}
+          hotelName={data.hotelName}
+          hotelArea={data.hotelArea}
+          nights={data.nights}
+          pricePerNight={data.pricePerNight}
+          accommodationTotal={data.accommodationTotal}
+          serviceFee={serviceFee}
+          tripId={data.tripId}
+          userEmail={user?.email}
+          userName={[user?.given_name, user?.family_name].filter(Boolean).join(" ")}
+          userPhone={userPhone}
+        />
       </div>
     </main>
   )

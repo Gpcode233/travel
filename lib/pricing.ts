@@ -5,7 +5,7 @@ export type ServiceFeeTier = {
 }
 
 export const serviceFeeTiers: ServiceFeeTier[] = [
-  { maxTotal: 200_000, rate: 0.04 },
+  { maxTotal: 200_000, rate: 0.05 },
   { maxTotal: 400_000, rate: 0.03 },
   { maxTotal: 600_000, rate: 0.02 },
   { maxTotal: 1_000_000, rate: 0.015 },
