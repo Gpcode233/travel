@@ -25,8 +25,8 @@ const DEFAULT_STEPS = [
   "Building your final route",
 ]
 
-const MAX_DURATION_MS = 199_000
-const FAST_INTERVAL = 280
+const MAX_DURATION_MS = 899_000
+const FAST_INTERVAL = 480
 const HOLD_AT_STEP = DEFAULT_STEPS.length - 2
 const SLOW_INTERVAL = MAX_DURATION_MS / HOLD_AT_STEP
 
