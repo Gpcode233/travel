@@ -10,7 +10,6 @@ import {
   CompassIcon,
   Delete02Icon,
   Location03Icon,
-  CompassIcon,
   Clock01Icon,
   Exchange01Icon,
   BedIcon,
