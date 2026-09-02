@@ -42,7 +42,7 @@ export function PlaceCard({
     <Link
       href={`/explore/${place.slug}`}
       className={cn(
-        "group block overflow-hidden rounded-3xl border transition hover:border-primary/40",
+        "group flex h-full flex-col overflow-hidden rounded-3xl border bg-card transition hover:border-primary/40 shadow-xs",
         className
       )}
     >
@@ -51,7 +51,7 @@ export function PlaceCard({
           src={place.image}
           alt={place.name}
           fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
           className="object-cover transition duration-500 group-hover:scale-[1.03]"
           loading="lazy"
         />
@@ -63,23 +63,21 @@ export function PlaceCard({
           {meta.label}
         </Badge>
       </div>
-      <div className="p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h3 className="text-xl font-heading font-semibold">
-              {place.name}
-            </h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {place.area} · {place.kind}
-            </p>
-          </div>
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="line-clamp-2 min-h-[2.8rem] text-lg font-heading font-semibold leading-snug text-foreground">
+            {place.name}
+          </h3>
           {badge && (
-            <Badge variant="outline" className="h-auto shrink-0 px-2.5 py-1 whitespace-nowrap">
+            <Badge variant="outline" className="h-auto shrink-0 px-2 py-0.5 text-[11px] font-normal whitespace-nowrap">
               {badge}
             </Badge>
           )}
         </div>
-        <p className="mt-4 text-sm leading-6 text-muted-foreground">
+        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground sm:text-sm">
+          {place.area} · {place.kind}
+        </p>
+        <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-muted-foreground sm:text-sm">
           {place.note}
         </p>
       </div>
