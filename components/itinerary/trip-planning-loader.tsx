@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { CheckmarkCircle02Icon, Loading03Icon } from "@hugeicons/core-free-icons"
@@ -25,10 +25,8 @@ const DEFAULT_STEPS = [
   "Building your final route",
 ]
 
-const MAX_DURATION_MS = 899_000
-const FAST_INTERVAL = 480
-const HOLD_AT_STEP = DEFAULT_STEPS.length - 2
-const SLOW_INTERVAL = MAX_DURATION_MS / HOLD_AT_STEP
+const TARGET_DURATION_MS = 28_000
+const STEP_INTERVAL_MS = Math.round(TARGET_DURATION_MS / DEFAULT_STEPS.length)
 
 export function TripPlanningLoader({
   dossier,
@@ -37,38 +35,41 @@ export function TripPlanningLoader({
 }: TripPlanningLoaderProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const totalSteps = DEFAULT_STEPS.length
+  const startTimeRef = useRef<number>(Date.now())
+  const [isAnimationFinished, setIsAnimationFinished] = useState(false)
 
-  // Slow advance while AI is still working — hold at second-to-last step
+  // Advance each step smoothly across the 28 seconds
   useEffect(() => {
-    if (isReady) return
-    const timer = setInterval(() => {
-      setCurrentStepIndex((prev) => (prev < HOLD_AT_STEP ? prev + 1 : prev))
-    }, SLOW_INTERVAL)
-    return () => clearInterval(timer)
-  }, [isReady])
-
-  // Hard cap: never let the "thinking" flow run past MAX_DURATION_MS
-  useEffect(() => {
-    const cap = setTimeout(() => {
-      setCurrentStepIndex(totalSteps - 1)
-      onComplete?.()
-    }, MAX_DURATION_MS)
-    return () => clearTimeout(cap)
-  }, [onComplete, totalSteps])
-
-  // Fast-complete once AI finishes
-  useEffect(() => {
-    if (!isReady) return
+    startTimeRef.current = Date.now()
     const timer = setInterval(() => {
       setCurrentStepIndex((prev) => {
-        if (prev < totalSteps - 1) return prev + 1
+        if (prev < totalSteps - 1) {
+          return prev + 1
+        }
         clearInterval(timer)
-        setTimeout(() => onComplete?.(), 600)
         return prev
       })
-    }, FAST_INTERVAL)
-    return () => clearInterval(timer)
-  }, [isReady, totalSteps, onComplete])
+    }, STEP_INTERVAL_MS)
+
+    const fullTimer = setTimeout(() => {
+      setIsAnimationFinished(true)
+    }, TARGET_DURATION_MS)
+
+    return () => {
+      clearInterval(timer)
+      clearTimeout(fullTimer)
+    }
+  }, [totalSteps])
+
+  // Trigger onComplete when both the 28s pacing has completed AND data is ready
+  useEffect(() => {
+    if (isAnimationFinished && isReady) {
+      const exitTimer = setTimeout(() => {
+        onComplete?.()
+      }, 500)
+      return () => clearTimeout(exitTimer)
+    }
+  }, [isAnimationFinished, isReady, onComplete])
 
   const progressPercent = Math.min(
     100,
@@ -165,7 +166,7 @@ export function TripPlanningLoader({
         {/* Bottom ETA & Progress Bar */}
         <div className="mt-6 flex items-center justify-between gap-4 border-t border-border pt-4 text-xs font-mono text-muted-foreground">
           <span className="whitespace-nowrap">
-            {isReady ? "Finalizing plan..." : "AI agent working..."}
+            {isAnimationFinished ? "Finalizing plan..." : "AI agent working..."}
           </span>
 
           <div className="h-1.5 flex-1 max-w-xs overflow-hidden rounded-full bg-muted">

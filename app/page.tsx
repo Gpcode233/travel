@@ -63,11 +63,12 @@ const heroCopies = [
 ]
 
 const heroBackgrounds = [
-  "/images/trails-background-2.png",
-  "/images/trails_background_3.png",
-  "/images/trails_background_4.webp",
-  "/images/trails_background_5.jpg",
-  "/images/trails_background_6.webp",
+  { src: "/images/trails-background-2.png", position: "center center" },
+  { src: "/images/trails_background_3.png", position: "center center" },
+  { src: "/images/landmark-resort-4.jpg", position: "center center" },
+  { src: "/images/trails_background_4.webp", position: "center center" },
+  { src: "/images/trails_background_5.jpg", position: "center center" },
+  { src: "/images/trails_background_6.webp", position: "center 18%" },
 ]
 
 export default function HomePage() {
@@ -193,11 +194,15 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
-          {heroBackgrounds.map((src, index) => (
+          {heroBackgrounds.map((bg, index) => (
             <div
-              key={src}
-              className="absolute inset-0 size-full bg-cover bg-center transition-opacity duration-1000"
-              style={{ backgroundImage: `url(${src})`, opacity: index === heroIndex ? 1 : 0 }}
+              key={bg.src}
+              className="absolute inset-0 size-full bg-cover transition-opacity duration-1000"
+              style={{
+                backgroundImage: `url(${bg.src})`,
+                backgroundPosition: bg.position,
+                opacity: index === heroIndex ? 1 : 0,
+              }}
             />
           ))}
           <div
