@@ -10,7 +10,7 @@ import {
   CompassIcon,
   Delete02Icon,
   Location03Icon,
-  SparklesIcon,
+  CompassIcon,
   Clock01Icon,
   Exchange01Icon,
   BedIcon,
@@ -229,7 +229,7 @@ export function ItineraryTimeline({
                           }}
                           className="ml-1 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
                         >
-                          <HugeiconsIcon icon={SparklesIcon} className="size-3" />
+                          <HugeiconsIcon icon={CompassIcon} className="size-3" />
                           + Replace
                         </button>
                       )}

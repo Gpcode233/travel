@@ -9,7 +9,7 @@ import {
   Bookmark02Icon,
   UserIcon,
   Mail01Icon,
-  SparklesIcon,
+  CompassIcon,
   ShoppingCart01Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
@@ -184,7 +184,7 @@ export function SaveTripBanner({
       <div className="sticky bottom-0 z-30 w-full border-t border-border/80 bg-background/95 py-3.5 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={SparklesIcon} className="size-4 text-primary hidden sm:inline-block" />
+            <HugeiconsIcon icon={CompassIcon} className="size-4 text-primary hidden sm:inline-block" />
             <p className="text-xs sm:text-sm font-medium text-foreground">
               {saved ? "Saved to dossier · Ready to book" : "Ready to book? Save and reserve your hotel."}
             </p>

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  SparklesIcon,
+  CompassIcon,
   Cancel01Icon,
   SentIcon,
   CheckmarkCircle02Icon,
@@ -109,7 +109,7 @@ export function AskTrailsAssistant({ onApplyAction }: AskTrailsAssistantProps) {
           className="group flex items-center gap-2 rounded-xs border border-border/80 bg-background px-4 py-2 text-xs font-semibold text-foreground shadow-xl transition-all duration-200 hover:border-primary hover:bg-muted/80"
         >
           <HugeiconsIcon
-            icon={SparklesIcon}
+            icon={CompassIcon}
             className="size-4 text-primary group-hover:scale-110 transition-transform"
           />
           <span>Ask Trails</span>
@@ -122,7 +122,7 @@ export function AskTrailsAssistant({ onApplyAction }: AskTrailsAssistantProps) {
           <SheetHeader className="text-left border-b pb-4">
             <div className="flex items-center gap-2">
               <div className="flex size-7 items-center justify-center rounded-xs bg-primary text-primary-foreground">
-                <HugeiconsIcon icon={SparklesIcon} className="size-4" />
+                <HugeiconsIcon icon={CompassIcon} className="size-4" />
               </div>
               <SheetTitle className="font-heading text-lg font-bold">
                 Ask Trails Assistant

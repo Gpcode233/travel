@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { SparklesIcon, SentIcon, Loading03Icon } from "@hugeicons/core-free-icons"
+import { CompassIcon, SentIcon, Loading03Icon } from "@hugeicons/core-free-icons"
 
 import {
   Sheet,
@@ -13,7 +13,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
 import {
   Conversation,
   ConversationContent,
@@ -61,7 +60,7 @@ export function AgentChatSidebar({
         <SheetHeader className="border-b pb-4">
           <div className="flex items-center gap-2">
             <div className="flex size-7 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <HugeiconsIcon icon={SparklesIcon} className="size-4" />
+              <HugeiconsIcon icon={CompassIcon} className="size-4" />
             </div>
             <SheetTitle className="font-heading text-lg font-bold">
               Trails Agent
@@ -76,7 +75,7 @@ export function AgentChatSidebar({
           <ConversationContent>
             {messages.length === 0 && (
               <ConversationEmptyState
-                icon={<HugeiconsIcon icon={SparklesIcon} className="size-6" />}
+                icon={<HugeiconsIcon icon={CompassIcon} className="size-6" />}
                 title="Ask Trails anything"
                 description="Get local context, prices, and tips grounded in real places."
               />

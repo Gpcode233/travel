@@ -6,7 +6,7 @@ import {
   ArrowLeft01Icon,
   Clock01Icon,
   Location05Icon,
-  SparklesIcon,
+  CompassIcon,
   Tag01Icon,
   BedIcon,
   CheckmarkCircle02Icon,
@@ -163,7 +163,7 @@ export default async function PlaceDetailsPage({
                     <p className="font-heading text-lg font-bold">{room.formattedPrice}</p>
                     <Button asChild size="sm" className="mt-3 w-full bg-blue-600 text-white hover:bg-blue-700">
                       <Link href={`/agent?budget=${encodeURIComponent("mid-range")}&prompt=${encodeURIComponent(`Book a ${room.name} at ${place.name}`)}`}>
-                        <HugeiconsIcon icon={SparklesIcon} className="size-3.5" />
+                        <HugeiconsIcon icon={CompassIcon} className="size-3.5" />
                         Plan trip with this room
                       </Link>
                     </Button>

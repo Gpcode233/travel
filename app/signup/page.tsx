@@ -12,11 +12,10 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 import {
   CompassIcon,
-  ShieldCheckIcon,
   GiftIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Mail, Phone, User, ArrowRight, Sparkles } from "lucide-react"
+import { Mail, Phone, User, ArrowRight } from "lucide-react"
 
 function SignUpContent() {
   const router = useRouter()

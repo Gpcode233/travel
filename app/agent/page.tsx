@@ -7,8 +7,6 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   CompassIcon,
-  SparklesIcon,
-  ArrowReloadHorizontalIcon,
 } from "@hugeicons/core-free-icons"
 
 import {

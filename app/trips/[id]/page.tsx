@@ -8,7 +8,7 @@ import {
   UserGroupIcon,
   BedIcon,
   Clock01Icon,
-  SparklesIcon,
+  CompassIcon,
   ArrowLeft01Icon,
   CheckmarkCircle02Icon,
   Tag01Icon,
@@ -300,7 +300,7 @@ export default async function TripDetailPage({
             {/* Budget breakdown */}
             <div className="rounded-2xl border bg-card p-4">
               <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={SparklesIcon} className="size-4 text-primary" />
+                <HugeiconsIcon icon={CompassIcon} className="size-4 text-primary" />
                 <h3 className="font-heading font-semibold">Estimated Budget</h3>
               </div>
               <div className="mt-4 space-y-2">
